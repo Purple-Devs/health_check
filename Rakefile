@@ -10,7 +10,10 @@ begin
     gem.email = "ian@heggie.biz"
     gem.homepage = "http://github.com/ianheggie/health_check"
     gem.authors = ["Ian Heggie"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_development_dependency "shoulda", ">= 0"
+    gem.add_development_dependency "sqlite3-ruby", ">= 0"
+    gem.add_development_dependency 'activerecord', '>= 1.15.4.7794'
+
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

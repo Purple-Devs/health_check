@@ -1,6 +1,53 @@
-= health_check
+health_check
+============
 
-Simple health check of Rails app for use with uptime.openacs.org or wasitup.com 
+Simple health check of Rails app for use with uptime.openacs.org or wasitup.com
+
+The basic goal is to check that rails is being launched and that it has access to correctly configured resources (database, email gateway)
+
+The email gateway is not checked unless the smtp settings have been changed,
+specify full or include email in the list of checks or vary the smtp settings
+(eg use 127.0.0.1 instead of localhost). 
+
+health_check provides various monitoring URIs 
+
+    % curl localhost:3000/health_check
+    success
+
+    % curl localhost:3000/health_check/standard
+    success
+
+    % curl localhost:3000/health_check/full
+    success
+
+    % curl localhost:3000/health_check/site_database_email_migrations
+    success
+
+Installation
+============
+
+    % cd vendor/plugins
+    % git clone git://github.com/ianheggie/health_check.git
+
+Installation as a gem is still under development
+
+Uptime Monitoring
+=================
+
+See
+* [WasItUp](http://wasitup.com/)
+* [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
+* [Engine Yard's guide](http://community-support.engineyard.com/faqs/guides/uptime-monitoring-for-your-rails-application) guide based on fitter_happier plugin includes monit and other setup help
+
+Checks
+======
+
+* standard (default) - site, database and migrations checks are run plus email if settings have been changed
+* all - all checks are run
+* database - checks that the database contains the current migration level
+* email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response 
+* migrations - checks that the database migration level matches that in db/migrations
+* site - checks rails is running sufficiently to render text 
 
 == Note on Patches/Pull Requests
  
@@ -14,4 +61,8 @@ Simple health check of Rails app for use with uptime.openacs.org or wasitup.com
 
 == Copyright
 
-Copyright (c) 2010 Ian Heggie. See LICENSE for details.
+Copyright (c) 2010 Ian Heggie, released under the MIT license. See LICENSE for details.
+
+== Similar projects
+
+* fitter_happier plugin by atmos - plugin with similar goals, but not compatable with uptime, and does not check email gateway 
