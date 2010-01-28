@@ -1,6 +1,6 @@
 = health_check
 
-Description goes here.
+Simple health check of Rails app for use with uptime.openacs.org or wasitup.com 
 
 == Note on Patches/Pull Requests
  
