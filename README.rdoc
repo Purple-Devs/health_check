@@ -26,10 +26,16 @@ health_check provides various monitoring URIs
 Installation
 ============
 
+As a Plugin
+
     % cd vendor/plugins
     % git clone git://github.com/ianheggie/health_check.git
 
-Installation as a gem is still under development
+As a Gem from gemcutter
+
+    % gem install health_check    
+    # Add the following line to config/environment.rb
+    config.gem "health_check"
 
 Uptime Monitoring
 =================
@@ -61,7 +67,16 @@ Checks
 
 == Copyright
 
-Copyright (c) 2010 Ian Heggie, released under the MIT license. See LICENSE for details.
+Copyright (c) 2010 Ian Heggie, released under the MIT license.
+See MIT-LICENSE for details.
+
+== Known Issues
+
+* Rails 1.x s not currently supported (smtp_settings versus server_settings)
+* I wasn't able to get tests to work standalone - the gem has to be installed as a plugin for the tests to work
+* No inline documentation for methods
+
+* Feedback welcome especially with suggested replacement code and corresponding tests
 
 == Similar projects
 
