@@ -35,9 +35,7 @@ class HealthCheck
   end
 
   def self.get_database_version
-    table_name = (Rails::VERSION::STRING >= '2.1.0' ? 'schema_migrations' : 'schema_info')
-    query = "SELECT version FROM #{table_name} ORDER BY version DESC LIMIT 1"
-    ActiveRecord::Base.connection.select_value(query)
+    ActiveRecord::Migrator.current_version
   end
 
   def self.get_migration_version(dir = self.db_migrate_path)

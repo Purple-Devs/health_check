@@ -34,7 +34,7 @@ class HealthCheckController < ActionController::Base
     errors = ''
     checks.split('_').each do |check|
       case check
-      when 'and'
+      when 'and', 'site'
         # do nothing
       when "database"
         HealthCheck.get_database_version
@@ -49,7 +49,7 @@ class HealthCheckController < ActionController::Base
       when "standard"
         errors << process_checks("database_migrations")
         errors << process_checks("email") unless HealthCheck.default_action_mailer_configuration?
-      when "all"
+      when "all", "full"
         errors << process_checks("database_migrations_email")
       else
         return "invalid argument to health_test. "

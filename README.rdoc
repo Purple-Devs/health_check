@@ -1,5 +1,4 @@
-health_check
-============
+= health_check
 
 Simple health check of Rails app for use with uptime.openacs.org or wasitup.com
 
@@ -17,14 +16,13 @@ health_check provides various monitoring URIs
     % curl localhost:3000/health_check/standard
     success
 
-    % curl localhost:3000/health_check/full
+    % curl localhost:3000/health_check/all
     success
 
-    % curl localhost:3000/health_check/site_database_email_migrations
+    % curl localhost:3000/health_check/site_and_database_and_email_migrations
     success
 
-Installation
-============
+== Installation
 
 As a Plugin
 
@@ -37,22 +35,20 @@ As a Gem from gemcutter
     # Add the following line to config/environment.rb
     config.gem "health_check"
 
-Uptime Monitoring
-=================
+== Uptime Monitoring
 
 See
 * [WasItUp](http://wasitup.com/)
 * [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
 * [Engine Yard's guide](http://community-support.engineyard.com/faqs/guides/uptime-monitoring-for-your-rails-application) guide based on fitter_happier plugin includes monit and other setup help
 
-Checks
-======
+== Checks
 
 * standard (default) - site, database and migrations checks are run plus email if settings have been changed
-* all - all checks are run
+* all / full - all checks are run
 * database - checks that the database contains the current migration level
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response 
-* migrations - checks that the database migration level matches that in db/migrations
+* migration - checks that the database migration level matches that in db/migrations
 * site - checks rails is running sufficiently to render text 
 
 == Note on Patches/Pull Requests
