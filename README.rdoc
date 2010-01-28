@@ -5,7 +5,7 @@ Simple health check of Rails app for use with uptime.openacs.org or wasitup.com
 The basic goal is to check that rails is being launched and that it has access to correctly configured resources (database, email gateway)
 
 The email gateway is not checked unless the smtp settings have been changed,
-specify full or include email in the list of checks or vary the smtp settings
+specify full or include email in the list of checks or varify the smtp settings
 (eg use 127.0.0.1 instead of localhost). 
 
 health_check provides various monitoring URIs 
@@ -76,4 +76,4 @@ See MIT-LICENSE for details.
 
 == Similar projects
 
-* fitter_happier plugin by atmos - plugin with similar goals, but not compatable with uptime, and does not check email gateway 
+* fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway 
