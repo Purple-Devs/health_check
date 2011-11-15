@@ -1,6 +1,6 @@
 = health_check
 
-Simple health check of Rails app for use with uptime.openacs.org or wasitup.com
+Simple health check of Rails app for use with uptime.openacs.org, wasitup.com or newrelic.com
 
 The basic goal is to check that rails is being launched and that it has access to correctly configured resources (database, email gateway)
 
@@ -41,6 +41,7 @@ See
 * [WasItUp](http://wasitup.com/)
 * [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
 * [Engine Yard's guide](http://community-support.engineyard.com/faqs/guides/uptime-monitoring-for-your-rails-application) guide based on fitter_happier plugin includes monit and other setup help
+* [NewRelic Availability Monitoring](http://newrelic.com/docs/features/availability-monitoring-faq)
 
 == Checks
 
@@ -63,7 +64,7 @@ See
 
 == Copyright
 
-Copyright (c) 2010 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2011 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Known Issues

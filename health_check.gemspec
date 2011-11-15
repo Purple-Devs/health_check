@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{health_check}
-  s.version = "0.1.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ian Heggie"]
-  s.date = %q{2010-01-29}
-  s.description = %q{Simple health check of Rails app for use with uptime.openacs.org or wasitup.com}
+  s.date = %q{2011-11-15}
+  s.description = %q{Simple health check of Rails app for use with uptime monitoring sites}
   s.email = %q{ian@heggie.biz}
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "health_check.gemspec",
      "init.rb",
+     "config/routes.rb",
      "lib/health_check.rb",
      "lib/health_check/add_routes.rb",
      "lib/health_check/health_check_class.rb",
