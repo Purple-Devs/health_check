@@ -22,8 +22,8 @@ class HealthCheck
   cattr_accessor :default_smtp_settings
 
   def self.db_migrate_path
-    # Lazy initialisation so RAILS_ROOT will be defined
-    @@db_migrate_path ||= File.join(RAILS_ROOT, 'db', 'migrate')
+    # Lazy initialisation so Rails.root will be defined
+    @@db_migrate_path ||= File.join(Rails.root, 'db', 'migrate')
   end
 
   def self.db_migrate_path=(value)

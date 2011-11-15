@@ -13,7 +13,7 @@ else
   fail "TODO: Work out how to test as a gem (test as a plugin instead)"
   # TODO: Work out how to do this!
   #require 'rails/version'
-  #RAILS_ROOT = "test" unless defined?(RAILS_ROOT)
+  #Rails.root = "test" unless defined?(Rails.root)
   #module Rails
   #  def backtrace_cleaner(args)
   #    # do nothing
@@ -61,7 +61,7 @@ ActionMailer::Base.delivery_method = :test
 # Make sure sendmail settings are set to something that is executrable (we wont actually execute it)
 sendmail_path = '/usr/sbin/sendmail'
 ['/bin/true', 'c:/windows/explorer.exe', 'c:/winnt/explorer.exe',
-  File.join(RAILS_ROOT, 'script', 'about')].each do |f|
+  File.join(Rails.root, 'script', 'about')].each do |f|
   sendmail_path = f if File.executable? f
 end
 
