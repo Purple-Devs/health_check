@@ -11,25 +11,6 @@ if File.exists?(environment_file)
 else
   #tests as gem
   fail "TODO: Work out how to test as a gem (test as a plugin instead)"
-  # TODO: Work out how to do this!
-  #require 'rails/version'
-  #Rails.root = "test" unless defined?(Rails.root)
-  #module Rails
-  #  def backtrace_cleaner(args)
-  #    # do nothing
-  #  end
-  #end
-
-  #require 'active_support'
-  #require 'action_controller'
-  #require 'action_controller/base'
-  ##require 'action_controller/test_case'
-  #require 'action_view'
-  #require 'active_record'
-  ##require 'active_support/backtrace_cleaner'
-  ##require 'rails/backtrace_cleaner'
-
-  #require 'test_help'
 end
 
 
@@ -48,7 +29,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 # plugin init
 require File.join(File.dirname(__FILE__), '..', 'init')
 
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :dbfile => ":memory:")
+ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :dbfile => ":memory:", :database => 'health_test_test')
 
 EXAMPLE_SMTP_SETTINGS = {
   :address => "smtp.gmail.com",

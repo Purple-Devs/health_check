@@ -3,8 +3,14 @@ require 'helper'
 class RoutingTest < Test::Unit::TestCase
 
   def setup
-    ActionController::Routing::Routes.draw do |map|
-       # do nothing - routes should be added automatically
+    if defined?(Rails) and defined?(Rails.application) and Rails.application.routes
+      Rails.application.routes.draw do |map|
+	 # do nothing - routes should be added automatically
+      end
+    else
+      ActionController::Routing::Routes.draw do |map|
+	 # do nothing - routes should be added automatically
+      end
     end
   end
 
@@ -23,7 +29,11 @@ class RoutingTest < Test::Unit::TestCase
   # tries to instantiate the controller) and because it uses an awkward
   # parameter order.
   def assert_recognition(method, path, options)
-    result = ActionController::Routing::Routes.recognize_path(path, :method => method)
+    if defined?(Rails) and defined?(Rails.application) and Rails.application.routes
+      result = Rails.application.routes.recognize_path(path, :method => method)
+    else
+      result = ActionController::Routing::Routes.recognize_path(path, :method => method)
+    end
     assert_equal options, result
   end
 
