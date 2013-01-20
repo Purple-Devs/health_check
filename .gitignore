@@ -12,6 +12,7 @@ tmtags
 
 ## VIM
 *.swp
+*~
 
 ## PROJECT::GENERAL
 coverage
@@ -19,3 +20,6 @@ rdoc
 pkg
 
 ## PROJECT::SPECIFIC
+health_check*.gem
+tmp/
+,*
