@@ -7,6 +7,7 @@ before_install:
   - gem --version
   - gem install bundler
   - bundle --version
+  - mkdir -p tmp/bundle
 
 bundler_args: --binstubs --path tmp/bundle
 gemfile:

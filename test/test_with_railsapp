@@ -48,6 +48,11 @@ cd railsapp
 pwd
 ls
 
+if [ -d $gem_dir/tmp/bundle ]
+then
+    # use bundle with just our gems if running in travis
+    export GEM_HOME=$gem_dir/tmp/bundle
+fi
 # Fix rakefile if needed
 ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
 if [ -f Gemfile ]
