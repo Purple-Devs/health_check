@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+require 'net/http'
+require 'uri'
+
+def open(url)
+  Net::HTTP.get(URI.parse(url))
+end
+
+page_content = open(ARGV[0]) rescue nil
+unless page_content
+  i=1
+  print "waiting.."
+  while i < 30 and not page_content
+    print "."
+    STDOUT.flush
+    i += 1
+    sleep(1)
+    page_content = open(ARGV[0]) rescue nil
+  end
+  puts " done"
+end
+
+puts page_content
+if ARGV[1]
+  if page_content.include? ARGV[1]
+    puts "PASS"
+    exit 0
+  else
+    puts "FAIL" 
+    exit 2
+  end
+end
+exit(page_content.nil? ? 1 : 0)
