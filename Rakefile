@@ -10,9 +10,8 @@ begin
     gem.email = "ian@heggie.biz"
     gem.homepage = "http://github.com/ianheggie/health_check"
     gem.authors = ["Ian Heggie"]
-    gem.add_development_dependency "shoulda", ">= 0"
-    gem.add_development_dependency "sqlite3-ruby", ">= 0"
-    gem.add_development_dependency 'activerecord', '>= 1.15.4.7794'
+    # Gemfile contains gem dependencies, apart from bundler itself
+    gem.add_development_dependency 'bundler', '~> 1.2.0'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
@@ -24,7 +23,7 @@ end
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
+  test.pattern = 'test/**/*_test.rb'
   test.verbose = true
 end
 
@@ -32,7 +31,7 @@ begin
   require 'rcov/rcovtask'
   Rcov::RcovTask.new do |test|
     test.libs << 'test'
-    test.pattern = 'test/**/test_*.rb'
+    test.pattern = 'test/**/*_test.rb'
     test.verbose = true
   end
 rescue LoadError
@@ -45,7 +44,7 @@ task :test => :check_dependencies
 
 task :default => :test
 
-require 'rake/rdoctask'
+require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
