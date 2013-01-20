@@ -3,14 +3,18 @@
 # Any failure causes exit
 set -e
 
-test_dir=/tmp/health_check_$$
-mkdir -p $test_dir
+gem_dir=`pwd`
+testurl=$gem_dir/test/testurl
+
+test_dir=`pwd`/tmp
+cd $test_dir
+rm -rf Gemfile* railsapp bin
+
 serverpid=''
 
 finish()
 {
        echo TEST ${1:-FAILED}
-       rm -rf $test_dir
        case "$serverpid" in
            [0-9]*)
                 kill -9 $serverpid
@@ -23,31 +27,99 @@ finish()
 
 trap "finish FAILED 1" 0
 
-current_dir=`pwd`
-
-cd $test_dir
+echo PATH=$PATH
 
 actual_rails_version=`rails -v`
 echo "Testing with $actual_rails_version"
 
 case "$actual_rails_version" in
-    "* [12].*")
-        bin/rails railsapp
+    *' '[12].*)
+        rails railsapp
+        ;;
+    *' '[34].*)
+        rails new railsapp
         ;;
     *)
-        bin/rails new railsapp
+        echo "Unknown rails version"
         ;;
 esac
 
-# TODO: install gem as plugin
+cd railsapp
+pwd
+ls
 
-# TODO: TEST
+# Fix rakefile if needed
+ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
+if [ -f Gemfile ]
+then
+    echo Installing health_check as gem ...
+    echo "gem 'health_check', :path => '$gem_dir'" >> Gemfile
+    bundle --binstubs --path $gem_dir/tmp/bundle
+else
+    echo Installing health_check as plugin ...
+    dest=`pwd`/vendor/plugins/health_check
+    mkdir -p $dest
+    (
+        cd $gem_dir
+        find . | egrep -v '/tmp' | cpio -pdl $dest
+    )
+fi
 
-# TODO: remove gem as plugin 
+port=3456
 
-# TODO: install as gem
+if [ -x script/server ]
+then
+    script/server webrick -p $port &
+else
+    rails s webrick -p $port &
+fi
+server_pid=$!
+trap "kill -9 $server_pid ; exit 9" 0
 
-# TODO: repeat TEST
+echo STATIC-FILE > public/static.txt
+
+host=http://localhost:${port}
+
+# get a static file
+set -x
+echo 'TESTING can get a static file ...'
+$testurl ${host}/static.txt STATIC-FILE
+
+echo 'TESTING health_check should pass with no database migrations ...'
+mkdir -p db/migrate
+ls db/migrate
+$testurl ${host}/health_check success
+
+echo 'TESTING health_check should fail without initial database migration ...'
+cp $gem_dir/test/migrate/nine/* db/migrate
+ls db/migrate
+$testurl ${host}/health_check failed
+
+echo 'TESTING health_check should pass after initial database migration ...'
+rake db:migrate 
+$testurl ${host}/health_check success
+
+echo 'TESTING health_check should fail without all migrations ...'
+cp $gem_dir/test/migrate/twelve/* db/migrate
+ls db/migrate
+$testurl ${host}/health_check failed
+
+echo 'TESTING health_check should pass after both database migrations ...'
+rake db:migrate 
+$testurl ${host}/health_check success
+
+if [ -d vendor/plugins/health_check ]
+then
+    echo "RUNNING UNIT TESTS...."
+    rake test:plugins || test_failed
+fi
+
+echo "Killing server"
+kill -9 $server_pid
+trap "" 0
+wait
 
 finish PASSED 0
 exit 0
+
+# vi: sw=4 ai sm:

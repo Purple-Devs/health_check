@@ -8,7 +8,7 @@ before_install:
   - gem install bundler
   - bundle --version
 
-bundler_args: --binstubs
+bundler_args: --binstubs --path tmp/bundle
 gemfile:
   - gemfiles/rails2_3.gemfile
 
