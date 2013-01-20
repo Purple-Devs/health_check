@@ -13,4 +13,4 @@ bundler_args: --binstubs --path tmp/bundle
 gemfile:
   - gemfiles/rails2_3.gemfile
 
-script: /bin/bash ./test/test_with_railsapp
+script: ./test/test_with_railsapp

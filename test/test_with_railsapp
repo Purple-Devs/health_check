@@ -4,6 +4,18 @@
 set -e
 
 gem_dir=`pwd`
+
+if [ -d $gem_dir/tmp/bundle ]
+then
+    echo Setting GEM_HOME=$gem_dir/tmp/bundle '(travis environment)'
+    export GEM_HOME=$gem_dir/tmp/bundle
+fi
+if [ -d $gem_dir/bin ]
+then
+    echo Setting PATH=$gem_dir/bin:$PATH '(travis environment)'
+    export PATH="$gem_dir/bin:$PATH"
+fi
+
 testurl=$gem_dir/test/testurl
 
 test_dir=`pwd`/tmp
@@ -14,8 +26,20 @@ serverpid=''
 
 finish()
 {
+       echo =========================================================================
        echo TEST ${1:-FAILED}
-       case "$serverpid" in
+       echo =========================================================================
+        if [ -d $test_dir/tmp/bundle ]
+        then
+            echo Gems installed:
+            ls $test_dir/tmp/bundle
+        fi
+        if [ -s $test_dir/railsapp/log/test.log ]
+        then
+            echo Last 300 lines of test log
+            tail -300 $test_dir/railsapp/log/test.log
+        fi
+        case "$serverpid" in
            [0-9]*)
                 kill -9 $serverpid
                 wait
@@ -27,10 +51,8 @@ finish()
 
 trap "finish FAILED 1" 0
 
-echo PATH=$PATH
-
 actual_rails_version=`rails -v`
-echo "Testing with $actual_rails_version"
+echo "Creating $actual_rails_version app in $test_dir/railsapp"
 
 case "$actual_rails_version" in
     *' '[12].*)
@@ -45,16 +67,11 @@ case "$actual_rails_version" in
 esac
 
 cd railsapp
-pwd
-ls
+echo "Changed current directory to railsapp root: `pwd`"
 
-if [ -d $gem_dir/tmp/bundle ]
-then
-    # use bundle with just our gems if running in travis
-    export GEM_HOME=$gem_dir/tmp/bundle
-fi
-# Fix rakefile if needed
+echo "Fixing rdoc require in Rakefile if needed"
 ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
+
 if [ -f Gemfile ]
 then
     echo Installing health_check as gem ...
@@ -71,6 +88,7 @@ else
 fi
 
 port=3456
+echo Starting server on port $port ...
 
 if [ -x script/server ]
 then
