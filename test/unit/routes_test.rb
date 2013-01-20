@@ -1,4 +1,4 @@
-require 'helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class RoutingTest < Test::Unit::TestCase
 

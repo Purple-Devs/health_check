@@ -1,9 +1,9 @@
-require 'helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class HealthCheckControllerTest < ActionController::TestCase
   #context "HealthCheck plugin" do
-  #   should_route :get, "/health_check", :controller => :health_check, :action => :index
-  #    should_route :get, "/health_check/two_checks", :controller => :health_check, :action => :index, :checks => 'two_checks'
+  #   should route :get, "/health_check", :controller => :health_check, :action => :index
+  #    should route :get, "/health_check/two_checks", :controller => :health_check, :action => :index, :checks => 'two_checks'
   #end
 
   context "GET standard on empty db" do
@@ -18,10 +18,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with :success
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with :success
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "return 'success' text" do
       assert_equal HealthCheck.success, @response.body
     end
@@ -39,10 +39,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with :success
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with :success
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "return 'success' text" do
       assert_equal HealthCheck.success, @response.body
     end
@@ -60,10 +60,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with 500
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with 500
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "not return 'success' text" do
       assert_not_equal HealthCheck.success, @response.body
     end
@@ -75,10 +75,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       get :check, :checks => 'email'
     end
 
-    should_respond_with :success
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with :success
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "return 'success' text" do
       assert_equal HealthCheck.success, @response.body
     end
@@ -102,10 +102,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with 500
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with 500
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "not return 'success' text" do
       assert_not_equal HealthCheck.success, @response.body
     end
@@ -123,8 +123,8 @@ class HealthCheckControllerTest < ActionController::TestCase
       get :check, :checks => 'email'
     end
 
-    should_respond_with :success
-    should_respond_with_content_type 'text/plain'
+    should respond_with :success
+    should respond_with_content_type 'text/plain'
     should "return 'success' text" do
       assert_equal HealthCheck.success, @response.body
     end
@@ -144,10 +144,10 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with 500
-    should_not_set_the_flash
-    should_respond_with_content_type 'text/plain'
-    should_render_without_layout
+    should respond_with 500
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
     should "not return 'success' text" do
       assert_not_equal HealthCheck.success, @response.body
     end
@@ -166,8 +166,8 @@ class HealthCheckControllerTest < ActionController::TestCase
       teardown_db
     end
 
-    should_respond_with :success
-    should_respond_with_content_type 'text/plain'
+    should respond_with :success
+    should respond_with_content_type 'text/plain'
     should "return 'success' text" do
       assert_equal HealthCheck.success, @response.body
     end
