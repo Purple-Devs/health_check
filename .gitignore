@@ -22,5 +22,6 @@ pkg
 ## PROJECT::SPECIFIC
 health_check*.gem
 tmp/
+bin/
 ,*
 .bundle
