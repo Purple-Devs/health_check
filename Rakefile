@@ -51,7 +51,7 @@ if File.exists?(environment_file) and File.directory?(plugin_dir)
 else
   #tests as gem
   task :test do
-    exec '/bin/bash', 'test/test_with_railsapp'
+    exec '/bin/bash', './test/test_with_railsapp'
   end
 end
 
