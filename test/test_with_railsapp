@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Any failure causes exit
+set -e
+
+test_dir=/tmp/health_check_$$
+mkdir -p $test_dir
+serverpid=''
+
+finish()
+{
+       echo TEST ${1:-FAILED}
+       rm -rf $test_dir
+       case "$serverpid" in
+           [0-9]*)
+                kill -9 $serverpid
+                wait
+                ;;
+        esac
+        trap "" 0
+        exit ${2:-2}
+}
+
+trap "finish FAILED 1" 0
+
+current_dir=`pwd`
+
+cd $test_dir
+
+actual_rails_version=`rails -v`
+echo "Testing with $actual_rails_version"
+
+case "$actual_rails_version" in
+    "* [12].*")
+        bin/rails railsapp
+        ;;
+    *)
+        bin/rails new railsapp
+        ;;
+esac
+
+# TODO: install gem as plugin
+
+# TODO: TEST
+
+# TODO: remove gem as plugin 
+
+# TODO: install as gem
+
+# TODO: repeat TEST
+
+finish PASSED 0
+exit 0
