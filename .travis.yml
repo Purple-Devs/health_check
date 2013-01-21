@@ -13,3 +13,8 @@ gemfile:
   - gemfiles/rails2_3.gemfile
 
 script: ./test/test_with_railsapp
+
+matrix:
+  exclude:
+    - rvm: 1.9.3
+      gemfile: gemfiles/rails2_3.gemfile

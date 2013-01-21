@@ -22,11 +22,11 @@ end
 
 puts page_content
 if ARGV[1]
-  if page_content.include? ARGV[1]
-    puts "PASS"
+  if page_content.to_s.include? ARGV[1]
+    puts "PASS (found #{ARGV[1]})"
     exit 0
   else
-    puts "FAIL" 
+    puts "FAIL (could not find #{ARGV[1]})" 
     exit 2
   end
 end

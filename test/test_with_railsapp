@@ -82,7 +82,7 @@ else
     mkdir -p $dest
     (
         cd $base_dir
-        find . | egrep -v '/tmp' | cpio -pdlv $dest
+        find . | egrep -v '/tmp|/\.git|\.gem$' | cpio -pdl $dest
     )
 fi
 
