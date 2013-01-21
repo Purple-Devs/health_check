@@ -69,8 +69,7 @@ See MIT-LICENSE for details.
 
 == Known Issues
 
-* Rails 1.x s not currently supported (smtp_settings versus server_settings)
-* I wasn't able to get tests to work standalone - the gem has to be installed as a plugin for the tests to work
+* Rails 1.x is not currently supported (smtp_settings versus server_settings)
 * No inline documentation for methods
 
 * Feedback welcome especially with suggested replacement code and corresponding tests
@@ -78,3 +77,8 @@ See MIT-LICENSE for details.
 == Similar projects
 
 * fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway 
+
+== Continuous integtration tests
+
+Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
+
