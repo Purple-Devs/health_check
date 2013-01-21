@@ -13,7 +13,6 @@ else
   fail "TODO: Work out how to test as a gem (test as a plugin instead)"
 end
 
-
 gem "shoulda"
 require 'shoulda'
 require 'shoulda/action_controller'

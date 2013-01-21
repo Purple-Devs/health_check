@@ -1,0 +1,150 @@
+#!/bin/bash
+
+# Any failure causes exit
+set -e
+
+base_dir=`pwd`
+
+testurl=$base_dir/test/testurl
+
+test_dir=`pwd`/tmp
+rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
+mkdir -p tmp/gems
+
+echo Installing health_check as a gem into tmp/gems
+env GEM_HOME=$test_dir/gems rake install
+
+export GEM_PATH="$test_dir/gems:`gem environment gempath`"
+echo Set GEM_PATH=$GEM_PATH
+
+echo Gems in tmp/gems:
+ls tmp/gems
+
+echo GEM LIST
+gem list
+
+serverpid=''
+
+finish()
+{
+    set +x
+    echo ========================================================
+    echo TEST ${1:-FAILED}
+    echo ========================================================
+    if [ -s $test_dir/railsapp/log/test.log ]
+    then
+        echo Last 300 lines of test log
+        tail -300 $test_dir/railsapp/log/test.log
+    fi
+    case "$serverpid" in
+        [0-9]*)
+            kill -9 $serverpid
+            wait
+            ;;
+    esac
+    trap "" 0
+    exit ${2:-2}
+}
+
+trap "finish FAILED 1" 0
+
+actual_rails_version=`rails -v`
+echo "Creating $actual_rails_version app in $test_dir/railsapp"
+
+cd $test_dir
+
+case "$actual_rails_version" in
+    *' '[12].*)
+        rails railsapp
+        ;;
+    *' '[34].*)
+        rails new railsapp
+        ;;
+    *)
+        echo "Unknown rails version"
+        ;;
+esac
+
+cd railsapp
+echo "Changed current directory to railsapp root: `pwd`"
+
+echo "Fixing rdoc require in Rakefile if needed"
+ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
+
+if [ -f Gemfile ]
+then
+    echo Installing health_check as gem ...
+    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+    bundle
+else
+    echo Installing health_check as plugin ...
+    dest=`pwd`/vendor/plugins/health_check
+    mkdir -p $dest
+    (
+        cd $base_dir
+        find . | egrep -v '/tmp|/\.git|\.gem$' | cpio -pdl $dest
+    )
+fi
+
+port=3456
+echo Starting server on port $port ...
+
+export RAILS_ENV=test
+
+if [ -x script/server ]
+then
+    script/server webrick -p $port &
+else
+    rails s webrick -p $port &
+fi
+server_pid=$!
+trap "kill -9 $server_pid ; exit 9" 0
+
+echo STATIC-FILE > public/static.txt
+
+host=http://localhost:${port}
+
+# get a static file
+echo
+echo 'TESTING can get a static file ...'
+$testurl ${host}/static.txt STATIC-FILE
+echo
+
+echo 'TESTING health_check should pass with no database migrations ...'
+mkdir -p db/migrate
+ls db/migrate
+$testurl ${host}/health_check success
+echo
+
+echo 'TESTING health_check should fail without initial database migration ...'
+cp $base_dir/test/migrate/nine/* db/migrate
+ls db/migrate
+$testurl ${host}/health_check failed
+echo
+
+echo 'TESTING health_check should pass after initial database migration ...'
+rake db:migrate 
+$testurl ${host}/health_check success
+echo
+
+echo 'TESTING health_check should fail without all migrations ...'
+cp $base_dir/test/migrate/twelve/* db/migrate
+ls db/migrate
+$testurl ${host}/health_check failed
+echo
+
+echo 'TESTING health_check should pass after both database migrations ...'
+rake db:migrate 
+$testurl ${host}/health_check success
+echo
+
+if [ -d vendor/plugins/health_check ]
+then
+    echo "RUNNING UNIT TESTS...."
+    rake test:plugins
+fi
+
+finish PASSED 0
+exit 0
+
+# vi: sw=4 ai sm:

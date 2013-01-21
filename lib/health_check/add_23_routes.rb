@@ -1,3 +1,6 @@
+# Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
+# See MIT-LICENSE for details.
+
 # rails prior to 3.0
 module ActionController
   module Routing #:nodoc:

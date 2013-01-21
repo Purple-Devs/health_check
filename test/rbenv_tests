@@ -1,0 +1,100 @@
+#!/bin/bash
+
+update_gems()
+{
+    if [ -d ~/.rbenv/versions/$RBENV_VERSION ]
+    then
+        echo Updating rails $2 and other gems in $RBENV_VERSION
+        (
+        cd tmp 
+        mkdir t$$-$RBENV_VERSION 
+        cd t$$-$RBENV_VERSION 
+        gem update --system
+        [ -x ~/.rbenv/versions/$RBENV_VERSION/bin/bundle ] || gem install bundler
+        bundle update 
+        cd ../
+        rm -rf t$$-$RBENV_VERSION
+        )
+    fi
+}
+
+check()
+{
+    op=$1
+    export RBENV_VERSION=$2
+    export BUNDLE_GEMFILE="`pwd`/gemfiles/rails$3.gemfile"
+    echo "CHECKING $1 $2 $3..."
+    case "$op" in
+        test)
+            if [ -d ~/.rbenv/versions/$RBENV_VERSION ]
+            then
+                test/test_with_railsapp
+            fi
+            ;;
+        setup)
+            (
+            if [ ! -d ~/.rbenv/versions/$RBENV_VERSION ]
+            then
+                echo Installing $RBENV_VERSION
+                rbenv install $RBENV_VERSION
+            fi
+            update_gems
+            ) &
+            ;;
+        update)
+            (
+            update_gems
+            ) &
+            ;;
+    esac
+}
+
+check_combinations()
+{
+    op=$1
+    # ruby 1.8.7 series
+    #check $op 1.8.7-p352 1_2
+    check $op 1.8.7-p357 2_3
+    #check $op 1.8.7-p358 3_0
+    #check $op 1.8.7-p370 3_1
+    #check $op 1.8.7-p371 3_2
+    wait
+    # ruby 1.9.3 series
+    #check $op 1.9.3-p286 3_0
+    #check $op 1.9.3-p327 3_1
+    #check $op 1.9.3-p362 3_2
+    #check $op 1.9.3-p374 4_0pre
+    wait
+    # jruby series
+    #check $op jruby-1.6.6 1_2
+    check $op jruby-1.6.7 2_3
+    #check $op jruby-1.6.8 3_0
+    #check $op jruby-1.7.0 3_1
+    #check $op jruby-1.7.1 3_2
+    #check $op jruby-1.7.2 4_0pre
+    wait
+    rbenv rehash
+}
+
+case "$1" in
+setup)
+    check_combinations setup
+    ;;
+update)
+    check_combinations update
+    ;;
+test)
+    check_combinations test
+    ;;
+*)
+    echo "usage: $0 setup|update|test"
+    echo -e "\tsetup - Setup rbenv areas if not already present"
+    echo -e "\tupdate - Update rbenv areas with latest rails in series"
+    echo -e "\ttest - test using available rbenv areas and versions of rails installed in them"
+    echo -e "\t[sets up combinations of mri 1.8.7, mri 1.9.3, jruby for rails 1.2, 2.3, 3.0, 3.1, 3.2 and 4.0.pre"
+    ;;
+esac
+
+exit 0
+
+# vi: sw=4 ai sm:
