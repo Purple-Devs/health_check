@@ -1,3 +1,6 @@
+# Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
+# See MIT-LICENSE for details.
+
 class HealthCheckController < ActionController::Base
   session(:off) if Rails::VERSION::STRING < '2.3'
   layout nil
