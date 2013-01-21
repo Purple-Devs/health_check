@@ -78,7 +78,7 @@ See MIT-LICENSE for details.
 
 * fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway 
 
-== Continuous integtration tests
+== Continuous integration tests
 
 Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
 
