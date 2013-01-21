@@ -9,7 +9,6 @@ before_install:
   - bundle --version
   - mkdir -p tmp/bundle
 
-bundler_args: --binstubs --path tmp/bundle
 gemfile:
   - gemfiles/rails2_3.gemfile
 

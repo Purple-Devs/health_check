@@ -10,6 +10,9 @@ group :development, :test do
   gem 'activerecord', ">= 2.3.0"
 end
 
-group :lint do
+group :misc do
+  # run travis-lint to check .travis.yml
   gem 'travis-lint'
+  # required to run rake test:plugins
+  gem 'ruby-prof', '>= 0.6.1'
 end
