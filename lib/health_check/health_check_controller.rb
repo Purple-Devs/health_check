@@ -1,7 +1,7 @@
 # Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
 # See MIT-LICENSE for details.
 
-class HealthCheckController < ActionController::Base
+class HealthCheck::HealthCheckController < ActionController::Base
   session(:off) if Rails::VERSION::STRING < '2.3'
   layout nil
 
@@ -22,7 +22,7 @@ class HealthCheckController < ActionController::Base
       errors = e.message
     end     
     if errors.blank?
-      render :text => HealthCheck.success, :content_type => 'text/plain'
+      render :text => HealthCheck::Utils.success, :content_type => 'text/plain'
     else
       msg = "health_check failed: #{errors}"
       render :text => msg, :status => 500, :content_type => 'text/plain'
@@ -40,18 +40,18 @@ class HealthCheckController < ActionController::Base
       when 'and', 'site'
         # do nothing
       when "database"
-        HealthCheck.get_database_version
+        HealthCheck::Utils.get_database_version
       when "email"
-        errors << HealthCheck.check_email
+        errors << HealthCheck::Utils.check_email
       when "migrations", "migration"
-        database_version = HealthCheck.get_database_version
-        migration_version = HealthCheck.get_migration_version
+        database_version = HealthCheck::Utils.get_database_version
+        migration_version = HealthCheck::Utils.get_migration_version
         if database_version.to_i != migration_version.to_i
           errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
         end
       when "standard"
         errors << process_checks("database_migrations")
-        errors << process_checks("email") unless HealthCheck.default_action_mailer_configuration?
+        errors << process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
       when "all", "full"
         errors << process_checks("database_migrations_email")
       else

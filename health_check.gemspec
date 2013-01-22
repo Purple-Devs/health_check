@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "health_check"
-  s.version = "0.2.4"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ian Heggie"]
-  s.date = "2013-01-21"
+  s.date = "2013-01-22"
   s.description = "Simple health check of Rails app for use with uptime.openacs.org or wasitup.com"
   s.email = "ian@heggie.biz"
   s.extra_rdoc_files = [
@@ -25,13 +25,6 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "config/routes.rb",
-    "gemfiles/rails1_2.gemfile",
-    "gemfiles/rails1_2.gemfile.lock",
-    "gemfiles/rails2_3.gemfile",
-    "gemfiles/rails2_3.gemfile.lock",
-    "gemfiles/rails3_0.gemfile",
-    "gemfiles/rails3_1.gemfile",
-    "gemfiles/rails3_2.gemfile",
     "health_check.gemspec",
     "init.rb",
     "lib/health_check.rb",
@@ -43,7 +36,6 @@ Gem::Specification.new do |s|
     "test/migrate/nine/9_create_countries.rb",
     "test/migrate/twelve/012_create_users.rb",
     "test/migrate/twelve/9_create_countries.rb",
-    "test/rbenv_tests",
     "test/test_helper.rb",
     "test/test_with_railsapp",
     "test/testurl",

@@ -12,6 +12,7 @@ begin
     gem.authors = ["Ian Heggie"]
     # Gemfile contains gem dependencies, apart from bundler itself
     gem.add_development_dependency 'bundler', '~> 1.2.0'
+    gem.files.exclude 'gemfiles/*', 'test/rbenv_tests', '.travis.yml'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

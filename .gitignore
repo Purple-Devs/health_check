@@ -23,5 +23,6 @@ pkg
 health_check*.gem
 tmp/
 bin/
+railsapps/
 ,*
 .bundle
