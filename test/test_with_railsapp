@@ -143,11 +143,11 @@ echo "Killing rails server [pid: $server_pid]"
 kill -9 $server_pid 
 server_pid=''
 
-if [ -d vendor/plugins/health_check ]
-then
-    echo "RUNNING UNIT TESTS...."
-    rake test:plugins
-fi
+#if [ -d vendor/plugins/health_check ]
+#then
+#    echo "RUNNING UNIT TESTS...."
+#    rake test:plugins
+#fi
 
 finish PASSED 0
 exit 0
