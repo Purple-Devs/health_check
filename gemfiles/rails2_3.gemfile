@@ -3,7 +3,7 @@
 source :rubygems
 
 group :development, :test do
-  gem 'rails', "~> 2.3.6"
+  gem 'rails', "~> 2.3.15"
   # rails requires rake >= 0.8.3 
   gem 'jeweler', '~> 1.8.4'
   gem 'shoulda', "~> 2.11.0"
