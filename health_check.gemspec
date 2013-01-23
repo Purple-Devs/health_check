@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ian Heggie"]
   s.date = "2013-01-23"
-  s.description = "Simple health check of Rails app for use with uptime.openacs.org or wasitup.com"
+  s.description = "Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc."
   s.email = "ian@heggie.biz"
   s.extra_rdoc_files = [
     "README.rdoc"
@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "app/controllers/health_check/health_check_controller.rb",
     "config/routes.rb",
     "health_check.gemspec",
     "init.rb",
@@ -44,7 +43,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/ianheggie/health_check"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.8.24"
-  s.summary = "Simple health check of Rails app"
+  s.summary = "Simple health check of Rails app for uptime monitoring"
 
   if s.respond_to? :specification_version then
     s.specification_version = 3

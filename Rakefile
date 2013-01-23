@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "health_check"
-    gem.summary = %Q{Simple health check of Rails app}
-    gem.description = %Q{Simple health check of Rails app for use with uptime.openacs.org or wasitup.com}
+    gem.summary = %Q{Simple health check of Rails app for uptime monitoring}
+    gem.description = %Q{Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.}
     gem.email = "ian@heggie.biz"
     gem.homepage = "http://github.com/ianheggie/health_check"
     gem.authors = ["Ian Heggie"]

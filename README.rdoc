@@ -1,11 +1,11 @@
 = health_check
 
-Simple health check of Rails app for use with uptime.openacs.org, wasitup.com or newrelic.com
+Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-The basic goal is to check that rails is being launched and that it has access to correctly configured resources (database, email gateway)
+The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
-The email gateway is not checked unless the smtp settings have been changed,
-specify full or include email in the list of checks or varify the smtp settings
+The email gateway is not checked unless the smtp settings have been changed.
+Specify full or include email in the list of checks to varify the smtp settings
 (eg use 127.0.0.1 instead of localhost). 
 
 health_check provides various monitoring URIs 
@@ -24,28 +24,43 @@ health_check provides various monitoring URIs
 
 == Installation
 
-As a Gem from rubygems
+*As a Gem from rubygems (Rails 3.0 and above)*
+
+Add the following line to Gemfile
+
+    gem "health_check"
+
+Then run 
+
+    % bundle
+
+*As a Gem from rubygems (Rails 2.3)*
+
+Install the gem using the following command
 
     % gem install health_check    
 
-    # Add the following line to Gemfile (Rails 3.0 and above)
-    gem "health_check"
+Then add the following line to config/environment.rb within the config block
 
-    # Add the following line to config/environment.rb (Rails 2.3.x)
     config.gem "health_check"
 
-As a Plugin (Rails 2.3.x)
+*As a Plugin (Rails 2.3.x)*
+
+Run the following commands from the root of your rails application
 
     % cd vendor/plugins
     % git clone git://github.com/ianheggie/health_check.git
 
 == Uptime Monitoring
 
+Use a website monitoring service to check the url regularly for the word "success" rather than just a 200 return code.
+
 See
-* [WasItUp](http://wasitup.com/)
-* [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
-* [Engine Yard's guide](http://community-support.engineyard.com/faqs/guides/uptime-monitoring-for-your-rails-application) guide based on fitter_happier plugin includes monit and other setup help
+* [Pingdom Website Monitoring](https://www.pingdom.com)
 * [NewRelic Availability Monitoring](http://newrelic.com/docs/features/availability-monitoring-faq)
+* [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
+* [Engine Yard's guide](https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime) although the guide is based on fitter_happier plugin it will also work with this gem
+* Any other montoring service that can be set to check for the word success in the test returned from a url
 
 == Checks
 
@@ -73,7 +88,6 @@ See MIT-LICENSE for details.
 
 == Known Issues
 
-* Rails 1.x is not currently supported (smtp_settings versus server_settings)
 * No inline documentation for methods
 
 * Feedback welcome especially with suggested replacement code and corresponding tests
