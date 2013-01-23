@@ -27,3 +27,4 @@ railsapps/
 ,*
 .bundle
 .rbenv-version
+gemfiles/*.lock
