@@ -10,14 +10,15 @@ gem 'arel', :git => 'git://github.com/rails/arel.git'
 
 gem "rack", '~> 1.4.3'
 
+if defined?(JRUBY_VERSION)
+  gem 'activerecord-jdbc-adapter', :require => false
+  gem 'jdbc-sqlite3', :require => false
+else
+  gem 'sqlite3', "~> 1.3.7"
+end
+
 group :development, :test do
   gem 'jeweler'
   gem 'shoulda'
-  if defined?(JRUBY_VERSION)
-    gem 'activerecord-jdbc-adapter', :require => false
-    gem 'jdbc-sqlite3', :require => false
-  else
-    gem 'sqlite3', "~> 1.3.7"
-  end
 end
 
