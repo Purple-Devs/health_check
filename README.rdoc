@@ -24,16 +24,20 @@ health_check provides various monitoring URIs
 
 == Installation
 
-As a Plugin
+As a Gem from rubygems
+
+    % gem install health_check    
+
+    # Add the following line to Gemfile (Rails 3.0 and above)
+    gem "health_check"
+
+    # Add the following line to config/environment.rb (Rails 2.3.x)
+    config.gem "health_check"
+
+As a Plugin (Rails 2.3.x)
 
     % cd vendor/plugins
     % git clone git://github.com/ianheggie/health_check.git
-
-As a Gem from gemcutter
-
-    % gem install health_check    
-    # Add the following line to config/environment.rb
-    config.gem "health_check"
 
 == Uptime Monitoring
 

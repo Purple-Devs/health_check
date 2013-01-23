@@ -1,73 +1,99 @@
 # Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
 # See MIT-LICENSE for details.
 
-class HealthCheck::HealthCheckController < ActionController::Base
-  session(:off) if Rails::VERSION::STRING < '2.3'
-  layout nil
+module HealthCheck
+  class HealthCheckController < ActionController::Base
 
-  def index
-    do_check('standard')
-  end
+    # turn sessions off if we can
+    session(:off) rescue nil
 
-  def check
-    do_check(params[:checks])
-  end
+    layout nil
 
-  private
-
-  def do_check(checks)
-    begin
-      errors = process_checks(checks)
-    rescue Exception => e
-      errors = e.message
-    end     
-    if errors.blank?
-      render :text => HealthCheck::Utils.success, :content_type => 'text/plain'
-    else
-      msg = "health_check failed: #{errors}"
-      render :text => msg, :status => 500, :content_type => 'text/plain'
-      # Log a single line as some uptime checkers only record that it failed, not the text returned
-      silence_level, logger.level = logger.level, @old_logger_level
-      logger.info msg
-      logger.level = silence_level
+    def index
+      do_check('standard')
     end
-  end
 
-  def process_checks(checks)
-    errors = ''
-    checks.split('_').each do |check|
-      case check
-      when 'and', 'site'
-        # do nothing
-      when "database"
-        HealthCheck::Utils.get_database_version
-      when "email"
-        errors << HealthCheck::Utils.check_email
-      when "migrations", "migration"
-        database_version = HealthCheck::Utils.get_database_version
-        migration_version = HealthCheck::Utils.get_migration_version
-        if database_version.to_i != migration_version.to_i
-          errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
-        end
-      when "standard"
-        errors << process_checks("database_migrations")
-        errors << process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
-      when "all", "full"
-        errors << process_checks("database_migrations_email")
+    def check
+      do_check(params[:checks])
+    end
+
+    private
+
+    def do_check(checks)
+      begin
+        errors = process_checks(checks)
+      rescue Exception => e
+        errors = e.message
+      end     
+      if errors.blank?
+        render :text => HealthCheck::Utils.success, :content_type => 'text/plain'
       else
-        return "invalid argument to health_test. "
+        msg = "health_check failed: #{errors}"
+        render :text => msg, :status => 500, :content_type => 'text/plain'
+        # Log a single line as some uptime checkers only record that it failed, not the text returned
+        if logger
+          silence_level, logger.level = logger.level, @old_logger_level
+          logger.info msg
+          logger.level = silence_level
+        end
       end
     end
-    return errors
-  end
 
-
-  def process_with_silence(*args)
-    @old_logger_level = logger.level
-    logger.silence do
-      process_without_silence(*args)
+    def process_checks(checks)
+      errors = ''
+      checks.split('_').each do |check|
+        case check
+        when 'and', 'site'
+          # do nothing
+        when "database"
+          HealthCheck::Utils.get_database_version
+        when "email"
+          errors << HealthCheck::Utils.check_email
+        when "migrations", "migration"
+          database_version = HealthCheck::Utils.get_database_version
+          migration_version = HealthCheck::Utils.get_migration_version
+          if database_version.to_i != migration_version.to_i
+            errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
+          end
+        when "standard"
+          errors << process_checks("database_migrations")
+          errors << process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
+        when "all", "full"
+          errors << process_checks("database_migrations_email")
+        else
+          return "invalid argument to health_test. "
+        end
+      end
+      return errors
     end
-  end
 
-  alias_method_chain :process, :silence
+    protected
+
+    # turn cookies for CSRF off
+    def protect_against_forgery?
+      false
+    end
+
+    # Silence logger as much as we can
+
+    def process_with_silent_log(method_name, *args)
+      if logger
+        @old_logger_level = logger.level
+        if Rails.version >= '3.2'
+          silence do
+            process_without_silent_log(method_name, *args)
+          end
+        else
+          logger.silence do
+            process_without_silent_log(method_name, *args)
+          end
+        end
+      else
+        process_without_silent_log(method_name, *args)
+      end
+    end
+
+    alias_method_chain :process, :silent_log
+
+  end
 end

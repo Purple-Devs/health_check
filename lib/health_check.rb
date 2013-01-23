@@ -3,19 +3,18 @@
 
 module HealthCheck
 
-  if (defined?(Rails) and Rails.respond_to?(:version) && Rails.version =~ /^[3-9]/)
+  if Rails.version >= '3.0'
     class Engine < Rails::Engine
     end
   end
-  #require 'health_check/add_3x_routes'
 
-end
-
-unless defined?(HealthCheck::Engine)
-  require 'health_check/add_23_routes'
 end
 
 require 'health_check/utils'
 require 'health_check/health_check_controller'
+
+unless defined?(HealthCheck::Engine)
+  require 'health_check/add_23_routes'
+end
 
 # vi: sw=2 sm ai:
