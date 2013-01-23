@@ -35,11 +35,14 @@ finish()
     echo ========================================================
     echo TEST ${1:-FAILED}
     echo ========================================================
+    ls -lR $test_dir/railsapp/log $test_dir/railsapp/db
+
     if [ -s $test_dir/railsapp/log/test.log ]
     then
         echo Last 300 lines of test log
         tail -300 $test_dir/railsapp/log/test.log
     fi
+
     case "$server_pid" in
         [0-9]*)
             echo "Killing rails server [pid: $server_pid]"
@@ -61,9 +64,12 @@ cd $test_dir
 case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
     [0-9]*)
         db=jdbcsqlite3
+        # Appears to need a bit extra time
+        extra_sleep='sleep 5'
         ;;
     *)
         db=sqlite3
+        extra_sleep='true'
         ;;
 esac
 case "$actual_rails_version" in
@@ -83,6 +89,12 @@ echo "Changed current directory to railsapp root: `pwd`"
 
 echo "Fixing rdoc require in Rakefile if needed"
 ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
+
+echo "Configuring mailer to point to fake_smtp_server port 3555"
+cat >> config/environment.rb <<!
+ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = {:address => 'localhost', :port => 3555, :domain => 'localhost'}
+!
 
 if [ -f Gemfile ]
 then
@@ -128,43 +140,75 @@ echo 'TESTING can get a static file ...'
 $testurl ${host}/static.txt STATIC-FILE
 echo
 
-echo 'TESTING health_check should pass with no database migrations ...'
+echo 'TESTING health_check/migration should pass with no database migrations ...'
 mkdir -p db/migrate
 ls db/migrate
-$testurl ${host}/health_check success
+$testurl ${host}/health_check/migration success
 echo
 
-echo 'TESTING health_check should fail without initial database migration ...'
+echo 'TESTING health_check/migration should fail without initial database migration ...'
 cp $base_dir/test/migrate/nine/* db/migrate
 ls db/migrate
-$testurl ${host}/health_check failed
+$testurl ${host}/health_check/migration failed
 echo
 
-echo 'TESTING health_check should pass after initial database migration ...'
+echo 'TESTING health_check/database should pass without initial database migration (since it ignores the difference) ...'
+$testurl ${host}/health_check/database success
+echo
+
+echo 'TESTING health_check/site should pass ...'
+$testurl ${host}/health_check/site success
+echo
+
+echo 'TESTING health_check/migration should pass after initial database migration ...'
 rake db:migrate 
-$testurl ${host}/health_check success
+$extra_sleep
+$testurl ${host}/health_check/migration success
 echo
 
-echo 'TESTING health_check should fail without all migrations ...'
+echo 'TESTING health_check/migration should fail without all migrations ...'
 cp $base_dir/test/migrate/twelve/* db/migrate
 ls db/migrate
-$testurl ${host}/health_check failed
+$testurl ${host}/health_check/migration failed
 echo
 
-echo 'TESTING health_check should pass after both database migrations ...'
+echo 'TESTING health_check/migration should pass after both database migrations ...'
 rake db:migrate 
+$extra_sleep
+$testurl ${host}/health_check/migration success
+echo
+
+echo 'TESTING health_check/migration should pass after both database migrations ...'
+rake db:migrate 
+$extra_sleep
+$testurl ${host}/health_check/migration success
+echo
+
+echo 'TESTING health_check/email should fail without smtp available ...'
+$testurl ${host}/health_check/site failed
+echo
+
+echo 'TESTING health_check/email should pass with smtp available ...'
+ruby test/fake_smtp_server &
+sleep 5
+$testurl ${host}/health_check/email success
+echo
+
+echo 'TESTING health_check (all) should fail without smtp available ...'
 $testurl ${host}/health_check success
 echo
 
-echo "Killing rails server [pid: $server_pid]"
-kill -9 $server_pid 
-server_pid=''
+echo 'TESTING health_check (all) should pass with smtp available ...'
+ruby test/fake_smtp_server &
+sleep 5
+$testurl ${host}/health_check success
+echo
 
-#if [ -d vendor/plugins/health_check ]
-#then
-#    echo "RUNNING UNIT TESTS...."
-#    rake test:plugins
-#fi
+echo 'TESTING health_check/all (all) should pass with smtp available ...'
+ruby test/fake_smtp_server &
+sleep 5
+$testurl ${host}/health_check/all success
+echo
 
 finish PASSED 0
 exit 0

@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'socket'
+
+port = 3555
+
+
+server = TCPServer.new port
+puts "fake_smtp_server: Waiting for one connection to port #{port} ..."
+
+def send(client, line)
+  client.puts line
+  puts "> #{line}"
+end
+
+def receive(client)
+  line = client.gets
+  puts "< #{line}"
+  line
+end
+
+client = server.accept    # Wait for a client to connect
+send(client, "220 dummy-smtp.example.com SMTP")
+cmd = receive(client)
+
+while cmd !~ /^QUIT/
+  if cmd =~ /^HELO/
+    send(client, "250 Welcome to a dummy smtp server")
+  else
+    send(client, "502 I am so dumb I only understand HELO and QUIT")
+  end
+  cmd = receive(client)
+end
+send(client, "221 Bye Bye")
+
+client.close
+puts "fake_smtp_server: Exiting now the conversation has finished."
+exit 0

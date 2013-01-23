@@ -4,8 +4,7 @@
 module HealthCheck
   class HealthCheckController < ActionController::Base
 
-    # turn sessions off if we can
-    session(:off) rescue nil
+    session(:off) if Rails.version < '3.0'
 
     layout nil
 
