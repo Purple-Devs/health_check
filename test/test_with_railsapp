@@ -23,6 +23,9 @@ ls tmp/gems
 echo GEM LIST
 gem list
 
+echo Environment:
+env | egrep 'TRAVIS|RAILS|RUBY|_ENV'
+
 server_pid=''
 
 finish()
