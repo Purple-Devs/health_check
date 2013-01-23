@@ -7,6 +7,11 @@ group :development, :test do
   # rails requires rake >= 0.8.3 
   gem 'jeweler', '~> 1.8.4'
   gem 'shoulda', "~> 2.11.0"
-  gem 'sqlite3', "~> 1.3.7"
+  if defined?(JRUBY_VERSION)
+    gem 'activerecord-jdbc-adapter', :require => false
+    gem 'jdbc-sqlite3', :require => false
+  else
+    gem 'sqlite3', "~> 1.3.7"
+  end
 end
 
