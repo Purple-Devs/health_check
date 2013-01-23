@@ -24,7 +24,7 @@ health_check provides various monitoring URIs
 
 == Installation
 
-*As a Gem from rubygems (Rails 3.0 and above)*
+=== As a Gem from rubygems (Rails 3.0 and above)
 
 Add the following line to Gemfile
 
@@ -34,7 +34,7 @@ Then run
 
     % bundle
 
-*As a Gem from rubygems (Rails 2.3)*
+=== As a Gem from rubygems (Rails 2.3)
 
 Install the gem using the following command
 
@@ -44,7 +44,7 @@ Then add the following line to config/environment.rb within the config block
 
     config.gem "health_check"
 
-*As a Plugin (Rails 2.3.x)*
+=== As a Plugin (Rails 2.3.x)
 
 Run the following commands from the root of your rails application
 
@@ -56,10 +56,10 @@ Run the following commands from the root of your rails application
 Use a website monitoring service to check the url regularly for the word "success" rather than just a 200 return code.
 
 See
-* [Pingdom Website Monitoring](https://www.pingdom.com)
-* [NewRelic Availability Monitoring](http://newrelic.com/docs/features/availability-monitoring-faq)
-* [Uptime by OpenACS](http://uptime.openacs.org/uptime/)
-* [Engine Yard's guide](https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime) although the guide is based on fitter_happier plugin it will also work with this gem
+* Pingdom Website Monitoring - https://www.pingdom.com
+* NewRelic Availability Monitoring - http://newrelic.com/docs/features/availability-monitoring-faq
+* Uptime by OpenACS - http://uptime.openacs.org/uptime/
+* Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Any other montoring service that can be set to check for the word success in the test returned from a url
 
 == Checks
@@ -98,5 +98,5 @@ See MIT-LICENSE for details.
 
 == Continuous integration tests
 
-Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
+See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
 
