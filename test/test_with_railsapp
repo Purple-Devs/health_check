@@ -58,12 +58,20 @@ echo "Creating $actual_rails_version app in $test_dir/railsapp"
 
 cd $test_dir
 
+case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
+    [0-9]*)
+        db=jdbcsqlite3
+        ;;
+    *)
+        db=sqlite3
+        ;;
+esac
 case "$actual_rails_version" in
     *' '[12].*)
-        rails railsapp
+        rails railsapp -d $db
         ;;
     *' '[34].*)
-        rails new railsapp
+        rails new railsapp -d $db
         ;;
     *)
         echo "Unknown rails version"
@@ -75,13 +83,6 @@ echo "Changed current directory to railsapp root: `pwd`"
 
 echo "Fixing rdoc require in Rakefile if needed"
 ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
-
-case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
-    [0-9]*)
-        echo "Changing database.yml to use jdbcsqlite3 ..."
-        ruby -pi.bak -e "gsub(/sqlite3/, 'jdbcsqlite3')" config/database.yml
-        ;;
-esac
 
 if [ -f Gemfile ]
 then
