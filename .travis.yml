@@ -14,6 +14,7 @@ before_install:
   - mkdir -p tmp/bundle
 
 gemfile:
+  - gemfiles/rails2_3.gemfile
   - gemfiles/rails3_0.gemfile
   - gemfiles/rails3_1.gemfile
   - gemfiles/rails3_2.gemfile
