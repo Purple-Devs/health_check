@@ -77,6 +77,12 @@ if [ -f Gemfile ]
 then
     echo Installing health_check as gem ...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+    case "$BUNDLE_GEMFILE" in
+        ?*)
+            echo Unsetting BUNDLE_GEMFILE '(so Gemfile will be used)'
+            unset BUNDLE_GEMFILE
+            ;;
+    esac
     bundle
 else
     echo Installing health_check as plugin ...

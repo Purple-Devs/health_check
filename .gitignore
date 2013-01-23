@@ -26,3 +26,4 @@ bin/
 railsapps/
 ,*
 .bundle
+.rbenv-version
