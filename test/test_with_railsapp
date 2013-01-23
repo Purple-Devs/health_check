@@ -185,7 +185,7 @@ $testurl ${host}/health_check/migration success
 echo
 
 echo 'TESTING health_check/email should fail without smtp available ...'
-$testurl ${host}/health_check/site failed
+$testurl ${host}/health_check/email failed
 echo
 
 echo 'TESTING health_check/email should pass with smtp available ...'
@@ -195,7 +195,11 @@ $testurl ${host}/health_check/email success
 echo
 
 echo 'TESTING health_check (all) should fail without smtp available ...'
-$testurl ${host}/health_check success
+$testurl ${host}/health_check failed
+echo
+
+echo 'TESTING health_check/all should fail without smtp available ...'
+$testurl ${host}/health_check failed
 echo
 
 echo 'TESTING health_check (all) should pass with smtp available ...'
@@ -204,7 +208,7 @@ sleep 5
 $testurl ${host}/health_check success
 echo
 
-echo 'TESTING health_check/all (all) should pass with smtp available ...'
+echo 'TESTING health_check/all should pass with smtp available ...'
 ruby test/fake_smtp_server &
 sleep 5
 $testurl ${host}/health_check/all success
