@@ -35,7 +35,7 @@ module HealthCheck
     end
 
     def self.default_action_mailer_configuration?
-      ActionMailer::Base.delivery_method == :smtp && HealthCheck.default_smtp_settings == ActionMailer::Base.smtp_settings
+      ActionMailer::Base.delivery_method == :smtp && HealthCheck::Utils.default_smtp_settings == ActionMailer::Base.smtp_settings
     end
 
     def self.get_database_version
@@ -54,9 +54,9 @@ module HealthCheck
     def self.check_email
       case ActionMailer::Base.delivery_method
       when :smtp
-        HealthCheck.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck.smtp_timeout)
+        HealthCheck::Utils.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck::Utils.smtp_timeout)
       when :sendmail
-        HealthCheck.check_sendmail(ActionMailer::Base.sendmail_settings)
+        HealthCheck::Utils.check_sendmail(ActionMailer::Base.sendmail_settings)
       else
         ''
       end

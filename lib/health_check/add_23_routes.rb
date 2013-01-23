@@ -9,9 +9,9 @@ module ActionController
       def draw
 	draw_without_health_check_routes do |map|
 	  map.connect 'health_check',
-	    :controller => 'health_check', :action => 'index'
+	    :controller => 'health_check/health_check', :action => 'index'
 	  map.connect 'health_check/:checks',
-	    :controller => 'health_check', :action => 'check'
+	    :controller => 'health_check/health_check', :action => 'check'
 	  yield map
 	end
       end
