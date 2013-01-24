@@ -5,8 +5,8 @@ set -e
 
 base_dir=`pwd`
 
-testurl=$base_dir/test/testurl
-fake_smtp_server=$base_dir/test/fake_smtp_server
+testurl="bundle exec $base_dir/test/testurl"
+fake_smtp_server="bundle exec $base_dir/test/fake_smtp_server"
 
 test_dir=`pwd`/tmp
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
@@ -22,7 +22,7 @@ echo Gems in tmp/gems:
 ls tmp/gems
 
 echo GEM LIST
-gem list
+bundle exec gem list
 
 echo Environment:
 env | egrep 'TRAVIS|RAILS|RUBY|_ENV'
@@ -66,19 +66,17 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
     [0-9]*)
         db=jdbcsqlite3
         # Appears to need a bit extra time
-        extra_sleep='sleep 5'
         ;;
     *)
         db=sqlite3
-        extra_sleep='true'
         ;;
 esac
 case "$actual_rails_version" in
     *' '[12].*)
-        rails railsapp -d $db
+        bundle exec rails railsapp -d $db
         ;;
     *' '[34].*)
-        rails new railsapp -d $db
+        bundle exec rails new railsapp -d $db
         ;;
     *)
         echo "Unknown rails version"
@@ -124,16 +122,26 @@ else
     )
 fi
 
+export RAILS_ENV=test RACK_ENV=test
+
+case $db in
+    jdbcsqlite3)
+        echo
+        echo 'Jruby requires the dastabase to be created before the server is started: running rake db:migrate'
+        bundle exec rake db:migrate 
+        echo
+        ;;
+esac
+
 port=3456
 echo Starting server on port $port ...
 
-export RAILS_ENV=test
 
 if [ -x script/server ]
 then
-    ./script/server webrick -p $port &
+    bundle exec ./script/server webrick -p $port &
 else
-    rails s webrick -p $port &
+    bundle exec rails s webrick -p $port &
 fi
 server_pid=$!
 
@@ -168,8 +176,7 @@ $testurl ${host}/health_check/site success
 echo
 
 echo 'TESTING health_check/migration should pass after initial database migration ...'
-rake db:migrate 
-$extra_sleep
+bundle exec rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
@@ -180,14 +187,12 @@ $testurl ${host}/health_check/migration failed
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
-rake db:migrate 
-$extra_sleep
+bundle exec rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
-rake db:migrate 
-$extra_sleep
+bundle exec rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
