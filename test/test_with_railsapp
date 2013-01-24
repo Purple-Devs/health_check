@@ -133,8 +133,8 @@ then
     echo running bundle --binstubs
     bundle --binstubs
     echo "Using binstubs in `pwd`/bin for rails and rake commands"
-    rails="`pwd`bin/rails"
-    rake="`pwd`bin/rake"
+    rails="`pwd`/bin/rails"
+    rake="`pwd`/bin/rake"
 else
     dest=`pwd`/vendor/plugins/health_check
     echo Installing health_check as plugin in $dest ...
