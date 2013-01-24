@@ -93,8 +93,9 @@ ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
 echo "Configuring mailer to point to fake_smtp_server port 3555"
 cat >> config/environment.rb <<'!EOF!'
 
+
 ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555, :domain => "localhost" }
+ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
 
 !EOF!
 
