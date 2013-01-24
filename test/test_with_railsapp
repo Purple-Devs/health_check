@@ -12,6 +12,8 @@ test_dir=`pwd`/tmp
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
 mkdir -p tmp/gems
 
+[ -d lib/health_check -a -d gemfiles ] || exec echo test MUST be executed in the base of the health_check gem/clone of git repository
+
 echo Installing health_check as a gem into tmp/gems
 env GEM_HOME=$test_dir/gems rake install
 
@@ -32,26 +34,31 @@ server_pid=''
 finish()
 {
     set +e
-    set +x
     echo ========================================================
     echo TEST ${1:-FAILED}
     echo ========================================================
+    echo Result of: ls -lR $test_dir/railsapp/log $test_dir/railsapp/db
     ls -lR $test_dir/railsapp/log $test_dir/railsapp/db
 
     if [ -s $test_dir/railsapp/log/test.log ]
     then
+        echo ========================================================
         echo Last 300 lines of test log
         tail -300 $test_dir/railsapp/log/test.log
     fi
 
     case "$server_pid" in
         [0-9]*)
+            echo ========================================================
             echo "Killing rails server [pid: $server_pid]"
             kill -9 $server_pid 
             wait
             ;;
     esac
     trap "" 0
+    echo ========================================================
+    echo TEST ${1:-FAILED}
+    echo ========================================================
     exit ${2:-2}
 }
 
@@ -149,6 +156,7 @@ else
     )
 fi
 
+echo Setting RAILS_ENV=test RACK_ENV=test
 export RAILS_ENV=test RACK_ENV=test
 
 case $db in
