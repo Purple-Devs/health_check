@@ -27,6 +27,8 @@ gemfile:
   - gemfiles/rails3_2.gemfile
   - gemfiles/rails_edge.gemfile
 
+bundler_args: "--binstubs"
+
 script: ./test/test_with_railsapp
 
 matrix:
@@ -36,6 +38,8 @@ matrix:
     - rvm: rbx-19mode
       gemfile: gemfiles/rails2_3.gemfile
     - rvm: jruby-18mode
+      gemfile: gemfiles/rails2_3.gemfile
+    - rvm: jruby-19mode
       gemfile: gemfiles/rails2_3.gemfile
     - rvm: jruby-head
       gemfile: gemfiles/rails2_3.gemfile
@@ -56,5 +60,4 @@ matrix:
     - gemfile: gemfiles/rails_edge.gemfile
     - rvm: jruby-head
     - rvm: ruby-head
-    - rvm: jruby-18mode
     - rvm: jruby-19mode

@@ -5,8 +5,8 @@ set -e
 
 base_dir=`pwd`
 
-testurl="bundle exec $base_dir/test/testurl"
-fake_smtp_server="bundle exec $base_dir/test/fake_smtp_server"
+testurl="$base_dir/test/testurl"
+fake_smtp_server="$base_dir/test/fake_smtp_server"
 
 test_dir=`pwd`/tmp
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
@@ -22,10 +22,10 @@ echo Gems in tmp/gems:
 ls tmp/gems
 
 echo GEM LIST
-bundle exec gem list
+gem list
 
 echo Environment:
-env | egrep 'TRAVIS|RAILS|RUBY|_ENV'
+env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
 
 server_pid=''
 
@@ -57,7 +57,19 @@ finish()
 
 trap "finish FAILED 1" 0
 
-actual_rails_version=`rails -v`
+rails='rails'
+if [ -x bin/rails ]
+then
+    rails='bin/rails'
+fi
+rake='rake'
+if [ -x bin/rake ]
+then
+    rake='bin/rake'
+fi
+
+
+actual_rails_version=`$rails -v`
 echo "Creating $actual_rails_version app in $test_dir/railsapp"
 
 cd $test_dir
@@ -73,10 +85,10 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 case "$actual_rails_version" in
     *' '[12].*)
-        bundle exec rails railsapp -d $db
+        $rails railsapp -d $db
         ;;
     *' '[34].*)
-        bundle exec rails new railsapp -d $db
+        $rails new railsapp -d $db
         ;;
     *)
         echo "Unknown rails version"
@@ -100,18 +112,25 @@ ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
 
 echo "Last ten lines of config/environment.rb:"
 tail -10 config/environment.rb
+echo 
 
 if [ -f Gemfile ]
 then
     echo Installing health_check as gem ...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+    echo Adding 
+    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+    #gem 'rails', :git => 'git://github.com/rails/rails.git'
+
     case "$BUNDLE_GEMFILE" in
         ?*)
             echo Unsetting BUNDLE_GEMFILE '(so Gemfile will be used)'
             unset BUNDLE_GEMFILE
             ;;
     esac
-    bundle
+    bundle --binstubs
+    rails='bin/rails'
+    rake='bin/rake'
 else
     echo Installing health_check as plugin ...
     dest=`pwd`/vendor/plugins/health_check
@@ -128,7 +147,7 @@ case $db in
     jdbcsqlite3)
         echo
         echo 'Jruby requires the dastabase to be created before the server is started: running rake db:migrate'
-        bundle exec rake db:migrate 
+        $rake db:migrate 
         echo
         ;;
 esac
@@ -136,12 +155,11 @@ esac
 port=3456
 echo Starting server on port $port ...
 
-
 if [ -x script/server ]
 then
     bundle exec ./script/server webrick -p $port &
 else
-    bundle exec rails s webrick -p $port &
+    $rails s webrick -p $port &
 fi
 server_pid=$!
 
@@ -176,7 +194,7 @@ $testurl ${host}/health_check/site success
 echo
 
 echo 'TESTING health_check/migration should pass after initial database migration ...'
-bundle exec rake db:migrate 
+$rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
@@ -187,12 +205,12 @@ $testurl ${host}/health_check/migration failed
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
-bundle exec rake db:migrate 
+$rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
-bundle exec rake db:migrate 
+$rake db:migrate 
 $testurl ${host}/health_check/migration success
 echo
 
