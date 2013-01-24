@@ -22,6 +22,8 @@ health_check provides various monitoring URIs
     % curl localhost:3000/health_check/site_and_database_and_email_migrations
     success
 
+The health_check controller disables sessions and logging for its actions to minimise the impact of frequent uptime checks on the session store and the log file.
+
 == Installation
 
 === As a Gem from rubygems (Rails 3.0 and above)
