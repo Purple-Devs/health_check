@@ -91,10 +91,15 @@ echo "Fixing rdoc require in Rakefile if needed"
 ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
 
 echo "Configuring mailer to point to fake_smtp_server port 3555"
-cat >> config/environment.rb <<!
+cat >> config/environment.rb <<'!EOF!'
+
 ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = {:address => 'localhost', :port => 3555, :domain => 'localhost'}
-!
+ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555, :domain => "localhost" }
+
+!EOF!
+
+echo "Last ten lines of config/environment.rb:"
+tail -10 config/environment.rb
 
 if [ -f Gemfile ]
 then
