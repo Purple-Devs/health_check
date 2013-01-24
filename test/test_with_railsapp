@@ -60,19 +60,19 @@ trap "finish FAILED 1" 0
 rails='rails'
 if [ -x bin/rails ]
 then
-    rails='bin/rails'
+    rails="`pwd`/bin/rails"
+    echo "Using binstub: $rails for rails command"
 fi
 rake='rake'
 if [ -x bin/rake ]
 then
-    rake='bin/rake'
+    rake="`pwd`/bin/rake"
+    echo "Using binstub: $rake for rake command"
 fi
 
+cd $test_dir
 
 actual_rails_version=`$rails -v`
-echo "Creating $actual_rails_version app in $test_dir/railsapp"
-
-cd $test_dir
 
 case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
     [0-9]*)
@@ -83,6 +83,8 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
         db=sqlite3
         ;;
 esac
+
+echo "Creating $actual_rails_version app in $test_dir/railsapp using adapter $db"
 case "$actual_rails_version" in
     *' '[12].*)
         $rails railsapp -d $db
@@ -104,7 +106,6 @@ ruby -p -i.bak -e '$_.gsub!(/rake.rdoctask/, "rdoc/task")' Rakefile
 echo "Configuring mailer to point to fake_smtp_server port 3555"
 cat >> config/environment.rb <<'!EOF!'
 
-
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
 
@@ -114,13 +115,10 @@ echo "Last ten lines of config/environment.rb:"
 tail -10 config/environment.rb
 echo 
 
-if [ -f Gemfile ]
+if [ -s Gemfile ]
 then
     echo Installing health_check as gem ...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
-    echo Adding 
-    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
-    #gem 'rails', :git => 'git://github.com/rails/rails.git'
 
     case "$BUNDLE_GEMFILE" in
         ?*)
@@ -128,16 +126,26 @@ then
             unset BUNDLE_GEMFILE
             ;;
     esac
+    echo
+    echo Gemfile contents:
+    cat Gemfile
+    echo
+    echo running bundle --binstubs
     bundle --binstubs
-    rails='bin/rails'
-    rake='bin/rake'
+    echo "Using binstubs in `pwd`/bin for rails and rake commands"
+    rails="`pwd`bin/rails"
+    rake="`pwd`bin/rake"
 else
-    echo Installing health_check as plugin ...
     dest=`pwd`/vendor/plugins/health_check
+    echo Installing health_check as plugin in $dest ...
     mkdir -p $dest
     (
         cd $base_dir
         find . | egrep -v '/tmp|/\.git|\.gem$' | cpio -pdl $dest
+        cd $dest
+        echo Files installed as plugin:
+        find . -type f
+        echo
     )
 fi
 
