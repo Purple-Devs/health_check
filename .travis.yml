@@ -60,4 +60,3 @@ matrix:
     - gemfile: gemfiles/rails_edge.gemfile
     - rvm: jruby-head
     - rvm: ruby-head
-    - rvm: jruby-19mode
