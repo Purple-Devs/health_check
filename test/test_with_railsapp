@@ -99,7 +99,7 @@ cd railsapp
 echo "Changed current directory to railsapp root: `pwd`"
 
 echo "Fixing rdoc require in Rakefile if needed"
-ruby -pi.bak -e "gsub(/rake.rdoctask/, 'rdoc/task')" Rakefile
+ruby -p -i.bak -e '$_.gsub!(/rake.rdoctask/, "rdoc/task")' Rakefile
 
 echo "Configuring mailer to point to fake_smtp_server port 3555"
 cat >> config/environment.rb <<'!EOF!'
