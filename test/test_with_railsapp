@@ -6,6 +6,7 @@ set -e
 base_dir=`pwd`
 
 testurl=$base_dir/test/testurl
+fake_smtp_server=$base_dir/test/fake_smtp_server
 
 test_dir=`pwd`/tmp
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
@@ -130,7 +131,7 @@ export RAILS_ENV=test
 
 if [ -x script/server ]
 then
-    script/server webrick -p $port &
+    ./script/server webrick -p $port &
 else
     rails s webrick -p $port &
 fi
@@ -195,7 +196,7 @@ $testurl ${host}/health_check/email failed
 echo
 
 echo 'TESTING health_check/email should pass with smtp available ...'
-ruby test/fake_smtp_server &
+$fake_smtp_server &
 sleep 5
 $testurl ${host}/health_check/email success
 echo
@@ -209,13 +210,13 @@ $testurl ${host}/health_check failed
 echo
 
 echo 'TESTING health_check (all) should pass with smtp available ...'
-ruby test/fake_smtp_server &
+$fake_smtp_server &
 sleep 5
 $testurl ${host}/health_check success
 echo
 
 echo 'TESTING health_check/all should pass with smtp available ...'
-ruby test/fake_smtp_server &
+$fake_smtp_server &
 sleep 5
 $testurl ${host}/health_check/all success
 echo
