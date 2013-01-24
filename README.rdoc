@@ -91,7 +91,6 @@ See MIT-LICENSE for details.
 == Known Issues
 
 * No inline documentation for methods
-
 * Feedback welcome especially with suggested replacement code and corresponding tests
 
 == Similar projects
@@ -102,3 +101,8 @@ See MIT-LICENSE for details.
 
 See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
 
+== Versions
+
+* 0.x - Rails 2.3
+* 1.x - Includes Rails 3.x suppprt as an Engine
+* 1.0.2 - Included travis config and gemfiles used in travis tests in gem and changes to test setup so that gem test 

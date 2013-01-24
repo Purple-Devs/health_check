@@ -12,7 +12,6 @@ begin
     gem.authors = ["Ian Heggie"]
     # Gemfile contains gem dependencies, apart from bundler itself
     gem.add_development_dependency 'bundler', '~> 1.2.0'
-    gem.files.exclude 'gemfiles/*', '.travis.yml'
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
@@ -26,6 +25,7 @@ end
 # Tests are conducted with health_test as a plugin
 environment_file = File.join(File.dirname(__FILE__), '..', '..', '..', 'config', 'environment.rb')
 plugin_dir = File.join(File.dirname(__FILE__), '..', 'plugins')
+
 if File.exists?(environment_file) and File.directory?(plugin_dir)
   # test as plugin
   

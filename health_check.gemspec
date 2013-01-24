@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "health_check"
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ian Heggie"]
-  s.date = "2013-01-23"
+  s.date = "2013-01-24"
   s.description = "Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc."
   s.email = "ian@heggie.biz"
   s.extra_rdoc_files = [
@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    ".travis.yml",
     "Gemfile",
     "Gemfile.lock",
     "MIT-LICENSE",
@@ -24,12 +25,19 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "config/routes.rb",
+    "gemfiles/rails1_2.gemfile",
+    "gemfiles/rails2_3.gemfile",
+    "gemfiles/rails3_0.gemfile",
+    "gemfiles/rails3_1.gemfile",
+    "gemfiles/rails3_2.gemfile",
+    "gemfiles/rails_edge.gemfile",
     "health_check.gemspec",
     "init.rb",
     "lib/health_check.rb",
     "lib/health_check/add_23_routes.rb",
     "lib/health_check/health_check_controller.rb",
     "lib/health_check/utils.rb",
+    "test/fake_smtp_server",
     "test/migrate/empty/do_not_remove.txt",
     "test/migrate/nine/9_create_countries.rb",
     "test/migrate/twelve/012_create_users.rb",

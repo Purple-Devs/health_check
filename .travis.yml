@@ -10,8 +10,8 @@ rvm:
   - rbx-19mode
   - jruby-18mode
   - jruby-19mode
-  - jruby-head
-  - ruby-head
+  #- jruby-head
+  #- ruby-head
   - ree
 before_install:
   - gem update --system
@@ -25,7 +25,7 @@ gemfile:
   - gemfiles/rails3_0.gemfile
   - gemfiles/rails3_1.gemfile
   - gemfiles/rails3_2.gemfile
-  - gemfiles/rails_edge.gemfile
+  #- gemfiles/rails_edge.gemfile
 
 bundler_args: "--binstubs"
 
