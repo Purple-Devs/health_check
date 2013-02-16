@@ -71,7 +71,8 @@ See
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response 
 * migration - checks that the database migration level matches that in db/migrations
-* site - checks rails is running sufficiently to render text 
+* cache - checks that a value can be written to the cache
+* site - checks rails is running sufficiently to render text
 
 == Note on Patches/Pull Requests
  
