@@ -81,12 +81,13 @@ Configure which rails version you want to test against, and load the gems approp
     # or
     cp gemfiles/rails3_2.gemfile Gemfile
 
+    # Install required gems
+    bundle install --binstubs
+    rbenv rehash  # if using rbenv
+
 Run the tests
 
     cd ~/tmp/health_check
-    # Install required gems
-    bundle --binstubs
-    rbenv rehash  # if using rbenv
 
     # Run tests 
     bin/rake test
