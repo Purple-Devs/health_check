@@ -1,6 +1,6 @@
 # Gemfile for health_test testing
 
-source :rubygems
+source 'https://rubygems.org'
 
 # Bundle edge Rails instead:
 
