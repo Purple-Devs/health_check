@@ -54,11 +54,13 @@ module HealthCheck
           if database_version.to_i != migration_version.to_i
             errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
           end
+        when 'cache'
+          errors << HealthCheck::Utils.check_cache
         when "standard"
           errors << process_checks("database_migrations")
           errors << process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
         when "all", "full"
-          errors << process_checks("database_migrations_email")
+          errors << process_checks("database_migrations_email_cache")
         else
           return "invalid argument to health_test. "
         end
