@@ -99,5 +99,9 @@ module HealthCheck
       (status =~ /^221/) ? '' : "SMTP: #{status || 'unexpected EOF on socket'}. "
     end
 
+    def self.check_cache
+      Rails.cache.write('__health_check_cache_test__', 'ok', expires_in: 1.second) ? '' : 'Unable to write to cache. '
+    end
+
   end
 end
