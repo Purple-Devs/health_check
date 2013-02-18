@@ -73,13 +73,13 @@ Configure which rails version you want to test against, and load the gems approp
 
     cd ~/tmp/health_check
 
-    cp gemfiles/rails2_3.gemfile Gemfile
+    export BUNDLE_GEMFILE=rails2_3.gemfile
     # or
-    cp gemfiles/rails3_0.gemfile Gemfile
+    export BUNDLE_GEMFILE=rails3_0.gemfile
     # or
-    cp gemfiles/rails3_1.gemfile Gemfile
+    export BUNDLE_GEMFILE=rails3_1.gemfile
     # or
-    cp gemfiles/rails3_2.gemfile Gemfile
+    export BUNDLE_GEMFILE=rails3_2.gemfile
 
     # Install required gems
     bundle install --binstubs

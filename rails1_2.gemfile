@@ -11,3 +11,10 @@ group :development, :test do
   gem 'shoulda', "~> 2.11.0"
 end
 
+group :misc do
+  # run travis-lint to check .travis.yml
+  gem 'travis-lint'
+  # required to run rake test:plugins
+  gem 'ruby-prof', '>= 0.6.1'
+end
+
