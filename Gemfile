@@ -7,7 +7,7 @@ group :development, :test do
   gem 'jeweler', '~> 1.8.4'
   gem 'shoulda', "~> 2.11.0"
   gem 'sqlite3', "~> 1.3.7"
-  gem 'activerecord', ">= 2.3.0"
+  gem 'rails', ">= 2.3.0"
 end
 
 group :misc do
