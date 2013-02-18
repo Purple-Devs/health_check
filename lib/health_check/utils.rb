@@ -4,14 +4,6 @@
 module HealthCheck
   class Utils
 
-    @@success = "success"
-
-    cattr_accessor :success
-
-    @@smtp_timeout = 30.0
-
-    cattr_accessor :smtp_timeout
-
     @@default_smtp_settings =
       {
       :address              => "localhost",
@@ -54,7 +46,7 @@ module HealthCheck
     def self.check_email
       case ActionMailer::Base.delivery_method
       when :smtp
-        HealthCheck::Utils.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck::Utils.smtp_timeout)
+        HealthCheck::Utils.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck.smtp_timeout)
       when :sendmail
         HealthCheck::Utils.check_sendmail(ActionMailer::Base.sendmail_settings)
       else

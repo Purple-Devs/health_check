@@ -8,6 +8,18 @@ module HealthCheck
     end
   end
 
+  # Text output upon success
+  mattr_accessor :success
+  self.success = "success"
+
+  # Timeout in seconds used when checking smtp server
+  mattr_accessor :smtp_timeout
+  self.smtp_timeout = 30.0
+
+  def self.setup
+    yield self
+  end
+
 end
 
 require 'health_check/utils'

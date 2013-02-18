@@ -25,7 +25,7 @@ module HealthCheck
         errors = e.message
       end     
       if errors.blank?
-        render :text => HealthCheck::Utils.success, :content_type => 'text/plain'
+        render :text => HealthCheck.success, :content_type => 'text/plain'
       else
         msg = "health_check failed: #{errors}"
         render :text => msg, :status => 500, :content_type => 'text/plain'
