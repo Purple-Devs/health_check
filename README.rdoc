@@ -110,7 +110,8 @@ See
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response 
 * migration - checks that the database migration level matches that in db/migrations
-* site - checks rails is running sufficiently to render text 
+* cache - checks that a value can be written to the cache
+* site - checks rails is running sufficiently to render text
 
 == Note on Patches/Pull Requests
  
@@ -145,4 +146,4 @@ See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_
 * 0.x - Rails 2.3
 * 1.x - Includes Rails 3.x suppprt as an Engine
 * 1.0.2 - Included travis config and gemfiles used in travis tests in gem and changes to test setup so that gem test 
-
+* 1.1.0 - Include cache check (Thanks to https://github.com/mgomes1 ) and some changes to test setup to workaround and diagnose test failures under rvm
