@@ -59,37 +59,37 @@ Using rbenv or rvm, install and set the version of ruby you wish to test against
 You will need to install the bundler gem if using rbenv.
 See the .travis.yml file for a list of supported ruby versions.
 
-		rbenv shell 1.8.7-p371
-		# or 
-		rvm use 1.9.3
+    rbenv shell 1.8.7-p371
+    # or 
+    rvm use 1.9.3
 
 Create a temp directory for throw away testing, and clone the health_check gem into it
 
-		mkdir -p ~/tmp
-		cd ~/tmp
-		git clone https://github.com/ianheggie/health_check.git
+    mkdir -p ~/tmp
+    cd ~/tmp
+    git clone https://github.com/ianheggie/health_check.git
 
 Configure which rails version you want to test against, and load the gems appropriate for the ruby version
 
-		cd ~/tmp/health_check
+    cd ~/tmp/health_check
 
-		cp gemfiles/rails2_3.gemfile Gemfile
-		# or
-		cp gemfiles/rails3_0.gemfile Gemfile
-		# or
-		cp gemfiles/rails3_1.gemfile Gemfile
-		# or
-		cp gemfiles/rails3_2.gemfile Gemfile
+    cp gemfiles/rails2_3.gemfile Gemfile
+    # or
+    cp gemfiles/rails3_0.gemfile Gemfile
+    # or
+    cp gemfiles/rails3_1.gemfile Gemfile
+    # or
+    cp gemfiles/rails3_2.gemfile Gemfile
 
 Run the tests
 
-		cd ~/tmp/health_check
-		# Install required gems
-		bundle --binstubs
-		rbenv rehash  # if using rbenv
+    cd ~/tmp/health_check
+    # Install required gems
+    bundle --binstubs
+    rbenv rehash  # if using rbenv
 
-		# Run tests 
-		bin/rake test
+    # Run tests 
+    bin/rake test
 
 == Uptime Monitoring
 
