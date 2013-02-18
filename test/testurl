@@ -8,16 +8,16 @@ end
 
 page_content = open(ARGV[0]) rescue nil
 unless page_content
-  i=1
+  i=0
   print "waiting.."
-  while i < 30 and not page_content
+  while i < 120 and not page_content
     print "."
     STDOUT.flush
     i += 1
     sleep(1)
     page_content = open(ARGV[0]) rescue nil
   end
-  puts " done"
+  puts "\n  #{page_content ? 'got url content' : 'timed out'} after waiting #{i} seconds"
 end
 
 puts page_content
