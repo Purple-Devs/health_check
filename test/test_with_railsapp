@@ -3,6 +3,23 @@
 # Any failure causes exit
 set -e
 
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+  echo "Detected user installed rvm"
+elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
+  echo "Detected root installed rvm"
+elif [[ -d "$HOME/.rbenv" ]] ; then
+  echo "Detected rbenv ..."
+else
+  printf "Note: Neither rvm nor rbenv was not found.\n"
+fi
+
+echo "Checking required commands exist:"
+for cmd in bash gem egrep ls tail kill find cpio ruby gem rake bundle
+do
+    echo -n "  "
+    which $cmd || ( echo "Aborting test: Missing $cmd command!" && exit 2 )
+done
+
 base_dir=`pwd`
 
 testurl="$base_dir/test/testurl"
@@ -12,7 +29,7 @@ test_dir=`pwd`/tmp
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
 mkdir -p tmp/gems
 
-[ -d lib/health_check -a -d gemfiles ] || exec echo test MUST be executed in the base of the health_check gem/clone of git repository
+[ -d lib/health_check ] || exec echo test MUST be executed in the base of the health_check gem/clone of git repository
 
 echo Installing health_check as a gem into tmp/gems
 env GEM_HOME=$test_dir/gems rake install
@@ -105,6 +122,7 @@ case "$actual_rails_version" in
 esac
 
 cd railsapp
+
 echo "Changed current directory to railsapp root: `pwd`"
 
 echo "Fixing rdoc require in Rakefile if needed"
@@ -142,14 +160,19 @@ then
     echo "Using binstubs in `pwd`/bin for rails and rake commands"
     rails="`pwd`/bin/rails"
     rake="`pwd`/bin/rake"
+    # Fix for rvm, otherwise bundle run from rails create fails
+    export PATH="`pwd`/bin:$PATH"
 else
     dest=`pwd`/vendor/plugins/health_check
     echo Installing health_check as plugin in $dest ...
     mkdir -p $dest
     (
-        cd $base_dir
+	cd $base_dir
+
         find . | egrep -v '/tmp|/\.git|\.gem$' | cpio -pdl $dest
-        cd $dest
+        
+	cd $dest
+
         echo Files installed as plugin:
         find . -type f
         echo
