@@ -26,5 +26,9 @@ bin/
 railsapps/
 ,*
 .bundle
-.rbenv-version
 gemfiles/*.lock
+
+# do NOT save ruby version to repository!
+.rbenv-version
+.ruby-version
+.rvmrc
