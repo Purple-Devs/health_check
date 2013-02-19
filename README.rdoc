@@ -55,6 +55,10 @@ Run the following commands from the root of your rails application
 
 === Standalone for testing the gem 
 
+The test will package up and install the gem under a temporary path, create a dummy rails app configured for sqlite,
+install the gem, and then run up tests against the server.
+This will require TCP port 3456 to be free.
+
 Using rbenv or rvm, install and set the version of ruby you wish to test against.
 You will need to install the bundler gem if using rbenv.
 See the .travis.yml file for a list of supported ruby versions.
@@ -73,13 +77,15 @@ Configure which rails version you want to test against, and load the gems approp
 
     cd ~/tmp/health_check
 
-    export BUNDLE_GEMFILE=rails2_3.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails2_3.gemfile
     # or
-    export BUNDLE_GEMFILE=rails3_0.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_0.gemfile
     # or
-    export BUNDLE_GEMFILE=rails3_1.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_1.gemfile
     # or
-    export BUNDLE_GEMFILE=rails3_2.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_2.gemfile
+    # or leave as is for latest rails
+    unset BUNDLE_GEMFILE
 
     # Install required gems
     bundle install --binstubs
@@ -132,6 +138,7 @@ See MIT-LICENSE for details.
 
 * No inline documentation for methods
 * Feedback welcome especially with suggested replacement code and corresponding tests
+* <b>rvm gemsets breaks the test</b> - specifically <tt>rvm use 1.9.3</tt> works but <tt>rvm gemset use ruby-1.9.3-p385@health_check --create</tt> triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
 
 == Similar projects
 
