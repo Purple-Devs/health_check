@@ -100,7 +100,10 @@ Run the tests
 
 == Uptime Monitoring
 
-Use a website monitoring service to check the url regularly for the word "success" rather than just a 200 return code.
+Use a website monitoring service to check the url regularly for the word "success" (without the quotes) rather than just a 200 http status so
+that any substitution of a different server or generic information page should also be reported as an error.
+
+If an error is encounted, the text "health_check failed: some error message/s" will be returned and the http status will be 500.
 
 See
 * Pingdom Website Monitoring - https://www.pingdom.com
