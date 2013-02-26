@@ -18,6 +18,7 @@ tmtags
 coverage
 rdoc
 pkg
+Gemfile.lock
 
 ## PROJECT::SPECIFIC
 health_check*.gem
@@ -26,7 +27,6 @@ bin/
 railsapps/
 ,*
 .bundle
-gemfiles/*.lock
 
 # do NOT save ruby version to repository!
 .rbenv-version
