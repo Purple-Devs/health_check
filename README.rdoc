@@ -91,6 +91,9 @@ Configure which rails version you want to test against, and load the gems approp
     bundle install --binstubs
     rbenv rehash  # if using rbenv
 
+    # Check the version of rails
+    rails --version
+
 Run the tests
 
     cd ~/tmp/health_check
