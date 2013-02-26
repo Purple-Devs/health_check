@@ -3,12 +3,14 @@
 # Any failure causes exit
 set -e
 
+rehash=''
 if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
   echo "Detected user installed rvm"
 elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
   echo "Detected root installed rvm"
 elif [[ -d "$HOME/.rbenv" ]] ; then
   echo "Detected rbenv ..."
+  rehash='rbenv rehash'
 else
   printf "Note: Neither rvm nor rbenv was not found.\n"
 fi
@@ -19,6 +21,10 @@ do
     echo -n "  "
     which $cmd || ( echo "Aborting test: Missing $cmd command!" && exit 2 )
 done
+if ! bundle check ; then
+    echo "Test aborted (missing required gems)"
+    exit 2
+fi
 
 base_dir=`pwd`
 
