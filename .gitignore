@@ -1,3 +1,22 @@
+# Suggested by bundler
+*.gem
+*.rbc
+.bundle
+.config
+.yardoc
+Gemfile.lock
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+
 ## MAC OS
 .DS_Store
 
@@ -14,21 +33,12 @@ tmtags
 *.swp
 *~
 
-## PROJECT::GENERAL
-coverage
-rdoc
-pkg
-Gemfile.lock
-
 ## PROJECT::SPECIFIC
-health_check*.gem
-tmp/
 bin/
 railsapps/
 ,*
-.bundle
 
-# do NOT save ruby version to repository!
+# Local ruby version config
 .rbenv-version
 .ruby-version
 .rvmrc

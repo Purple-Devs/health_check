@@ -1,26 +1,7 @@
-require 'rubygems'
+require "bundler/gem_tasks"
+
+#require 'rubygems'
 require 'rake'
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "health_check"
-    gem.summary = %Q{Simple health check of Rails app for uptime monitoring}
-    gem.description = %Q{Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.}
-    gem.email = "ian@heggie.biz"
-    gem.homepage = "http://github.com/ianheggie/health_check"
-    gem.authors = ["Ian Heggie"]
-    # Gemfile contains gem dependencies, apart from bundler itself
-    gem.add_development_dependency 'bundler', '~> 1.2.0'
-
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-
-  #task :test => :check_dependencies
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
-end
 
 # Tests are conducted with health_test as a plugin
 environment_file = File.join(File.dirname(__FILE__), '..', '..', '..', 'config', 'environment.rb')
