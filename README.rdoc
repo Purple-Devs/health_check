@@ -1,28 +1,40 @@
-= health_check
+= health\_check gem
 
 Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
-The email gateway is not checked unless the smtp settings have been changed.
-Specify full or include email in the list of checks to varify the smtp settings
-(eg use 127.0.0.1 instead of localhost). 
+health_check provides various monitoring URIs, for example:
 
-health_check provides various monitoring URIs 
-
-    % curl localhost:3000/health_check
+    curl localhost:3000/health_check
     success
 
-    % curl localhost:3000/health_check/standard
+    curl localhost:3000/health_check/all
     success
 
-    % curl localhost:3000/health_check/all
+    curl localhost:3000/health_check/database_cache_migration
     success
 
-    % curl localhost:3000/health_check/site_and_database_and_email_migrations
-    success
+On failure a 500 http status is returned with a simple explination of the failure
+
+    curl localhost:3000/health_check/fail
+    health_check failed: invalid argument to health_test.
 
 The health_check controller disables sessions and logging for its actions to minimise the impact of frequent uptime checks on the session store and the log file.
+
+== Checks
+
+* standard (default) - site, database and migrations checks are run plus email if settings have been changed
+* all / full - all checks are run
+* database - checks that the current migration level can be read from the database
+* email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
+* migration - checks that the database migration level matches that in db/migrations
+* cache - checks that a value can be written to the cache
+* site - checks rails is running sufficiently to render text
+
+The email gateway is not checked unless the smtp settings have been changed.
+Specify full or include email in the list of checks to varify the smtp settings
+(eg use 127.0.0.1 instead of localhost).
 
 == Installation
 
@@ -32,15 +44,19 @@ Add the following line to Gemfile
 
     gem "health_check"
 
-Then run 
+And then execute
 
-    % bundle
+    bundle
+
+Or install it yourself as:
+
+    gem install health_check
 
 === As a Gem from rubygems (Rails 2.3)
 
 Install the gem using the following command
 
-    % gem install health_check    
+    gem install health_check
 
 Then add the following line to config/environment.rb within the config block
 
@@ -50,18 +66,63 @@ Then add the following line to config/environment.rb within the config block
 
 Run the following commands from the root of your rails application
 
-    % cd vendor/plugins
-    % git clone git://github.com/ianheggie/health_check.git
+    cd vendor/plugins
+    git clone git://github.com/ianheggie/health_check.git
 
-=== Standalone for testing the gem 
+== Uptime Monitoring
+
+Use a website monitoring service to check the url regularly for the word "success" (without the quotes) rather than just a 200 http status so
+that any substitution of a different server or generic information page should also be reported as an error.
+
+If an error is encounted, the text "health_check failed: some error message/s" will be returned and the http status will be 500.
+
+See
+
+* Pingdom Website Monitoring - https://www.pingdom.com
+* NewRelic Availability Monitoring - http://newrelic.com/docs/features/availability-monitoring-faq
+* Uptime by OpenACS - http://uptime.openacs.org/uptime/
+* Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
+* Any other montoring service that can be set to check for the word success in the test returned from a url
+
+== Note on Patches/Pull Requests
+
+<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
+
+1. Fork it
+2. Create your feature branch (<tt>git checkout -b my-new-feature</tt>)
+3. Commit your changes (<tt>git commit -am 'Add some feature'</tt>)
+4. Push to the branch (<tt>git push origin my-new-feature</tt>)
+5. Create new Pull Request.
+
+== Known Issues
+
+* No inline documentation for methods
+* <b>rvm gemsets breaks the test</b> - specifically <tt>rvm use 1.9.3</tt> works but <tt>rvm gemset use ruby-1.9.3-p385@health_check --create</tt> triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
+
+== Similar projects
+
+* fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway
+
+== Testing
+
+=== Automated continuous integration tests
+
+See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]
+
+Code Climate also monitors this project: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
+
+=== Manual testing
+
+The test will package up and install the gem under a temporary path, create a dummy rails app configured for sqlite,
+install the gem, and then run up tests against the server.
+This will require TCP port 3456 to be free.
 
 Using rbenv or rvm, install and set the version of ruby you wish to test against.
 You will need to install the bundler gem if using rbenv.
-See the .travis.yml file for a list of supported ruby versions.
+See the <tt>.travis.yml</tt> file for a list of supported ruby versions.
 
-    rbenv shell 1.8.7-p371
-    # or 
-    rvm use 1.9.3
+* rbenv command: <tt>rbenv shell 1.8.7-p371</tt>
+* rvm command: <tt>rvm use 1.9.3</tt>
 
 Create a temp directory for throw away testing, and clone the health_check gem into it
 
@@ -69,81 +130,29 @@ Create a temp directory for throw away testing, and clone the health_check gem i
     cd ~/tmp
     git clone https://github.com/ianheggie/health_check.git
 
-Configure which rails version you want to test against, and load the gems appropriate for the ruby version
+All of the following commands should be run under the checked out gem
 
     cd ~/tmp/health_check
 
-    export BUNDLE_GEMFILE=rails2_3.gemfile
-    # or
-    export BUNDLE_GEMFILE=rails3_0.gemfile
-    # or
-    export BUNDLE_GEMFILE=rails3_1.gemfile
-    # or
-    export BUNDLE_GEMFILE=rails3_2.gemfile
+Configure which rails version you want to test against, and load the gems appropriate for the ruby version - use one of the following commands:
 
-    # Install required gems
+    export BUNDLE_GEMFILE=$PWD/rails2_3.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_0.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_1.gemfile
+    export BUNDLE_GEMFILE=$PWD/rails3_2.gemfile
+    unset BUNDLE_GEMFILE # for installed version of rails
+
+Then install the required gems, and update rbenv shims (if using rbenv)
+
     bundle install --binstubs
-    rbenv rehash  # if using rbenv
+    rbenv rehash
 
 Run the tests
 
-    cd ~/tmp/health_check
-
-    # Run tests 
     bin/rake test
-
-== Uptime Monitoring
-
-Use a website monitoring service to check the url regularly for the word "success" rather than just a 200 return code.
-
-See
-* Pingdom Website Monitoring - https://www.pingdom.com
-* NewRelic Availability Monitoring - http://newrelic.com/docs/features/availability-monitoring-faq
-* Uptime by OpenACS - http://uptime.openacs.org/uptime/
-* Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
-* Any other montoring service that can be set to check for the word success in the test returned from a url
-
-== Checks
-
-* standard (default) - site, database and migrations checks are run plus email if settings have been changed
-* all / full - all checks are run
-* database - checks that the current migration level can be read from the database
-* email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response 
-* migration - checks that the database migration level matches that in db/migrations
-* cache - checks that a value can be written to the cache
-* site - checks rails is running sufficiently to render text
-
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
 
 == Copyright
 
 Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
-== Known Issues
-
-* No inline documentation for methods
-* Feedback welcome especially with suggested replacement code and corresponding tests
-
-== Similar projects
-
-* fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway 
-
-== Continuous integration tests
-
-See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png" />}[https://travis-ci.org/ianheggie/health_check]
-
-== Versions
-
-* 0.x - Rails 2.3
-* 1.x - Includes Rails 3.x suppprt as an Engine
-* 1.0.2 - Included travis config and gemfiles used in travis tests in gem and changes to test setup so that gem test 
-* 1.1.0 - Include cache check (Thanks to https://github.com/mgomes1 ) and some changes to test setup to workaround and diagnose test failures under rvm

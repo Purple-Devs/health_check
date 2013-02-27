@@ -4,6 +4,18 @@
 module HealthCheck
   class Utils
 
+    @@success = "success"
+
+    cattr_accessor :success
+
+    @@smtp_timeout = 30.0
+
+    cattr_accessor :smtp_timeout
+
+    @@error_status_code = 500
+
+    cattr_accessor :error_status_code
+
     @@default_smtp_settings =
       {
       :address              => "localhost",
