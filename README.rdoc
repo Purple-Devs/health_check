@@ -1,4 +1,4 @@
-# health\_check gem
+= health\_check gem
 
 Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
@@ -17,7 +17,7 @@ health_check provides various monitoring URIs, for example:
 
 The health_check controller disables sessions and logging for its actions to minimise the impact of frequent uptime checks on the session store and the log file.
 
-## Checks
+== Checks
 
 * standard (default) - site, database and migrations checks are run plus email if settings have been changed
 * all / full - all checks are run
@@ -31,9 +31,9 @@ The email gateway is not checked unless the smtp settings have been changed.
 Specify full or include email in the list of checks to varify the smtp settings
 (eg use 127.0.0.1 instead of localhost).
 
-## Installation
+== Installation
 
-### As a Gem from rubygems (Rails 3.0 and above)
+=== As a Gem from rubygems (Rails 3.0 and above)
 
 Add the following line to Gemfile
 
@@ -47,7 +47,7 @@ Or install it yourself as:
 
     gem install health_check
 
-### As a Gem from rubygems (Rails 2.3)
+=== As a Gem from rubygems (Rails 2.3)
 
 Install the gem using the following command
 
@@ -57,14 +57,14 @@ Then add the following line to config/environment.rb within the config block
 
     config.gem "health_check"
 
-### As a Plugin (Rails 2.3.x)
+=== As a Plugin (Rails 2.3.x)
 
 Run the following commands from the root of your rails application
 
     cd vendor/plugins
     git clone git://github.com/ianheggie/health_check.git
 
-## Uptime Monitoring
+== Uptime Monitoring
 
 Use a website monitoring service to check the url regularly for the word "success" (without the quotes) rather than just a 200 http status so
 that any substitution of a different server or generic information page should also be reported as an error.
@@ -79,34 +79,34 @@ See
 * Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Any other montoring service that can be set to check for the word success in the test returned from a url
 
-## Note on Patches/Pull Requests
+== Note on Patches/Pull Requests
 
-_Feedback welcome! Especially with suggested replacement code and corresponding tests_
+<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
 
 1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
+2. Create your feature branch (<tt>git checkout -b my-new-feature</tt>)
+3. Commit your changes (<tt>git commit -am 'Add some feature'</tt>)
+4. Push to the branch (<tt>git push origin my-new-feature</tt>)
 5. Create new Pull Request.
 
-## Known Issues
+== Known Issues
 
 * No inline documentation for methods
-* <b>rvm gemsets breaks the test</b> - specifically `rvm use 1.9.3` works but `rvm gemset use ruby-1.9.3-p385@health_check --create`
-triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
+* <b>rvm gemsets breaks the test</b> - specifically <tt>rvm use 1.9.3</tt> works but <tt>rvm gemset use ruby-1.9.3-p385@health_check --create</tt> triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
 
-## Similar projects
+== Similar projects
 
 * fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway
 
+== Testing
 
-## Testing
+=== Automated continuous integration tests
 
-### Automated continuous integration tests
+See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]
 
-See Travis CI testing result: [<img src="https://travis-ci.org/ianheggie/health_check.png" />](https://travis-ci.org/ianheggie/health_check)
+Code Climate also monitors this project: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
 
-### Manual testing
+=== Manual testing
 
 The test will package up and install the gem under a temporary path, create a dummy rails app configured for sqlite,
 install the gem, and then run up tests against the server.
@@ -114,10 +114,10 @@ This will require TCP port 3456 to be free.
 
 Using rbenv or rvm, install and set the version of ruby you wish to test against.
 You will need to install the bundler gem if using rbenv.
-See the `.travis.yml` file for a list of supported ruby versions.
+See the <tt>.travis.yml</tt> file for a list of supported ruby versions.
 
-* rbenv command: `rbenv shell 1.8.7-p371`
-* rvm command: `rvm use 1.9.3`
+* rbenv command: <tt>rbenv shell 1.8.7-p371</tt>
+* rvm command: <tt>rvm use 1.9.3</tt>
 
 Create a temp directory for throw away testing, and clone the health_check gem into it
 
@@ -146,8 +146,8 @@ Run the tests
 
     bin/rake test
 
-## Copyright
+== Copyright
 
 Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
-See [MIT-LICENSE](MIT-LICENSE) for details.
+See MIT-LICENSE for details.
 
