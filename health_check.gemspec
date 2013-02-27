@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.extra_rdoc_files = [ "README.md", "MIT-LICENSE" ]
+  gem.extra_rdoc_files = [ "README.rdoc" ]
   gem.require_paths = ["lib"]
   gem.add_dependency(%q<rails>, [">= 2.3.0"])
   gem.add_development_dependency(%q<rake>, [">= 0.8.3"])

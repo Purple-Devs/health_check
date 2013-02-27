@@ -15,6 +15,11 @@ health_check provides various monitoring URIs, for example:
     curl localhost:3000/health_check/database_cache_migration
     success
 
+On failure a 500 http status is returned with a simple explination of the failure
+
+    curl localhost:3000/health_check/fail
+    health_check failed: invalid argument to health_test.
+
 The health_check controller disables sessions and logging for its actions to minimise the impact of frequent uptime checks on the session store and the log file.
 
 == Checks
