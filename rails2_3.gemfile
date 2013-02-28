@@ -2,7 +2,8 @@
 
 source 'https://rubygems.org'
 
-#rubygems "~> 1.2"
+# Last rubygems version before 2.0.0 (which breaks rails 2.3)
+#rubygems 1.8.25
 
 ruby "1.8.7"
 
