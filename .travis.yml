@@ -11,10 +11,13 @@ rvm:
   - jruby-18mode
   - jruby-19mode
   #- jruby-head
-  #- ruby-head
+  - ruby-head
   - ree
+env:
+  - RUBYGEMS_VERSION=
+  - RUBYGEMS_VERSION=1.8.25
 before_install:
-  - gem update --system `ruby -n -e 'puts $1 if /^\#rubygems (.*)/' $BUNDLE_GEMFILE`
+  - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - gem install bundler
   - bundle --version
@@ -60,3 +63,4 @@ matrix:
     - gemfile: rails_edge.gemfile
     - rvm: jruby-head
     - rvm: ruby-head
+    - env: RUBYGEMS_VERSION=
