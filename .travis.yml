@@ -6,13 +6,9 @@ notifications:
 rvm:
   - 1.8.7
   - 1.9.3
-  - rbx-18mode
+  - 2.0.0
   - rbx-19mode
-  - jruby-18mode
   - jruby-19mode
-  #- jruby-head
-  - ruby-head
-  - ree
 env:
   - RUBYGEMS_VERSION=1.8.25
   - RUBYGEMS_VERSION=
@@ -24,11 +20,11 @@ before_install:
   - mkdir -p tmp/bundle
 
 gemfile:
-  - rails2_3.gemfile
-  - rails3_0.gemfile
-  - rails3_1.gemfile
-  - rails3_2.gemfile
-  #- rails_edge.gemfile
+  - test/rails_2.3.gemfile
+  - test/rails_3.0.gemfile
+  - test/rails_3.1.gemfile
+  - test/rails_3.2.gemfile
+  - test/rails_4.0-beta.gemfile
 
 bundler_args: "--binstubs"
 
@@ -36,90 +32,43 @@ script: ./test/test_with_railsapp
 
 matrix:
   exclude:
-    - rvm: rbx-18mode
-      gemfile: rails2_3.gemfile
+    - rvm: 1.8.7
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: 1.8.7
+      gemfile: test/rails_4.0-beta.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: 1.8.7
+      gemfile: test/rails_4.0-beta.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+
+    - rvm: rbx-19mode
+      gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=1.8.25
     - rvm: rbx-19mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-18mode
-      gemfile: rails2_3.gemfile
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=1.8.25
     - rvm: jruby-19mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-head
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: ruby-head
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: 1.9.3
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: 1.8.7
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: rbx-18mode
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-18mode
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: ree
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=
 
-    - rvm: rbx-18mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: rbx-19mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-18mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-19mode
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-head
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: ruby-head
-      gemfile: rails2_3.gemfile
+    - rvm: 1.9.3
+      gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=
     - rvm: 1.9.3
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: 1.8.7
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: rbx-18mode
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-18mode
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: ree
-      gemfile: rails_edge.gemfile
-      env: RUBYGEMS_VERSION=
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
 
-    - rvm: 1.8.7
-      gemfile: rails2_3.gemfile
+    - rvm: 2.0.0
+      gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=
-    - rvm: ree
-      gemfile: rails2_3.gemfile
-      env: RUBYGEMS_VERSION=
-
-    - rvm: jruby-18mode
-      gemfile: rails_3_1.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-18mode
-      gemfile: rails_3_2.gemfile
-      env: RUBYGEMS_VERSION=
+    - rvm: 2.0.0
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
 
   allow_failures:
-    - gemfile: rails_edge.gemfile
-    - rvm: jruby-head
-    - rvm: ruby-head
     - env: RUBYGEMS_VERSION=
