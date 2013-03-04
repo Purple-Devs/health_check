@@ -69,6 +69,56 @@ matrix:
     - rvm: 2.0.0
       gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=1.8.25
+    - rvm: 2.0.0
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: 2.0.0
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: 2.0.0
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: 2.0.0
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+
+    - rvm: rbx-19mode
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: rbx-19mode
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: jruby-19mode
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
 
   allow_failures:
     - env: RUBYGEMS_VERSION=
