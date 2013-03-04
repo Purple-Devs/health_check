@@ -1,4 +1,4 @@
-= health\_check gem
+= health_check gem
 
 Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
@@ -69,6 +69,39 @@ Run the following commands from the root of your rails application
     cd vendor/plugins
     git clone git://github.com/ianheggie/health_check.git
 
+== Configuration
+
+To change the configuration of health_check, create a file `config/initializers/health_check.rb` and add a configuration block like:
+
+    HealthCheck.setup do |config|
+
+      # Text output upon success
+      config.success = 'success'
+
+      # Timeout in seconds used when checking smtp server
+      self.smtp_timeout = 30.0
+
+      # http status code used when plain text error message is output
+      # Set to 200 if you want your want to distinguish between partial (text does not include success) and
+      # total failure of rails application (http status of 500 etc)
+
+      self.http_status_for_error_text = 500
+
+      # http status code used when an error object is output (json or xml)
+      # Set to 200 if you want your want to distinguish between partial (healthy property == false) and
+      # total failure of rails application (http status of 500 etc)
+
+      self.http_status_for_error_object = 500
+
+      # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
+      config.add_custom_check do
+        CustomHealthCheck.perform_check # any code that returns blank on success and non blank string upon failure
+      end
+
+    end
+
+You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
+
 == Uptime Monitoring
 
 Use a website monitoring service to check the url regularly for the word "success" (without the quotes) rather than just a 200 http status so
@@ -83,6 +116,21 @@ See
 * Uptime by OpenACS - http://uptime.openacs.org/uptime/
 * Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Any other montoring service that can be set to check for the word success in the test returned from a url
+
+=== Json and XML requests
+
+Health_check will now respond with an encoded hash object if json or xml is requested via the HTTP Accept header or by adding .json or .xml to the url.
+
+The hash contains two keys:
+* healthy - true if requested checks pass (boolean)
+* message - text message ("success" or error message)
+
+  curl -v localhost:3000/health_check.json
+  curl -v localhost:3000/health_check/email.json
+  curl -v -H “Accept: application/json” localhost:3000/health_check
+  curl -v localhost:3000/health_check.xml
+  curl -v localhost:3000/health_check/migration_cache.xml
+  curl -v -H “Accept: text/xml” localhost:3000/health_check/cache
 
 == Note on Patches/Pull Requests
 
@@ -105,11 +153,11 @@ See
 
 == Testing
 
-=== Automated continuous integration tests
+=== Automated testing
 
 See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]
 
-Code Climate also monitors this project: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
+Code Climate also monitors this project for code quality: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
 
 === Manual testing
 
@@ -119,7 +167,7 @@ This will require TCP port 3456 to be free.
 
 Using rbenv or rvm, install and set the version of ruby you wish to test against.
 You will need to install the bundler gem if using rbenv.
-See the <tt>.travis.yml</tt> file for a list of supported ruby versions.
+See the <tt>.travis.yml</tt> file for the list of ruby versions that we test against.
 
 * rbenv command: <tt>rbenv shell 1.8.7-p371</tt>
 * rvm command: <tt>rvm use 1.9.3</tt>
@@ -130,26 +178,19 @@ Create a temp directory for throw away testing, and clone the health_check gem i
     cd ~/tmp
     git clone https://github.com/ianheggie/health_check.git
 
-All of the following commands should be run under the checked out gem
+Cd to the checked out health_check directory and then run the test as follows:
 
     cd ~/tmp/health_check
 
-Configure which rails version you want to test against, and load the gems appropriate for the ruby version - use one of the following commands:
+    test/test_with_railsapp
 
-    export BUNDLE_GEMFILE=$PWD/rails2_3.gemfile
-    export BUNDLE_GEMFILE=$PWD/rails3_0.gemfile
-    export BUNDLE_GEMFILE=$PWD/rails3_1.gemfile
-    export BUNDLE_GEMFILE=$PWD/rails3_2.gemfile
-    unset BUNDLE_GEMFILE # for installed version of rails
+The script will first call `test/setup_railsapp` to setup a rails app with health_check installed and then
+run up the rails server and perform veraious tests.
 
-Then install the required gems, and update rbenv shims (if using rbenv)
+The script `test/setup_railsapp` will prompt you for which gemfile under test you wish to use to install the appropriate rails version, and then
+setup tmp/railsapp accordingly.
 
-    bundle install --binstubs
-    rbenv rehash
-
-Run the tests
-
-    bin/rake test
+The command `rake test` will also launch these tests, except it cannot install the bundler and rake gems if they are missing first (unlike test/test_with_railsapp)
 
 == Copyright
 
