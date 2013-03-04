@@ -3,15 +3,35 @@
 # Any failure causes exit
 set -e
 
-. test/setup_railsapp
+case "$1" in
+redo)
+    . test/init_variables
+    cd $railsapp
+    echo Dropping database ...
+    $rake db:drop 
+    echo Removing migrations ...
+    rm -f db/migrate/* db/schema.rb
+    case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
+	[0-9]*)
+        echo 'Jruby requires the database to be created before the server is started: running rake db:migrate'
+        $rake db:migrate 
+	;;
+    esac
 
-# Check required vars are set ...
-: ${base_dir:?} ${test_dir:?} ${success:?} ${rake:?}
+    ;;
+*)
+    . test/setup_railsapp
+    ;;
+esac
+
+cd $railsapp
+date > $custom_file
 
 testurl="$base_dir/test/testurl"
 fake_smtp_server="$base_dir/test/fake_smtp_server"
 
 server_pid=''
+fake_smtp_pid=''
 
 finish()
 {
@@ -19,24 +39,31 @@ finish()
     echo ========================================================
     echo TEST ${1:-FAILED}
     echo ========================================================
-    echo Result of: ls -lR $test_dir/railsapp/log $test_dir/railsapp/db
-    ls -lR $test_dir/railsapp/log $test_dir/railsapp/db
+    echo Result of: ls -lR $railsapp/log $railsapp/db
+    ls -lR $railsapp/log $railsapp/db
 
-    if [ -s $test_dir/railsapp/log/test.log ]
+    if [ -s $railsapp/log/test.log ]
     then
         echo ========================================================
-        echo Last 300 lines of test log
-        tail -300 $test_dir/railsapp/log/test.log
+        echo Last 50 lines of test log
+        tail -50 $railsapp/log/test.log
     fi
 
+    case "$fake_smtp_pid" in
+        [0-9]*)
+            echo ========================================================
+            echo "Killing fake smtp server [pid: $fake_smtp_pid]"
+            kill -9 $fake_smtp_pid
+            ;;
+    esac
     case "$server_pid" in
         [0-9]*)
             echo ========================================================
             echo "Killing rails server [pid: $server_pid]"
             kill -9 $server_pid 
-            wait
             ;;
     esac
+    wait
     trap "" 0
     echo ========================================================
     echo TEST ${1:-FAILED}
@@ -45,11 +72,6 @@ finish()
 }
 
 trap "finish FAILED 1" 0
-
-cd $railsapp
-
-echo Setting RAILS_ENV=test RACK_ENV=test
-export RAILS_ENV=test RACK_ENV=test
 
 port=3456
 
@@ -68,7 +90,7 @@ else
     $rails s webrick -p $port &
 fi
 server_pid=$!
-sleep 20
+sleep 17
 
 echo STATIC-FILE > public/static.txt
 
@@ -77,79 +99,118 @@ host=http://localhost:${port}
 # get a static file
 echo
 echo 'TESTING can get a static file ...'
-$testurl ${host}/static.txt STATIC-FILE
+$testurl ${host}/static.txt 200 text/plain STATIC-FILE
 echo
 
 echo 'TESTING health_check/migration should pass with no database migrations ...'
 mkdir -p db/migrate
 ls db/migrate
-$testurl ${host}/health_check/migration $success
+$testurl ${host}/health_check/migration 200 text/plain $success
 echo
 
 echo 'TESTING health_check/migration should fail without initial database migration ...'
 cp $base_dir/test/migrate/nine/* db/migrate
 ls db/migrate
-$testurl ${host}/health_check/migration failed
+$testurl ${host}/health_check/migration 550 text/plain failed
 echo
 
 echo 'TESTING health_check/database should pass without initial database migration (since it ignores the difference) ...'
-$testurl ${host}/health_check/database $success
+$testurl ${host}/health_check/database 200 text/plain $success
 echo
 
 echo 'TESTING health_check/site should pass ...'
-$testurl ${host}/health_check/site $success
+$testurl ${host}/health_check/site 200 text/plain $success
 echo
 
 echo 'TESTING health_check/migration should pass after initial database migration ...'
 $rake db:migrate 
-$testurl ${host}/health_check/migration $success
+$testurl ${host}/health_check/migration 200 text/plain $success
 echo
 
 echo 'TESTING health_check/migration should fail without all migrations ...'
 cp $base_dir/test/migrate/twelve/* db/migrate
 ls db/migrate
-$testurl ${host}/health_check/migration failed
+$testurl ${host}/health_check/migration 550 text/plain failed
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
 $rake db:migrate 
-$testurl ${host}/health_check/migration $success
+$testurl ${host}/health_check/migration 200 text/plain $success
 echo
 
 echo 'TESTING health_check/migration should pass after both database migrations ...'
 $rake db:migrate 
-$testurl ${host}/health_check/migration $success
+$testurl ${host}/health_check/migration 200 text/plain $success
 echo
 
 echo 'TESTING health_check/email should fail without smtp available ...'
-$testurl ${host}/health_check/email failed
+$testurl ${host}/health_check/email 550 text/plain failed
 echo
 
 echo 'TESTING health_check/email should pass with smtp available ...'
 $fake_smtp_server &
+fake_smtp_pid=$!
 sleep 5
-$testurl ${host}/health_check/email $success
+$testurl ${host}/health_check/email 200 text/plain $success
 echo
 
 echo 'TESTING health_check (all) should fail without smtp available ...'
-$testurl ${host}/health_check failed
+$testurl ${host}/health_check 550 text/plain failed
 echo
 
 echo 'TESTING health_check/all should fail without smtp available ...'
-$testurl ${host}/health_check failed
+$testurl ${host}/health_check 550 text/plain failed
 echo
 
+kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
 echo 'TESTING health_check (all) should pass with smtp available ...'
 $fake_smtp_server &
+fake_smtp_pid=$!
 sleep 5
-$testurl ${host}/health_check $success
+$testurl ${host}/health_check 200 text/plain $success
 echo
 
+kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
 echo 'TESTING health_check/all should pass with smtp available ...'
 $fake_smtp_server &
+fake_smtp_pid=$!
 sleep 5
-$testurl ${host}/health_check/all $success
+$testurl ${host}/health_check/all 200 text/plain $success
 echo
+
+echo 'TESTING health_check/custom should pass ...'
+$testurl ${host}/health_check/custom 200 text/plain $success
+echo
+
+echo 'TESTING health_check/custom.json should pass ...'
+$testurl ${host}/health_check/custom.json 200 application/json '"healthy":true'
+$testurl ${host}/health_check/custom.json 200 application/json "\"message\":\"$success\""
+echo
+
+echo 'TESTING health_check/custom.xml should pass ...'
+$testurl ${host}/health_check/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
+$testurl ${host}/health_check/custom.xml 200 application/xml "<message>$success</message>"
+echo
+
+echo 'TESTING health_check/custom should fail when custom returns string ...'
+rm -f $custom_file
+$testurl ${host}/health_check/custom 550 text/plain failed
+echo
+
+echo 'TESTING health_check (all) should fail when custom check fails ...'
+$testurl ${host}/health_check 550 text/plain "$custom_file is missing!"
+echo
+
+echo 'TESTING health_check.json (all) should fail when custom check fails ...'
+$testurl ${host}/health_check.json 555 application/json '"healthy":false'
+$testurl ${host}/health_check.json 555 application/json "$custom_file is missing!"
+echo
+
+echo 'TESTING health_check.xml (all) should fail when custom check fails ...'
+$testurl ${host}/health_check.xml 555 application/xml '<healthy type="boolean">false</healthy>'
+echo
+
+date > $custom_file
 
 finish PASSED 0
 exit 0

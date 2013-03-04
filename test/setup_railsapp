@@ -26,32 +26,10 @@ do
     export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
 done
 
-rehash=''
-rbenv_which='which'
+rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
+mkdir -p tmp/gems
 
-if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
-  echo "Detected user installed rvm"
-elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
-  echo "Detected root installed rvm"
-elif [[ -d "$HOME/.rbenv" ]] ; then
-  echo "Detected rbenv: `rbenv version`"
-  rehash='rbenv rehash'
-  rbenv_which='rbenv which'
-else
-  printf "Note: Neither rvm nor rbenv was not found.\n"
-fi
-
-echo "Checking required commands exist:"
-for cmd in bash gem egrep ls tail kill find cpio
-do
-    echo -n "  "
-    which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
-done
-for cmd in ruby gem
-do
-    echo -n "  "
-    $rbenv_which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
-done
+. test/init_variables
 
 if $rbenv_which bundle ; then
   echo Bundler is installed
@@ -67,22 +45,12 @@ if ! bundle --binstubs ; then
 fi
 $rehash
 
-base_dir=`pwd`
-test_dir=$PWD/tmp
-railsapp=$test_dir/railsapp
-custom_file="$railsapp/tmp/custom_check.ok"
-
-success=successful
-
-rm -rf tmp/Gemfile* $railsapp tmp/bin tmp/gems
-mkdir -p tmp/gems
-
 [ -d lib/health_check ] || exec echo setup_railsapp MUST be executed in the base of the health_check gem/clone of git repository
 
 echo Installing health_check as a gem into tmp/gems
-env GEM_HOME=$test_dir/gems rake install
+env GEM_HOME=$tmp_dir/gems rake install
 
-export GEM_PATH="$test_dir/gems:`gem environment gempath`"
+export GEM_PATH="$tmp_dir/gems:`gem environment gempath`"
 echo Set GEM_PATH=$GEM_PATH
 
 echo Gems in tmp/gems:
@@ -91,10 +59,10 @@ ls tmp/gems
 echo Environment:
 env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
 
-rails="$PWD/test/bin/rails"
-rake="$PWD/test/bin/rake"
+rails="$base_dir/test/bin/rails"
+rake="$base_dir/test/bin/rake"
 
-cd $test_dir
+cd $tmp_dir
 
 actual_rails_version=`$rails -v`
 
@@ -108,7 +76,7 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
         ;;
 esac
 
-echo "Creating $actual_rails_version app in $test_dir/railsapp using adapter $db"
+echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
 case "$actual_rails_version" in
     *' '[12].*)
         $rails railsapp -d $db
@@ -148,7 +116,7 @@ HealthCheck.setup do |config|
   config.http_status_for_error_object = 555
 
   config.add_custom_check do
-    Find.exists?("$custom_file") ? '' : '$custom_file is missing!'
+    File.exists?("$custom_file") ? '' : '$custom_file is missing!'
   end
 end
 !
@@ -211,6 +179,77 @@ case $db in
         echo
         ;;
 esac
+
+cat > public/ajax_example.html <<'EOF'
+    <html>
+    <head>
+      <title>Example static and dynamic calls to health_check</title>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <script>
+	function parse_result(result, callback) {
+	    $("#html_status_"+callback).text(result.status);
+	    $("#html_body_"+callback).text(result.responseText);
+	    alert(callback + " callback called");
+	};
+
+	function dynamic_call(dataType, url) {
+	  $.ajax({
+	    dataType: dataType,
+	    url: url,
+	    success: function(data, textStatus, result) {
+	      $("#data_success").text(data);
+	      parse_result(result, "success");
+	    },
+	    error: function(result, textStatus) {
+	      parse_result(result, "error");
+	    },
+	    complete: function(result, textStatus) {
+	      parse_result(result, "complete");
+	    }
+	  });
+	};
+      </script>
+    </head>
+    <body>
+      <h1>Static calls</h1>
+      <ul>
+	<li><a href="http://localhost:3000/health_check/site" target="_blank">Minimal health check should always work</a>
+	  (<a href="http://localhost:3000/health_check/site.json" target="_blank">json</a>,
+	  <a href="http://localhost:3000/health_check/site.xml" target="_blank">xml</a>,
+	  <a href="http://localhost:3000/health_check/site.html" target="_blank">html</a>)
+	<li><a href="http://localhost:3000/health_check/fail" target="_blank">Force health check to fail!</a>
+	  (<a href="http://localhost:3000/health_check/fail.json" target="_blank">json</a>,
+	  <a href="http://localhost:3000/health_check/fail.xml" target="_blank">xml</a>,
+	  <a href="http://localhost:3000/health_check/fail.html" target="_blank">html</a>)
+      </ul>
+      <h1>Dynamic calls</h1>
+      <ul>
+	<li><a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/site');">Minimal health check should always work</a>
+	  (<a href="#" onclick="dynamic_call('json', 'http://localhost:3000/health_check/site.json');">json</a>,
+	  <a href="#" onclick="dynamic_call('site', 'http://localhost:3000/health_check/site.xml');">xml</a>,
+	  <a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/site.html');">html</a>)
+
+	<li><a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/fail');">Force health check to fail!</a>
+	  (<a href="#" onclick="dynamic_call('json', 'http://localhost:3000/health_check/fail.json');">json</a>,
+	  <a href="#" onclick="dynamic_call('site', 'http://localhost:3000/health_check/fail.xml');">xml</a>,
+	  <a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/fail.html');">html</a>)
+	<li>Last results sent to success:<ul>
+	  <li><b>Data:</b><span id=data_success></span>
+	  <li><b>result.status:</b><span id=html_status_success></span>
+	  <li><b>result.responseText:</b><span id=html_body_success></span>
+	</ul>
+	<li>Last results sent to error:<ul>
+	  <li><b>result.status:</b><span id=html_status_error></span>
+	  <li><b>result.responseText:</b><span id=html_body_error></span>
+	</ul>
+	<li>Last results sent to complete:<ul>
+	  <li><b>result.status:</b><span id=html_status_complete></span>
+	  <li><b>result.responseText:</b><span id=html_body_complete></span>
+	</ul>
+      </ul>
+    </body>
+    </html>
+EOF
 
 echo
 echo "Created $actual_rails_version app in $railsapp using adapter $db"

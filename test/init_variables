@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Any failure causes exit
+set -e
+
+echo Setting RAILS_ENV=test RACK_ENV=test
+export RAILS_ENV=test RACK_ENV=test
+
+base_dir=$PWD
+tmp_dir=$base_dir/tmp
+railsapp=$tmp_dir/railsapp
+custom_file="$railsapp/tmp/custom_check.ok"
+success=successful
+
+rehash=''
+rbenv_which='which'
+
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+  echo "Detected user installed rvm"
+elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
+  echo "Detected root installed rvm"
+elif [[ -d "$HOME/.rbenv" ]] ; then
+  echo "Detected rbenv: `rbenv version`"
+  rehash='rbenv rehash'
+  rbenv_which='rbenv which'
+else
+  printf "Note: Neither rvm nor rbenv was not found.\n"
+fi
+
+echo "Checking required commands exist:"
+for cmd in bash gem egrep ls tail kill find cpio
+do
+    echo -n "  "
+    which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
+done
+for cmd in ruby gem
+do
+    echo -n "  "
+    $rbenv_which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
+done
+
+rails="rails"
+rake="rake"
+
+if [ -x $base_dir/test/bin/rails ]
+then
+    rails="$base_dir/test/bin/rails"
+    rake="$base_dir/test/bin/rake"
+fi
+
+if [ -x $railsapp/bin/rails ]
+then
+    rails="$railsapp/bin/rails"
+    rake="$railsapp/bin/rake"
+    export PATH="`pwd`/bin:$PATH"
+fi
+
+echo "Using rails=$rails, rake=$rake"
+
+actual_rails_version=`$rails -v`
