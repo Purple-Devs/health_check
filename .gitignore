@@ -17,6 +17,9 @@ test/tmp
 test/version_tmp
 tmp
 
+## RUBYMINE
+.idea/
+
 ## MAC OS
 .DS_Store
 
@@ -35,7 +38,9 @@ tmtags
 
 ## PROJECT::SPECIFIC
 bin/
+test/bin/
 railsapps/
+test/*.gemfile.lock
 ,*
 
 # Local ruby version config
