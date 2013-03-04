@@ -3,55 +3,13 @@
 # Any failure causes exit
 set -e
 
-rehash=''
-if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
-  echo "Detected user installed rvm"
-elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
-  echo "Detected root installed rvm"
-elif [[ -d "$HOME/.rbenv" ]] ; then
-  echo "Detected rbenv ..."
-  rehash='rbenv rehash'
-else
-  printf "Note: Neither rvm nor rbenv was not found.\n"
-fi
+. test/setup_railsapp
 
-echo "Checking required commands exist:"
-for cmd in bash gem egrep ls tail kill find cpio ruby gem rake bundle
-do
-    echo -n "  "
-    which $cmd || ( echo "Aborting test: Missing $cmd command!" && exit 2 )
-done
-if ! bundle check ; then
-    echo "Test aborted (missing required gems)"
-    exit 2
-fi
-
-base_dir=`pwd`
-success=sucessful
+# Check required vars are set ...
+: ${base_dir:?} ${test_dir:?} ${success:?} ${rake:?}
 
 testurl="$base_dir/test/testurl"
 fake_smtp_server="$base_dir/test/fake_smtp_server"
-
-test_dir=`pwd`/tmp
-rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
-mkdir -p tmp/gems
-
-[ -d lib/health_check ] || exec echo test MUST be executed in the base of the health_check gem/clone of git repository
-
-echo Installing health_check as a gem into tmp/gems
-env GEM_HOME=$test_dir/gems rake install
-
-export GEM_PATH="$test_dir/gems:`gem environment gempath`"
-echo Set GEM_PATH=$GEM_PATH
-
-echo Gems in tmp/gems:
-ls tmp/gems
-
-echo GEM LIST
-gem list
-
-echo Environment:
-env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
 
 server_pid=''
 
@@ -88,135 +46,29 @@ finish()
 
 trap "finish FAILED 1" 0
 
-rails='rails'
-if [ -x bin/rails ]
-then
-    rails="`pwd`/bin/rails"
-    echo "Using binstub: $rails for rails command"
-fi
-rake='rake'
-if [ -x bin/rake ]
-then
-    rake="`pwd`/bin/rake"
-    echo "Using binstub: $rake for rake command"
-fi
-
-cd $test_dir
-
-actual_rails_version=`$rails -v`
-
-case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
-    [0-9]*)
-        db=jdbcsqlite3
-        # Appears to need a bit extra time
-        ;;
-    *)
-        db=sqlite3
-        ;;
-esac
-
-echo "Creating $actual_rails_version app in $test_dir/railsapp using adapter $db"
-case "$actual_rails_version" in
-    *' '[12].*)
-        $rails railsapp -d $db
-        ;;
-    *' '[34].*)
-        $rails new railsapp -d $db
-        ;;
-    *)
-        echo "Unknown rails version"
-        ;;
-esac
-
-cd railsapp
-
-echo "Changed current directory to railsapp root: `pwd`"
-
-echo "Fixing rdoc require in Rakefile if needed"
-ruby -p -i.bak -e '$_.gsub!(/rake.rdoctask/, "rdoc/task")' Rakefile
-
-echo "Configuring mailer to point to fake_smtp_server port 3555"
-cat >> config/environment.rb <<'!EOF!'
-
-ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
-
-!EOF!
-
-echo Adding an initializer ...
-mkdir -p config/initializer
-cat > config/initializer/health_check.rb <<!
-HealthCheck.setup do |config|
-  config.success = "$success"
-  config.smtp_timeout = 60.0
-end
-!
-
-echo "Last ten lines of config/environment.rb:"
-tail -10 config/environment.rb
-echo 
-
-if [ -s Gemfile ]
-then
-    echo Adding health_check as gem to Gemfile...
-    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
-
-    case "$BUNDLE_GEMFILE" in
-        ?*)
-            echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
-            unset BUNDLE_GEMFILE
-            ;;
-    esac
-    echo
-    echo Gemfile contents:
-    cat Gemfile
-    echo
-    echo running bundle install --binstubs
-    bundle install --binstubs
-    echo "Using binstubs in `pwd`/bin for rails and rake commands"
-    rails="`pwd`/bin/rails"
-    rake="`pwd`/bin/rake"
-    # Fix for rvm, otherwise bundle run from rails create fails
-    export PATH="`pwd`/bin:$PATH"
-else
-    dest=`pwd`/vendor/plugins/health_check
-    echo Installing health_check as plugin in $dest ...
-    mkdir -p $dest
-    (
-	cd $base_dir
-
-        find . | egrep -v '/tmp|/\.git|\.gem$' | cpio -pdl $dest
-        
-	cd $dest
-
-        echo Files installed as plugin:
-        find . -type f
-        echo
-    )
-fi
+cd $railsapp
 
 echo Setting RAILS_ENV=test RACK_ENV=test
 export RAILS_ENV=test RACK_ENV=test
 
-case $db in
-    jdbcsqlite3)
-        echo
-        echo 'Jruby requires the dastabase to be created before the server is started: running rake db:migrate'
-        $rake db:migrate 
-        echo
-        ;;
-esac
-
 port=3456
-echo Starting server on port $port ...
 
 if [ -x script/server ]
 then
-    bundle exec ./script/server webrick -p $port &
+    if [ -f Gemfile ]
+    then
+	echo Starting server on port $port using bundle exec ./script/server ...
+	bundle exec ./script/server webrick -p $port &
+    else
+	echo Starting server on port $port using ./script/server ...
+	./script/server webrick -p $port &
+    fi
 else
+    echo Starting server on port $port using $rails s ...
     $rails s webrick -p $port &
 fi
 server_pid=$!
+sleep 20
 
 echo STATIC-FILE > public/static.txt
 

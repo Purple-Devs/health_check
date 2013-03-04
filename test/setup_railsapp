@@ -1,0 +1,218 @@
+#!/bin/bash
+
+# Any failure causes exit
+set -e
+
+while :
+do
+    case "$BUNDLE_GEMFILE" in
+    */test/rails_[Qq].gemfile)
+        echo "Aborting..."
+        exit 2
+        ;;
+    */test/rails_[0-9].[0-9]*.gemfile)
+        if [ -f "$BUNDLE_GEMFILE" ]; then
+            break
+        fi
+        ;;
+    esac
+    echo "== SELECT GEMFILE =="
+    echo
+    echo "Please select the gemfile for the required rails series:"
+    (cd test ; ls rails*gemfile | ruby -p -e '$_.sub!(/rails_(.*).gemfile/, "    \\1")' )
+    echo
+    echo -n "Enter choice (or q to quit): "
+    read x
+    export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
+done
+
+rehash=''
+rbenv_which='which'
+
+if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
+  echo "Detected user installed rvm"
+elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
+  echo "Detected root installed rvm"
+elif [[ -d "$HOME/.rbenv" ]] ; then
+  echo "Detected rbenv: `rbenv version`"
+  rehash='rbenv rehash'
+  rbenv_which='rbenv which'
+else
+  printf "Note: Neither rvm nor rbenv was not found.\n"
+fi
+
+echo "Checking required commands exist:"
+for cmd in bash gem egrep ls tail kill find cpio
+do
+    echo -n "  "
+    which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
+done
+for cmd in ruby gem
+do
+    echo -n "  "
+    $rbenv_which $cmd || ( echo "Aborting setup_railsapp: Missing $cmd command!" && exit 2 )
+done
+
+if $rbenv_which bundle ; then
+  echo Bundler is installed
+else
+  gem install bundler
+  $rehash
+fi
+
+echo "Running bundle --binstubs with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+if ! bundle --binstubs ; then
+    echo "Test aborted (missing required gems)"
+    exit 2
+fi
+$rehash
+
+base_dir=`pwd`
+test_dir=$PWD/tmp
+railsapp=$test_dir/railsapp
+custom_file="$railsapp/tmp/custom_check.ok"
+
+success=successful
+
+rm -rf tmp/Gemfile* $railsapp tmp/bin tmp/gems
+mkdir -p tmp/gems
+
+[ -d lib/health_check ] || exec echo setup_railsapp MUST be executed in the base of the health_check gem/clone of git repository
+
+echo Installing health_check as a gem into tmp/gems
+env GEM_HOME=$test_dir/gems rake install
+
+export GEM_PATH="$test_dir/gems:`gem environment gempath`"
+echo Set GEM_PATH=$GEM_PATH
+
+echo Gems in tmp/gems:
+ls tmp/gems
+
+echo Environment:
+env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
+
+rails="$PWD/test/bin/rails"
+rake="$PWD/test/bin/rake"
+
+cd $test_dir
+
+actual_rails_version=`$rails -v`
+
+case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
+    [0-9]*)
+        db=jdbcsqlite3
+        # Appears to need a bit extra time
+        ;;
+    *)
+        db=sqlite3
+        ;;
+esac
+
+echo "Creating $actual_rails_version app in $test_dir/railsapp using adapter $db"
+case "$actual_rails_version" in
+    *' '[12].*)
+        $rails railsapp -d $db
+        ;;
+    *' '[34].*)
+        $rails new railsapp -d $db
+        ;;
+    *)
+        echo "Unknown rails version"
+        ;;
+esac
+
+cd $railsapp
+
+[ -z "$rehash" ] || rbenv local `rbenv version-name`
+
+echo "Changed current directory to railsapp root: $railsapp"
+
+echo "Fixing rdoc require in Rakefile if needed"
+ruby -p -i.bak -e '$_.gsub!(/rake.rdoctask/, "rdoc/task")' Rakefile
+
+echo "Configuring mailer to point to fake_smtp_server port 3555"
+cat >> config/environment.rb <<'!EOF!'
+
+ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
+
+!EOF!
+
+echo Adding an initializer for health_check gem ...
+mkdir -p config/initializers
+tee config/initializers/health_check.rb <<!
+HealthCheck.setup do |config|
+  config.success = "$success"
+  config.smtp_timeout = 60.0
+  config.http_status_for_error_text = 550
+  config.http_status_for_error_object = 555
+
+  config.add_custom_check do
+    Find.exists?("$custom_file") ? '' : '$custom_file is missing!'
+  end
+end
+!
+
+echo "Last ten lines of config/environment.rb:"
+tail -10 config/environment.rb
+echo 
+
+echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
+unset BUNDLE_GEMFILE
+
+if [ -s Gemfile ]
+then
+    echo Adding health_check as gem to Gemfile...
+    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+
+    echo
+    echo Gemfile contents:
+    cat Gemfile
+    echo
+    echo running bundle install --binstubs
+    bundle install --binstubs
+    case "$actual_rails_version" in
+    *' '4.*)
+        echo "Running rake rails:update:binstubs to fix up binstubs bundle has overwritten"
+        echo a | rake rails:update:bin
+        ;;
+    esac
+    $rehash
+    echo "Using binstubs in $railsapp/bin for rails and rake commands"
+    rails="$railsapp/bin/rails"
+    rake="$railsapp/bin/rake"
+    # Fix for rvm, otherwise bundle run from rails create fails
+    export PATH="`pwd`/bin:$PATH"
+else
+    dest=$railsapp/vendor/plugins/health_check
+    echo Installing health_check as plugin in $dest ...
+    mkdir -p $dest
+    (
+	cd $base_dir
+
+        git ls-files | cpio -pdl $dest
+        
+	cd $dest
+
+        echo Files installed as plugin:
+        find . -type f
+        echo
+    )
+fi
+
+echo Setting RAILS_ENV=test RACK_ENV=test
+export RAILS_ENV=test RACK_ENV=test
+
+case $db in
+    jdbcsqlite3)
+        echo
+        echo 'Jruby requires the database to be created before the server is started: running rake db:migrate'
+        $rake db:migrate 
+        echo
+        ;;
+esac
+
+echo
+echo "Created $actual_rails_version app in $railsapp using adapter $db"
+echo -n "Using "
+ruby --version
