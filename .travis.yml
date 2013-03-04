@@ -11,7 +11,7 @@ rvm:
   - jruby-19mode
 env:
   - RUBYGEMS_VERSION=1.8.25
-  - RUBYGEMS_VERSION=
+  #- RUBYGEMS_VERSION=
 before_install:
   - gem update --system $RUBYGEMS_VERSION
   - gem --version
