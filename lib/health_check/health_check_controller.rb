@@ -9,26 +9,27 @@ module HealthCheck
     layout nil
 
     def index
-      do_check('standard')
-    end
-
-    def check
-      do_check(params[:checks])
-    end
-
-    private
-
-    def do_check(checks)
+      checks = params[:checks] || 'standard'
       begin
-        errors = process_checks(checks)
+        errors = HealthCheck::Utils.process_checks(checks)
       rescue Exception => e
         errors = e.message
       end     
       if errors.blank?
-        render :text => HealthCheck.success, :content_type => 'text/plain'
+        obj = { :healthy => true, :message => HealthCheck.success }
+        respond_to do |format|
+          #format.xml { render :xml => obj.to_xml }
+          #format.json { render :xml => obj.to_json }
+          format.any { render :text => HealthCheck.success, :content_type => 'text/plain' }
+        end
       else
         msg = "health_check failed: #{errors}"
-        render :text => msg, :status => 500, :content_type => 'text/plain'
+        obj = { :healthy => false, :message => msg }
+        respond_to do |format|
+          #format.xml { render :xml => obj.to_xml, :status => HealthCheck.http_status_for_error_object }
+          #format.json { render :xml => obj.to_json, :status => HealthCheck.http_status_for_error_object}
+          format.any { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+        end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
           silence_level, logger.level = logger.level, @old_logger_level
@@ -38,35 +39,6 @@ module HealthCheck
       end
     end
 
-    def process_checks(checks)
-      errors = ''
-      checks.split('_').each do |check|
-        case check
-        when 'and', 'site'
-          # do nothing
-        when "database"
-          HealthCheck::Utils.get_database_version
-        when "email"
-          errors << HealthCheck::Utils.check_email
-        when "migrations", "migration"
-          database_version = HealthCheck::Utils.get_database_version
-          migration_version = HealthCheck::Utils.get_migration_version
-          if database_version.to_i != migration_version.to_i
-            errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
-          end
-        when 'cache'
-          errors << HealthCheck::Utils.check_cache
-        when "standard"
-          errors << process_checks("database_migrations")
-          errors << process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
-        when "all", "full"
-          errors << process_checks("database_migrations_email_cache")
-        else
-          return "invalid argument to health_test. "
-        end
-      end
-      return errors
-    end
 
     protected
 

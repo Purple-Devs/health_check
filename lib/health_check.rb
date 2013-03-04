@@ -16,6 +16,22 @@ module HealthCheck
   mattr_accessor :smtp_timeout
   self.smtp_timeout = 30.0
 
+  # http status code used when plain text error message is output
+  mattr_accessor :http_status_for_error_text
+  self.http_status_for_error_text = 500
+
+  # http status code used when an error object is output (json or xml)
+  mattr_accessor :http_status_for_error_object
+  self.http_status_for_error_object = 500
+
+  # Array of custom check blocks
+  mattr_accessor :custom_checks
+  self.custom_checks = [ ]
+
+  def self.add_custom_check(&block)
+    custom_checks << block
+  end
+
   def self.setup
     yield self
   end

@@ -4,30 +4,54 @@
 module HealthCheck
   class Utils
 
-    @@success = "success"
-
-    cattr_accessor :success
-
-    @@smtp_timeout = 30.0
-
-    cattr_accessor :smtp_timeout
-
-    @@error_status_code = 500
-
-    cattr_accessor :error_status_code
-
     @@default_smtp_settings =
-      {
-      :address              => "localhost",
-      :port                 => 25,
-      :domain               => 'localhost.localdomain',
-      :user_name            => nil,
-      :password             => nil,
-      :authentication       => nil,
-      :enable_starttls_auto => true,
-    }
+        {
+            :address              => "localhost",
+            :port                 => 25,
+            :domain               => 'localhost.localdomain',
+            :user_name            => nil,
+            :password             => nil,
+            :authentication       => nil,
+            :enable_starttls_auto => true,
+        }
 
     cattr_accessor :default_smtp_settings
+
+
+    def self.process_checks(checks)
+      errors = ''
+      checks.split('_').each do |check|
+        case check
+          when 'and', 'site'
+            # do nothing
+          when "database"
+            HealthCheck::Utils.get_database_version
+          when "email"
+            errors << HealthCheck::Utils.check_email
+          when "migrations", "migration"
+            database_version  = HealthCheck::Utils.get_database_version
+            migration_version = HealthCheck::Utils.get_migration_version
+            if database_version.to_i != migration_version.to_i
+              errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
+            end
+          when 'cache'
+            errors << HealthCheck::Utils.check_cache
+          when "standard"
+            errors << HealthCheck::Utils.process_checks("database_migrations_custom")
+            errors << HealthCheck::Utils.process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
+          when "custom"
+            HealthCheck.custom_checks.each do |custom_check|
+              errors << custom_check.call(self)
+            end
+          when "all", "full"
+            errors << HealthCheck::Utils.process_checks("database_migrations_custom_email_cache")
+          else
+            return "invalid argument to health_test. "
+        end
+      end
+      return errors
+    end
+
 
     def self.db_migrate_path
       # Lazy initialisation so Rails.root will be defined
@@ -57,12 +81,12 @@ module HealthCheck
 
     def self.check_email
       case ActionMailer::Base.delivery_method
-      when :smtp
-        HealthCheck::Utils.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck.smtp_timeout)
-      when :sendmail
-        HealthCheck::Utils.check_sendmail(ActionMailer::Base.sendmail_settings)
-      else
-        ''
+        when :smtp
+          HealthCheck::Utils.check_smtp(ActionMailer::Base.smtp_settings, HealthCheck.smtp_timeout)
+        when :sendmail
+          HealthCheck::Utils.check_sendmail(ActionMailer::Base.sendmail_settings)
+        else
+          ''
       end
     end
 
@@ -95,7 +119,7 @@ module HealthCheck
             end
           end
         end
-      rescue  Errno::EBADF => ex
+      rescue Errno::EBADF => ex
         status = "Unable to connect to service"
       rescue Exception => ex
         status = ex.to_s
