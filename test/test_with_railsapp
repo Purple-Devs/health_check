@@ -17,7 +17,7 @@ redo)
         $rake db:migrate 
 	;;
     esac
-
+    actual_rails_version=`$rails -v`
     ;;
 *)
     . test/setup_railsapp

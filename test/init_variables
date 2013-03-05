@@ -46,15 +46,15 @@ if [ -x $base_dir/test/bin/rails ]
 then
     rails="$base_dir/test/bin/rails"
     rake="$base_dir/test/bin/rake"
+    export PATH="$base_dir/test/bin:$PATH"
 fi
 
 if [ -x $railsapp/bin/rails ]
 then
     rails="$railsapp/bin/rails"
     rake="$railsapp/bin/rake"
-    export PATH="`pwd`/bin:$PATH"
+    export PATH="$railsapp/bin:$PATH"
 fi
 
 echo "Using rails=$rails, rake=$rake"
 
-actual_rails_version=`$rails -v`

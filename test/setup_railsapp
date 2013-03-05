@@ -26,7 +26,8 @@ do
     export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
 done
 
-rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems
+rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems test/bin test/rails*.gemfile.lock
+
 mkdir -p tmp/gems
 
 . test/init_variables
@@ -45,6 +46,11 @@ if ! bundle --binstubs ; then
 fi
 $rehash
 
+rails="$base_dir/test/bin/rails"
+rake="$base_dir/test/bin/rake"
+
+actual_rails_version=`$rails -v`
+
 [ -d lib/health_check ] || exec echo setup_railsapp MUST be executed in the base of the health_check gem/clone of git repository
 
 echo Installing health_check as a gem into tmp/gems
@@ -59,12 +65,7 @@ ls tmp/gems
 echo Environment:
 env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
 
-rails="$base_dir/test/bin/rails"
-rake="$base_dir/test/bin/rake"
-
 cd $tmp_dir
-
-actual_rails_version=`$rails -v`
 
 case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
     [0-9]*)
