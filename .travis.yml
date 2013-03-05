@@ -3,15 +3,7 @@ notifications:
   email:
     on_success: change
     on_failure: always
-rvm:
-  - 1.8.7
-  - 1.9.3
-  - 2.0.0
-  - rbx-19mode
-  - jruby-19mode
-env:
-  - RUBYGEMS_VERSION=1.8.25
-  #- RUBYGEMS_VERSION=
+
 before_install:
   - gem update --system $RUBYGEMS_VERSION
   - gem --version
@@ -19,106 +11,61 @@ before_install:
   - bundle --version
   - mkdir -p tmp/bundle
 
-gemfile:
-  - test/rails_2.3.gemfile
-  - test/rails_3.0.gemfile
-  - test/rails_3.1.gemfile
-  - test/rails_3.2.gemfile
-  - test/rails_4.0-beta.gemfile
-
 bundler_args: "--binstubs"
 
 script: ./test/test_with_railsapp
 
+rvm: 
+  - 1.8.7
+  - 1.9.2
+  - 1.9.3
+  - 2.0.0
+  - jruby-19mode
+  - rbx-19mode
+  - ree
+
 matrix:
-  exclude:
+  include:
+    # rails 2.3 march 16 2009 - ruby 1.8.7
     - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
+      env: RUBYGEMS_VERSION=1.8.25
+
+    # rails 3.0 aug 29 2010 - ruby 1.8.7
     - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+      env: RUBYGEMS_VERSION=
+
+    # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: 1.9.2
+      gemfile: test/rails_3.1.gemfile
+      env: RUBYGEMS_VERSION=
+
+    # rails 3.2 jan 20 2012 - ruby 1.9.3
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+    
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
+    
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+    
+    - rvm: ree
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+    
+    # rails 4.0 - in development as of 5 mar 2013 - ruby 2.0
+    - rvm: 2.0.0
       gemfile: test/rails_4.0-beta.gemfile
       env: RUBYGEMS_VERSION=
-    - rvm: 1.8.7
-      gemfile: test/rails_4.0-beta.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-
-    - rvm: rbx-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: rbx-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-
-    - rvm: 1.9.3
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: 1.9.3
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-
-    - rvm: 2.0.0
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: 2.0.0
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: 2.0.0
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: 2.0.0
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: 2.0.0
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: 2.0.0
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-
-    - rvm: rbx-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: rbx-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: rbx-19mode
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: rbx-19mode
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: rbx-19mode
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: rbx-19mode
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-19mode
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
 
   allow_failures:
-    - env: RUBYGEMS_VERSION=
+    - gemfile: test/rails_4.0-beta.gemfile
