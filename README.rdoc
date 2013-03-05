@@ -9,13 +9,17 @@ health_check provides various monitoring URIs, for example:
     curl localhost:3000/health_check
     success
 
-    curl localhost:3000/health_check/all
-    success
+    curl localhost:3000/health_check/all.json
+    {"healthy":true,"message":"success"}
 
-    curl localhost:3000/health_check/database_cache_migration
-    success
+    curl localhost:3000/health_check/database_cache_migration.xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <hash>
+      <healthy type="boolean">true</healthy>
+      <message>success</message>
+    </hash>
 
-On failure a 500 http status is returned with a simple explination of the failure
+On failure a 500 http status is returned with a simple explanation of the failure
 
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
@@ -31,12 +35,13 @@ The health_check controller disables sessions and logging for its actions to min
 * migration - checks that the database migration level matches that in db/migrations
 * cache - checks that a value can be written to the cache
 * site - checks rails is running sufficiently to render text
+* custom - runs checks added via config.add_custom_check
 
 The email gateway is not checked unless the smtp settings have been changed.
-Specify full or include email in the list of checks to varify the smtp settings
+Specify full or include email in the list of checks to verify the smtp settings
 (eg use 127.0.0.1 instead of localhost).
 
-Note: rails 4.0 also checks migrations and throws a ActiveRecord::PendingMigrationError (http error 500)
+Note: rails 4.0 also checks migrations and throws an ActiveRecord::PendingMigrationError exception (http error 500) if there is an error
 
 == Installation
 

@@ -227,12 +227,12 @@ cat > public/ajax_example.html <<'EOF'
       <ul>
 	<li><a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/site');">Minimal health check should always work</a>
 	  (<a href="#" onclick="dynamic_call('json', 'http://localhost:3000/health_check/site.json');">json</a>,
-	  <a href="#" onclick="dynamic_call('site', 'http://localhost:3000/health_check/site.xml');">xml</a>,
+	  <a href="#" onclick="dynamic_call('xml', 'http://localhost:3000/health_check/site.xml');">xml</a>,
 	  <a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/site.html');">html</a>)
 
 	<li><a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/fail');">Force health check to fail!</a>
 	  (<a href="#" onclick="dynamic_call('json', 'http://localhost:3000/health_check/fail.json');">json</a>,
-	  <a href="#" onclick="dynamic_call('site', 'http://localhost:3000/health_check/fail.xml');">xml</a>,
+	  <a href="#" onclick="dynamic_call('xml', 'http://localhost:3000/health_check/fail.xml');">xml</a>,
 	  <a href="#" onclick="dynamic_call('text', 'http://localhost:3000/health_check/fail.html');">html</a>)
 	<li>Last results sent to success:<ul>
 	  <li><b>Data:</b><span id=data_success></span>
