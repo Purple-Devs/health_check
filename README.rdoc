@@ -119,20 +119,38 @@ See
 * Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Any other montoring service that can be set to check for the word success in the test returned from a url
 
-=== Json and XML requests
+=== Requesting Json and XML responses
 
-Health_check will now respond with an encoded hash object if json or xml is requested via the HTTP Accept header or by adding .json or .xml to the url. To force plain text, add .html to the url.
+Health_check will respond with an encoded hash object if json or xml is requested.
+Either set the HTTP Accept header or append .json or .xml to the url.
 
 The hash contains two keys:
 * healthy - true if requested checks pass (boolean)
 * message - text message ("success" or error message)
 
+The following commands 
+
   curl -v localhost:3000/health_check.json
   curl -v localhost:3000/health_check/email.json
-  curl -v -H “Accept: application/json” localhost:3000/health_check
+  curl -v -H "Accept: application/json" localhost:3000/health_check
+
+Will return a result with Content-Type: application/json and body like:
+
+  {"healthy":true,"message":"success"}
+
+These following commands
+
   curl -v localhost:3000/health_check.xml
   curl -v localhost:3000/health_check/migration_cache.xml
-  curl -v -H “Accept: text/xml” localhost:3000/health_check/cache
+  curl -v -H "Accept: text/xml" localhost:3000/health_check/cache
+
+Will return a result with Content-Type: application/xml and body like:
+
+  <?xml version="1.0" encoding="UTF-8"?>
+  <hash>
+    <healthy type="boolean">true</healthy>
+    <message>success</message>
+  </hash>
 
 See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax example
 
