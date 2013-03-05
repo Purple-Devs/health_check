@@ -1,5 +1,9 @@
 = Change Log =
 
+* 1.2.0 - The gem can now be configured, including timeouts, status codes and text returned on success
+        - Customn checks can be added via initializer like config.add_custom_check { CustomCheckClass.a_custom_check }
+	- You can now request the response to be json or xml (via url or Content-accepted header)
+	- reduced tests to the versions of ruby recomended for the different versions of rails
 * 1.1.2 - Change to bundler support for building gems, as jeweler gem was broken by v2.0.0 of rubygems
 * 1.1.0 - Include cache check (Thanks to https://github.com/mgomes1 ) and some changes to test setup to workaround and diagnose test failures under rvm
 * 1.0.2 - Included travis config and gemfiles used in travis tests in gem and changes to test setup so that gem test 
