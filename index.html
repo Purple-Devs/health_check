@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Health check : Monitor the health of your rails application with standard uptime monitoring services" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Health check</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ianheggie/health_check">View on GitHub</a>
+
+          <h1 id="project_title">Health check</h1>
+          <h2 id="project_tagline">Monitor the health of your rails application with standard uptime monitoring services</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ianheggie/health_check/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ianheggie/health_check/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>health_check</h1>
+
+<p><strong>The Health_check gem provides a simple service that Pingdom, NewRelic, EngineYard, uptime.openacs.org and other uptime services can monitor to confirm the rails application is healthy, or alert you if it isn't.</strong></p>
+
+<p>The health checks include checking the database, (nfs/local) file system, email gateway, cache are accessible and that migrations are up to date. You can also add your own custom checks as well.</p>
+
+<p><strong>Installation</strong></p>
+
+<ul>
+<li>Add the line <code>gem "health_check"</code> to your Gemfile,</li>
+<li>run <code>bundle</code>
+</li>
+<li>deploy to your server</li>
+<li>Configure your uptime service to monitor <a href="http://your.site/health_check">http://your.site/health_check</a> for the text "success" (and alert you on failure)</li>
+</ul><p>health_check is compatible with rails versions 2.3 through 4.0 - See travis-ci tests for further details </p>
+
+<h2>Further Details</h2>
+
+<ul>
+<li><a href="https://github.com/ianheggie/health_check">GitHub Project</a></li>
+<li><a href="https://github.com/ianheggie/health_check/wiki">Wiki</a></li>
+<li><a href="https://rubygems.org/gems/health_check">health_check on RubyGems</a></li>
+<li><a href="https://travis-ci.org/ianheggie/health_check">travis-ci tests</a></li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Health check maintained by <a href="https://github.com/ianheggie">ianheggie</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-39037614-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
