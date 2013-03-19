@@ -25,7 +25,8 @@ module HealthCheck
   self.http_status_for_error_object = 500
 
   # Array of custom check blocks
-  mattr_accessor :custom_checks, :full_checks
+  mattr_accessor :custom_checks
+  mattr_accessor :full_checks
   self.custom_checks = [ ]
   self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
 
