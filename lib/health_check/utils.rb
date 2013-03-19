@@ -44,7 +44,7 @@ module HealthCheck
               errors << custom_check.call(self)
             end
           when "all", "full"
-            errors << HealthCheck::Utils.process_checks("database_migrations_custom_email_cache")
+            errors << HealthCheck::Utils.process_checks(HealthCheck.full_checks.join('_'))
           else
             return "invalid argument to health_test. "
         end
@@ -67,7 +67,7 @@ module HealthCheck
     end
 
     def self.get_database_version
-      ActiveRecord::Migrator.current_version
+      ActiveRecord::Migrator.current_version if defined?(ActiveRecord)
     end
 
     def self.get_migration_version(dir = self.db_migrate_path)
