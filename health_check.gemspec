@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.description = <<-EOF
   	Simple health check of Rails app for uptime monitoring with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
   EOF
-  gem.homepage      = "https://github.com/ianheggie/health_check"
+  gem.homepage      = "http://ianheggie.github.io/health_check/"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

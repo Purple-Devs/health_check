@@ -180,11 +180,13 @@ See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax exam
 
 == Testing
 
-=== Automated testing
+=== Automated testing and other checks
 
-See Travis CI testing result: {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]
+Travis CI runs the tests: {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]
 
-Code Climate also monitors this project for code quality: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
+Code Climate monitors code quality: {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check]
+
+Gemnasium monitors gem dependencies {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check]
 
 === Manual testing
 
