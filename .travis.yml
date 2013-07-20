@@ -62,7 +62,7 @@ matrix:
 
     # rails 4.0 - in development as of 5 mar 2013 - ruby 2.0
     - rvm: 2.0.0
-      gemfile: test/rails_4.0-beta.gemfile
+      gemfile: test/rails_4.0.gemfile
       env: RUBYGEMS_VERSION=
 
     - rvm: jruby-19mode
