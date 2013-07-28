@@ -5,6 +5,7 @@ module HealthCheck
 
   if Rails.version >= '3.0'
     class Engine < Rails::Engine
+      cattr_accessor :routes_defined
     end
   end
 
@@ -42,7 +43,9 @@ require "health_check/version"
 require 'health_check/utils'
 require 'health_check/health_check_controller'
 
-unless defined?(HealthCheck::Engine)
+if defined?(HealthCheck::Engine)
+  require 'health_check/health_check_routes'
+else
   require 'health_check/add_23_routes'
 end
 

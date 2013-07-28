@@ -69,5 +69,3 @@ matrix:
       gemfile: test/rails_3.2.gemfile
       env: RUBYGEMS_VERSION=1.8.25
 
-  allow_failures:
-    - gemfile: test/rails_4.0-beta.gemfile
