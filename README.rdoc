@@ -29,7 +29,7 @@ The health_check controller disables sessions and logging for its actions to min
 == Checks
 
 * standard (default) - site, database and migrations checks are run plus email if settings have been changed
-* all / full - all checks are run
+* all / full - all checks are run (can be overriden in config block)
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
@@ -99,6 +99,9 @@ To change the configuration of health_check, create a file `config/initializers/
       # total failure of rails application (http status of 500 etc)
 
       config.http_status_for_error_object = 500
+
+      # You can set what tests are run with the 'full' or 'all' parameter
+      self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do
