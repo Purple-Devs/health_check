@@ -73,7 +73,7 @@ module HealthCheck
     def self.get_migration_version(dir = self.db_migrate_path)
       latest_migration = nil
       Dir[File.join(dir, "[0-9]*_*.rb")].each do |f|
-        l = f.scan(/0*([0-9]+)_[_.a-zA-Z0-9]*.rb/).first.first
+        l = f.scan(/0*([0-9]+)_[_.a-zA-Z0-9]*.rb/).first.first rescue -1
         latest_migration = l if !latest_migration || l.to_i > latest_migration.to_i
       end
       latest_migration

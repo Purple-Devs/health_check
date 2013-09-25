@@ -129,6 +129,13 @@ echo
 
 echo 'TESTING health_check/migration should fail without all migrations ...'
 cp $base_dir/test/migrate/twelve/* db/migrate
+
+case "$actual_rails_version" in
+    *' '[12].*|*' '3.[01]*)
+        echo removing db/migrate/*.*.rb "($actual_rails_version does not support extra dots in migration names)"
+        rm -f db/migrate/*.*.rb
+        ;;
+esac
 ls db/migrate
 $testurl ${host}/health_check/migration 550 text/plain failed
 echo
