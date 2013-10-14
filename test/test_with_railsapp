@@ -26,12 +26,54 @@ esac
 
 cd $railsapp
 date > $custom_file
+rm -f $catchall_file
 
 testurl="$base_dir/test/testurl"
 fake_smtp_server="$base_dir/test/fake_smtp_server"
 
 server_pid=''
 fake_smtp_pid=''
+
+port=3456
+host=http://localhost:${port}
+
+start_server()
+{
+    if [ -x script/server ]
+    then
+        if [ -f Gemfile ]
+        then
+            echo Starting server on port $port using bundle exec ./script/server ...
+            bundle exec ./script/server webrick -p $port &
+        else
+            echo Starting server on port $port using ./script/server ...
+            ./script/server webrick -p $port &
+        fi
+    else
+        echo Starting server on port $port using $rails s ...
+        $rails s webrick -p $port &
+    fi
+    server_pid=$!
+    sleep 3
+    echo
+    echo 'Check server is up ...'
+    $testurl ${host}/static.txt
+    #sleep 3
+    #echo
+    #echo 'Double check server is up ...'
+    #$testurl ${host}/static.txt
+}
+
+kill_server()
+{
+    case "$server_pid" in
+        [0-9]*)
+            echo ========================================================
+            echo "Killing rails server [pid: $server_pid]"
+            kill -9 $server_pid 
+            ;;
+    esac
+}
 
 finish()
 {
@@ -56,13 +98,7 @@ finish()
             kill -9 $fake_smtp_pid
             ;;
     esac
-    case "$server_pid" in
-        [0-9]*)
-            echo ========================================================
-            echo "Killing rails server [pid: $server_pid]"
-            kill -9 $server_pid 
-            ;;
-    esac
+    kill_server
     wait
     trap "" 0
     echo ========================================================
@@ -73,33 +109,27 @@ finish()
 
 trap "finish FAILED 1" 0
 
-port=3456
-
-if [ -x script/server ]
-then
-    if [ -f Gemfile ]
-    then
-	echo Starting server on port $port using bundle exec ./script/server ...
-	bundle exec ./script/server webrick -p $port &
-    else
-	echo Starting server on port $port using ./script/server ...
-	./script/server webrick -p $port &
-    fi
-else
-    echo Starting server on port $port using $rails s ...
-    $rails s webrick -p $port &
-fi
-server_pid=$!
-sleep 17
-
-echo STATIC-FILE > public/static.txt
-
-host=http://localhost:${port}
+start_server
 
 # get a static file
 echo
 echo 'TESTING can get a static file ...'
 $testurl ${host}/static.txt 200 text/plain STATIC-FILE
+echo
+
+echo
+echo 'TESTING can get an example controller ...'
+$testurl ${host}/example 200 text/plain 'example page'
+echo
+
+echo
+echo 'TESTING direct call to catchall method on example controller ...'
+$testurl ${host}/example/catchall 200 text/plain 'catch all route'
+echo
+
+echo
+echo 'TESTING no catchall route active ...'
+$testurl ${host}/another/url 404
 echo
 
 echo 'TESTING health_check/migration should pass with no database migrations ...'
@@ -218,6 +248,26 @@ $testurl ${host}/health_check.xml 555 application/xml '<healthy type="boolean">f
 echo
 
 date > $custom_file
+date > $catchall_file
+
+stop_server
+start_server
+
+echo
+echo 'TESTING can get an example controller ...'
+$testurl ${host}/example 200 text/plain 'example page'
+echo
+
+echo 'TESTING health_check/site should pass ...'
+$testurl ${host}/health_check/site 200 text/plain $success
+echo
+
+echo
+echo 'TESTING catchall route active ...'
+$testurl ${host}/another/url 200 text/plain 'catch all route'
+echo
+
+rm -f $catchall_file
 
 finish PASSED 0
 exit 0

@@ -181,6 +181,8 @@ case $db in
         ;;
 esac
 
+echo STATIC-FILE > public/static.txt
+
 cat > public/ajax_example.html <<'EOF'
     <html>
     <head>
@@ -251,6 +253,41 @@ cat > public/ajax_example.html <<'EOF'
     </body>
     </html>
 EOF
+
+cat > app/controller/example_controller.rb <<'EOF'
+class ExampleController < ApplicationController
+
+  def index
+    render :text => 'example page'
+  end
+  
+  def catchall
+    render :text => 'catch all route'
+  end
+  
+end
+
+EOF
+
+mv -f config/routes.rb config/routes.rb-old
+var=`ruby -n -e 'print $1 if /^[^#]+ do \|([^\|]+)\|/' config/routes.rb-old`
+(
+  ruby -n -e 'print if not /^end/..9999' config/routes.rb-old
+  echo "# CATCH ALL ROUTE"
+  case "$var" in
+  '')
+    echo "match('*path' => 'example#catchall') if File.exists?('$catchall_file')"
+    ;;
+  *)
+    echo "${var}.connect('*path', :controller => 'example', :action => 'catchall') if File.exists?('$catchall_file')"
+    ;;
+  esac
+  ruby -n -e 'print if /^end/..9999' config/routes.rb-old
+)  > config/routes.rb
+
+echo =============== config/routes.rb ========================
+cat config/routes.rb
+echo =======================================
 
 echo
 echo "Created $actual_rails_version app in $railsapp using adapter $db"
