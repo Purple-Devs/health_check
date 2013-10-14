@@ -254,7 +254,7 @@ cat > public/ajax_example.html <<'EOF'
     </html>
 EOF
 
-cat > app/controller/example_controller.rb <<'EOF'
+cat > app/controllers/example_controller.rb <<'EOF'
 class ExampleController < ApplicationController
 
   def index
