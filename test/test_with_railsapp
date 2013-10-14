@@ -119,12 +119,12 @@ echo
 
 echo
 echo 'TESTING can get an example controller ...'
-$testurl ${host}/example 200 text/plain 'example page'
+$testurl ${host}/example 200 text/html 'example page'
 echo
 
 echo
 echo 'TESTING direct call to catchall method on example controller ...'
-$testurl ${host}/example/catchall 200 text/plain 'catch all route'
+$testurl ${host}/example/catchall 200 text/html 'catch all route'
 echo
 
 echo
@@ -255,7 +255,7 @@ start_server
 
 echo
 echo 'TESTING can get an example controller ...'
-$testurl ${host}/example 200 text/plain 'example page'
+$testurl ${host}/example 200 text/html 'example page'
 echo
 
 echo 'TESTING health_check/site should pass ...'
@@ -264,7 +264,7 @@ echo
 
 echo
 echo 'TESTING catchall route active ...'
-$testurl ${host}/another/url 200 text/plain 'catch all route'
+$testurl ${host}/another/url 200 text/html 'catch all route'
 echo
 
 rm -f $catchall_file
