@@ -275,7 +275,7 @@ if [ -s config/routes.rb ]; then
   (
     ruby -n -e 'print if not /^end/..9999' config/routes.rb-old | tee /tmp/t$$
     if [ ! -s /tmp/t$$ ]; then
-      echo "WARNING: ruby -n -e failed silently!! (rbx-19mode has that problem)"
+      echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
       sed -e '/^end/,$d' config/routes.rb-old
     fi
 
@@ -308,10 +308,10 @@ if [ -s config/routes.rb ]; then
     esac
     ruby -n -e 'print if /^end/..9999' config/routes.rb-old | tee /tmp/t$$ 
     if [ ! -s /tmp/t$$ ]; then
-      echo "WARNING: ruby -n -e failed silently!! (rbx-19mode has that problem)"
+      echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
       sed -n -e '/^end/,$p' config/routes.rb-old
     fi
-  )  > config/routes.rb
+  ) 3>&1 > config/routes.rb
 
   #echo =============== config/routes.rb-old ========================
   #cat config/routes.rb-old
