@@ -273,7 +273,12 @@ if [ -s config/routes.rb ]; then
   mv -f config/routes.rb config/routes.rb-old
   var=`ruby -n -e 'print $1 if /^[^#]+ do \|([^\|]+)\|/' config/routes.rb-old`
   (
-    ruby -n -e 'print if not /^end/..9999' config/routes.rb-old
+    ruby -n -e 'print if not /^end/..9999' config/routes.rb-old | tee /tmp/t$$
+    if [ ! -s /tmp/t$$ ]; then
+      echo "WARNING: ruby -n -e failed silently!! (rbx-19mode has that problem)"
+      sed -p -e '/^end/,$d' config/routes.rb-old
+    fi
+
     case "$var" in
     '')
       echo "  # example controller"
@@ -286,7 +291,7 @@ if [ -s config/routes.rb ]; then
       ;;
     *)
       echo "  # example controller"
-      echo "  ${var}.connect 'example(/:action(/:id))(.:format)' => 'example'"
+      echo "  ${var}.connect 'example(/:action(/:id))(.:format)', :controller => 'example'"
       echo "  if File.exists?('$catchall_file')"
       echo "    health_check_routes(${var})"
       echo "    # CATCH ALL ROUTE"
@@ -294,7 +299,11 @@ if [ -s config/routes.rb ]; then
       echo "  end"
       ;;
     esac
-    ruby -n -e 'print if /^end/..9999' config/routes.rb-old
+    ruby -n -e 'print if /^end/..9999' config/routes.rb-old | tee /tmp/t$$ 
+    if [ ! -s /tmp/t$$ ]; then
+      echo "WARNING: ruby -n -e failed silently!! (rbx-19mode has that problem)"
+      sed -n -e '/^end/,$p' config/routes.rb-old
+    fi
   )  > config/routes.rb
 
   echo =============== config/routes.rb-old ========================
