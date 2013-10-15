@@ -21,7 +21,6 @@ rvm:
   - jruby-19mode
   - rbx-19mode
   - ruby-head
-  - jruby-head
 
 gemfile:
   - test/rails_4.0.gemfile
@@ -33,10 +32,6 @@ matrix:
 matrix:
   allow_failures:
     - rvm: ruby-head
-      gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION=
-
-    - rvm: jruby-head
       gemfile: test/rails_4.0.gemfile
       env: RUBYGEMS_VERSION=
 
@@ -131,9 +126,5 @@ matrix:
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
       env: RUBYGEMS_VERSION= RAILS_SERVER=unicorn
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=mongrel
 
 

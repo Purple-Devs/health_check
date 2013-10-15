@@ -49,29 +49,52 @@ esac
 
 start_server()
 {
-    if [ -x script/server ]
+    bundle_prefix=''
+    if [ -f Gemfile ]
     then
-        if [ -f Gemfile ]
-        then
-            echo Starting server on port $port using bundle exec ./script/server ...
-            bundle exec ./script/server ${RAILS_SERVER:-webrick} -p $port &
-        else
-            echo Starting server on port $port using ./script/server ...
-            ./script/server ${RAILS_SERVER:-webrick} -p $port &
-        fi
-    else
-        echo Starting server on port $port using $rails s ...
-        $rails s ${RAILS_SERVER:-webrick} -p $port &
+        bundle_prefix='bundle exec'
     fi
+    server_arg=${RAILS_SERVER:-webrick}
+    case "$server_arg" in
+    puma) 
+        $bundle_prefix puma -b tcp://127.0.0.1:$port &
+        ;;
+    passenger) 
+        $bundle_prefix passenger start -p $port &
+        ;;
+    thin) 
+        $bundle_prefix thin start -p $port &
+        ;;
+    thin) 
+        $bundle_prefix unicorn -p $port &
+        ;;
+    *)
+        if [ -x script/server ]
+        then
+            echo Starting server on port $port using $bundle_prefix ./script/server ...
+            $bundle_prefix ./script/server $server_arg -p $port &
+        else
+            echo Starting server on port $port using $rails s ...
+            $bundle_prefix $rails server $server_arg -p $port &
+        fi
+        ;;
+    esac
     server_pid=$!
     sleep 3
     echo
-    echo 'Check server is up (retry 6 times in case server is downloading and compiling on first run)...'
-    $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt 
-    #sleep 3
-    #echo
-    #echo 'Double check server is up ...'
-    #$testurl ${host}/static.txt
+    echo 'Checking server is up ...'
+    for i in 1 2 3 4 5 6
+    do
+      if $testurl ${host}/static.txt ; then
+        break
+      fi
+      if kill -0 $server_pid ; then
+        echo "waiting ${i} ..."
+      else
+        echo "ERROR: Server has died!!"
+        exit 3
+      fi
+   done
 }
 
 stop_server()
