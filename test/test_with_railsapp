@@ -64,7 +64,7 @@ start_server()
     #$testurl ${host}/static.txt
 }
 
-kill_server()
+stop_server()
 {
     case "$server_pid" in
         [0-9]*)
@@ -98,7 +98,7 @@ finish()
             kill -9 $fake_smtp_pid
             ;;
     esac
-    kill_server
+    stop_server
     wait
     trap "" 0
     echo ========================================================
