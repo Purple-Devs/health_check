@@ -281,22 +281,29 @@ if [ -s config/routes.rb ]; then
 
     case "$var" in
     '')
-      echo "  # example controller"
+      echo "  # -----------------------------------------"
+      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
       echo "  if File.exists?('$catchall_file')"
       echo "    health_check_routes"
       echo "    # CATCH ALL ROUTE"
       echo "    get '*path' => 'example#catchall'"
       echo "  end"
+      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "  # ---------------------------------------"
       ;;
     *)
+      echo "  # -----------------------------------------"
+      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  # example controller"
       echo "  ${var}.connect 'example(/:action(/:id))(.:format)', :controller => 'example'"
       echo "  if File.exists?('$catchall_file')"
-      echo "    health_check_routes(${var})"
+      echo "    # health_check routes already at the top in rails 2.3! do not need to call health_check_routes"
       echo "    # CATCH ALL ROUTE"
       echo "    ${var}.connect '*path', :controller => 'example', :action => 'catchall'"
       echo "  end"
+      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "  # ---------------------------------------"
       ;;
     esac
     ruby -n -e 'print if /^end/..9999' config/routes.rb-old | tee /tmp/t$$ 

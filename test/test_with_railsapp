@@ -129,8 +129,13 @@ echo
 
 echo
 echo 'TESTING no catchall route active ...'
-$testurl ${host}/another/url 500
-echo
+expected_status=500
+case "$actual_rails_version" in
+    *' '[12].*)
+        expected_status=404
+        ;;
+esac
+$testurl ${host}/another/url $expected_status
 
 echo 'TESTING health_check/migration should pass with no database migrations ...'
 mkdir -p db/migrate
