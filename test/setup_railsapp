@@ -134,6 +134,15 @@ then
     echo Adding health_check as gem to Gemfile...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
 
+    case "$RAILS_SERVER" in
+    webrick|'')
+            echo "Using default webrick server"
+            ;;
+    *)
+            echo "Using $RAILS_SERVER server"
+            echo "gem '$RAILS_SERVER'" >> Gemfile
+            ;;
+    esac
     echo
     echo Gemfile contents:
     cat Gemfile

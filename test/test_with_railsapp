@@ -37,16 +37,6 @@ fake_smtp_pid=''
 port=3456
 host=http://localhost:${port}
 
-case "$RAILS_SERVER" in
-webrick|'')
-        echo "Using default webrick server"
-        ;;
-*)
-        echo "Using $RAILS_SERVER server"
-        gem install $RAILS_SERVER
-        ;;
-esac
-
 start_server()
 {
     bundle_prefix=''
