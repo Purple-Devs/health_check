@@ -16,21 +16,30 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 rvm: 
-  - 1.8.7
-  - 1.9.2
   - 1.9.3
   - 2.0.0
   - jruby-19mode
   - rbx-19mode
-  - ree
+  - ruby-head
+  - jruby-head
 
 gemfile:
-  - test/rails_3.2.gemfile
+  - test/rails_4.0.gemfile
 
 env:
   - RUBYGEMS_VERSION=
 
 matrix:
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: jruby-head
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION=
+
   exclude:
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
@@ -60,12 +69,30 @@ matrix:
       gemfile: test/rails_3.1.gemfile
       env: RUBYGEMS_VERSION=
 
-    # rails 4.0 - in development as of 5 mar 2013 - ruby 2.0
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
+    # rails 3.2 jan 20, 2012
+    - rvm: 1.8.7
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: 1.9.2
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+
+    - rvm: ree
+      gemfile: test/rails_3.2.gemfile
       env: RUBYGEMS_VERSION=
 
     - rvm: jruby-19mode
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
+      env: RUBYGEMS_VERSION=
 
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.2.gemfile
+      env: RUBYGEMS_VERSION=
+
+    # rails 4.0  June 25, 2013
+    # (tests with full list)
