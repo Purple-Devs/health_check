@@ -129,7 +129,7 @@ echo
 
 echo
 echo 'TESTING no catchall route active ...'
-$testurl ${host}/another/url 404
+$testurl ${host}/another/url 500
 echo
 
 echo 'TESTING health_check/migration should pass with no database migrations ...'
@@ -258,13 +258,13 @@ echo 'TESTING can get an example controller ...'
 $testurl ${host}/example 200 text/html 'example page'
 echo
 
-echo 'TESTING health_check/site should pass ...'
-$testurl ${host}/health_check/site 200 text/plain $success
-echo
-
 echo
 echo 'TESTING catchall route active ...'
 $testurl ${host}/another/url 200 text/html 'catch all route'
+echo
+
+echo 'TESTING health_check/site should pass ...'
+$testurl ${host}/health_check/site 200 text/plain $success
 echo
 
 rm -f $catchall_file
