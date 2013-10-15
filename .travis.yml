@@ -40,6 +40,26 @@ matrix:
       gemfile: test/rails_4.0.gemfile
       env: RUBYGEMS_VERSION=
 
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=puma
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=passenger
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=thin
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=unicorn
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=mongrel
+
   exclude:
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
@@ -96,3 +116,24 @@ matrix:
 
     # rails 4.0  June 25, 2013
     # (tests with full list)
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=puma
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=passenger
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=thin
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=unicorn
+
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RUBYGEMS_VERSION= RAILS_SERVER=mongrel
+
+

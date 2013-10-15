@@ -37,6 +37,16 @@ fake_smtp_pid=''
 port=3456
 host=http://localhost:${port}
 
+case "$RAILS_SERVER" in
+webrick|'')
+        echo "Using default webrick server"
+        ;;
+*)
+        echo "Using $RAILS_SERVER server"
+        gem install $RAILS_SERVER
+        ;;
+esac
+
 start_server()
 {
     if [ -x script/server ]
@@ -44,20 +54,20 @@ start_server()
         if [ -f Gemfile ]
         then
             echo Starting server on port $port using bundle exec ./script/server ...
-            bundle exec ./script/server webrick -p $port &
+            bundle exec ./script/server ${RAILS_SERVER:-webrick} -p $port &
         else
             echo Starting server on port $port using ./script/server ...
-            ./script/server webrick -p $port &
+            ./script/server ${RAILS_SERVER:-webrick} -p $port &
         fi
     else
         echo Starting server on port $port using $rails s ...
-        $rails s webrick -p $port &
+        $rails s ${RAILS_SERVER:-webrick} -p $port &
     fi
     server_pid=$!
     sleep 3
     echo
-    echo 'Check server is up ...'
-    $testurl ${host}/static.txt
+    echo 'Check server is up (retry 6 times in case server is downloading and compiling on first run)...'
+    $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt || $testurl ${host}/static.txt 
     #sleep 3
     #echo
     #echo 'Double check server is up ...'
