@@ -176,9 +176,12 @@ fi
 
 for e in test development production
 do
-    echo ======== config/environments/$e.rb ================
-    cat config/environments/$e.rb || true
-    echo
+    if [ -f config/environments/$e.rb ]; then
+      echo ======== config/environments/$e.rb ================
+      sed -i.bak -e 's/config.serve_static_assets = false/config.serve_static_assets = true   # NOTE: health_check test: changed to true/' config/environments/$e.rb 
+      cat config/environments/$e.rb || true
+      echo
+    fi
 done
 echo "============== config/environment.rb ============="
 cat config/environment.rb
