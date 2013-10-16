@@ -122,10 +122,6 @@ HealthCheck.setup do |config|
 end
 !
 
-echo "Last ten lines of config/environment.rb:"
-tail -10 config/environment.rb
-echo 
-
 echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
 unset BUNDLE_GEMFILE
 
@@ -180,10 +176,14 @@ fi
 
 for e in test development production
 do
-    echo ======== config/environments/$e ================
-    cat config/environments/$e 
+    echo ======== config/environments/$e.rb ================
+    cat config/environments/$e.rb || true
     echo
 done
+echo "============== config/environment.rb ============="
+cat config/environment.rb
+echo 
+
 echo ========================
 case $db in
     jdbcsqlite3)
