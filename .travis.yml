@@ -31,26 +31,6 @@ matrix:
     - rvm: ruby-head
       gemfile: test/rails_4.0.gemfile
 
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=puma
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=passenger
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=thin
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=unicorn
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=mongrel
-
   exclude:
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
