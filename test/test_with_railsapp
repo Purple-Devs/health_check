@@ -293,17 +293,7 @@ start_server
 
 echo
 echo 'TESTING no catchall route active ...'
-expected_status=500
-case "$actual_rails_version" in
-    *' '[12].*)
-        expected_status=404
-        ;;
-esac
-case "$server_arg" in
-passenger) 
-    expected_status=502
-    ;;
-esac
+expected_status=404,500,502
 $testurl ${host}/another/url $expected_status
 
 common_tests

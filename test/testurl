@@ -30,16 +30,16 @@ puts "  response code: #{response.code} #{response.message}"
 puts "  content_type: #{response.content_type}"
 puts "  body: #{page_content}"
 
-if ARGV[1]
-  if response.code == ARGV[1]
-    puts "PASS (response code was #{ARGV[1]})"
+if ARGV[1] and ARGV[1] != ''
+  if ARGV[1].split(',').include?(response.code)
+    puts "PASS (response code was #{response.code} which matched #{ARGV[1]})"
   else
     puts "FAIL (response code was #{response.code}, expected #{ARGV[1]})" 
     exit 1
   end
 end
 
-if ARGV[2]
+if ARGV[2] and ARGV[2] != ''
   if response.content_type == ARGV[2]
     puts "PASS (content type was #{response.content_type})"
   else
@@ -48,7 +48,7 @@ if ARGV[2]
   end
 end
 
-if ARGV[3]
+if ARGV[3] and ARGV[3] != ''
   if page_content.to_s.include? ARGV[3]
     puts "PASS (found #{ARGV[3]})"
   else
