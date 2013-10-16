@@ -39,6 +39,10 @@ host=http://127.0.0.1:${port}
 
 start_server()
 {
+    # restart migration list
+    rm -rf db/migrate db/schema.rb
+    mkdir -p db/migrate
+
     # Increment port each time to make sure we have not trouble with address/port already allocated
     port=`expr 1 + $port`
     host=http://localhost:${port}
@@ -145,9 +149,6 @@ trap "finish FAILED 1" 0
 
 common_tests()
 {
-    # restart migration list
-    rm -rf db/migrate
-    mkdir -p db/migrate
 
     echo
     echo 'TESTING can get a static file ...'
