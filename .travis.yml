@@ -25,44 +25,41 @@ rvm:
 gemfile:
   - test/rails_4.0.gemfile
 
-env:
-  - RUBYGEMS_VERSION=
-
 matrix:
 matrix:
   allow_failures:
     - rvm: ruby-head
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=puma
+      env: RAILS_SERVER=puma
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=passenger
+      env: RAILS_SERVER=passenger
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=thin
+      env: RAILS_SERVER=thin
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=unicorn
+      env: RAILS_SERVER=unicorn
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=mongrel
+      env: RAILS_SERVER=mongrel
 
   exclude:
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: jruby-19mode
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
+
+    - rvm: rbx-19mode
+      gemfile: test/rails_4.0.gemfile
 
   include:
     # rails 2.3 march 16 2009 - ruby 1.8.7
@@ -73,58 +70,52 @@ matrix:
     # rails 3.0 aug 29 2010 - ruby 1.8.7
     - rvm: 1.8.7
       gemfile: test/rails_3.0.gemfile
-      env: RUBYGEMS_VERSION=
 
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
     - rvm: 1.8.7
       gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: 1.9.2
       gemfile: test/rails_3.1.gemfile
-      env: RUBYGEMS_VERSION=
 
     # rails 3.2 jan 20, 2012
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: 1.9.2
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: ree
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: jruby-19mode
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     - rvm: rbx-19mode
       gemfile: test/rails_3.2.gemfile
-      env: RUBYGEMS_VERSION=
 
     # rails 4.0  June 25, 2013
     # (tests with full list)
-    - rvm: 2.0.0
+    - rvm: rbx-19mode
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=puma
+      env: RAILS_ENV2=development
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=passenger
+      env: RAILS_SERVER=puma
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=thin
+      env: RAILS_SERVER=passenger
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RUBYGEMS_VERSION= RAILS_SERVER=unicorn
+      env: RAILS_SERVER=thin
 
+    - rvm: 2.0.0
+      gemfile: test/rails_4.0.gemfile
+      env: RAILS_SERVER=unicorn
 

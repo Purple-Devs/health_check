@@ -308,9 +308,9 @@ $testurl ${host}/another/url $expected_status
 common_tests
 
 echo ========================================================
-echo TESTING WITH CATCHALL in production env
+echo TESTING WITH CATCHALL in ${RAILS_ENV2:-production} env
 echo ========================================================
-export RAILS_ENV=production RACK_ENV=production
+export RAILS_ENV=${RAILS_ENV2:-production} RACK_ENV=${RAILS_ENV2:-production}
 
 date > $catchall_file
 
