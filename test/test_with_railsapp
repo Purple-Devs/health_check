@@ -93,9 +93,24 @@ stop_server()
         [0-9]*)
             echo ========================================================
             echo "Killing rails server [pid: $server_pid]"
-            kill -9 $server_pid 
+            kill -1 $server_pid  || true
+            sleep 2
+            kill -9 $server_pid  || true
             ;;
     esac
+    case "$fake_smtp_pid" in
+        [0-9]*)
+            echo ========================================================
+            echo "Killing fake smtp server [pid: $fake_smtp_pid]"
+            kill -1 $fake_smtp_pid || true
+            sleep 2
+            kill -9 $fake_smtp_pid || true
+            ;;
+    esac
+    server_pid=''
+    fake_smtp_pid=''
+    wait
+    sleep 2
 }
 
 finish()
@@ -114,15 +129,7 @@ finish()
         tail -50 $railsapp/log/test.log
     fi
 
-    case "$fake_smtp_pid" in
-        [0-9]*)
-            echo ========================================================
-            echo "Killing fake smtp server [pid: $fake_smtp_pid]"
-            kill -9 $fake_smtp_pid
-            ;;
-    esac
     stop_server
-    wait
     trap "" 0
     echo ========================================================
     echo TEST ${1:-FAILED}
