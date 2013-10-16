@@ -34,11 +34,14 @@ fake_smtp_server="$base_dir/test/fake_smtp_server"
 server_pid=''
 fake_smtp_pid=''
 
-port=3456
-host=http://localhost:${port}
+port=53456
+host=http://127.0.0.1:${port}
 
 start_server()
 {
+    # Increment port each time to make sure we have not trouble with address/port already allocated
+    port=`expr 1 + $port`
+    host=http://localhost:${port}
     bundle_prefix=''
     if [ -f Gemfile ]
     then
