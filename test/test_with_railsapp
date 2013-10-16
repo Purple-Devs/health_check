@@ -135,6 +135,10 @@ trap "finish FAILED 1" 0
 
 common_tests()
 {
+    # restart migration list
+    rm -rf db/migrate
+    mkdir -p db/migrate
+
     echo
     echo 'TESTING can get a static file ...'
     $testurl ${host}/static.txt 200 text/plain STATIC-FILE
@@ -151,7 +155,6 @@ common_tests()
     echo
 
     echo 'TESTING health_check/migration should pass with no database migrations ...'
-    mkdir -p db/migrate
     ls db/migrate
     $testurl ${host}/health_check/migration 200 text/plain $success
     echo
