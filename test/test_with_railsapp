@@ -55,8 +55,8 @@ start_server()
     thin) 
         $bundle_prefix thin start -p $port &
         ;;
-    thin) 
-        $bundle_prefix unicorn -p $port &
+    unicorn) 
+        $bundle_prefix unicorn_rails -l 127.0.0.1:$port &
         ;;
     *)
         if [ -x script/server ]
@@ -132,23 +132,150 @@ finish()
 
 trap "finish FAILED 1" 0
 
+
+common_tests()
+{
+    echo
+    echo 'TESTING can get a static file ...'
+    $testurl ${host}/static.txt 200 text/plain STATIC-FILE
+    echo
+
+    echo
+    echo 'TESTING can get an example controller ...'
+    $testurl ${host}/example 200 text/html 'example page'
+    echo
+
+    echo
+    echo 'TESTING direct call to catchall method on example controller ...'
+    $testurl ${host}/example/catchall 200 text/html 'catch all route'
+    echo
+
+    echo 'TESTING health_check/migration should pass with no database migrations ...'
+    mkdir -p db/migrate
+    ls db/migrate
+    $testurl ${host}/health_check/migration 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/migration should fail without initial database migration ...'
+    cp $base_dir/test/migrate/nine/* db/migrate
+    ls db/migrate
+    $testurl ${host}/health_check/migration 550 text/plain failed
+    echo
+
+    echo 'TESTING health_check/database should pass without initial database migration (since it ignores the difference) ...'
+    $testurl ${host}/health_check/database 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/site should pass ...'
+    $testurl ${host}/health_check/site 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/migration should pass after initial database migration ...'
+    $rake db:migrate 
+    $testurl ${host}/health_check/migration 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/migration should fail without all migrations ...'
+    cp $base_dir/test/migrate/twelve/* db/migrate
+
+    case "$actual_rails_version" in
+        *' '[12].*|*' '3.[01]*)
+            echo removing db/migrate/*.*.rb "($actual_rails_version does not support extra dots in migration names)"
+            rm -f db/migrate/*.*.rb
+            ;;
+    esac
+    ls db/migrate
+    $testurl ${host}/health_check/migration 550 text/plain failed
+    echo
+
+    echo 'TESTING health_check/migration should pass after both database migrations ...'
+    $rake db:migrate 
+    $testurl ${host}/health_check/migration 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/migration should pass after both database migrations ...'
+    $rake db:migrate 
+    $testurl ${host}/health_check/migration 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/email should fail without smtp available ...'
+    $testurl ${host}/health_check/email 550 text/plain failed
+    echo
+
+    echo 'TESTING health_check/email should pass with smtp available ...'
+    $fake_smtp_server &
+    fake_smtp_pid=$!
+    sleep 5
+    $testurl ${host}/health_check/email 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check (all) should fail without smtp available ...'
+    $testurl ${host}/health_check 550 text/plain failed
+    echo
+
+    echo 'TESTING health_check/all should fail without smtp available ...'
+    $testurl ${host}/health_check 550 text/plain failed
+    echo
+
+    kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
+    echo 'TESTING health_check (all) should pass with smtp available ...'
+    $fake_smtp_server &
+    fake_smtp_pid=$!
+    sleep 5
+    $testurl ${host}/health_check 200 text/plain $success
+    echo
+
+    kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
+    echo 'TESTING health_check/all should pass with smtp available ...'
+    $fake_smtp_server &
+    fake_smtp_pid=$!
+    sleep 5
+    $testurl ${host}/health_check/all 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/custom should pass ...'
+    $testurl ${host}/health_check/custom 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/custom.json should pass ...'
+    $testurl ${host}/health_check/custom.json 200 application/json '"healthy":true'
+    $testurl ${host}/health_check/custom.json 200 application/json "\"message\":\"$success\""
+    echo
+
+    echo 'TESTING health_check/custom.xml should pass ...'
+    $testurl ${host}/health_check/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
+    $testurl ${host}/health_check/custom.xml 200 application/xml "<message>$success</message>"
+    echo
+
+    echo 'TESTING health_check/custom should fail when custom returns string ...'
+    rm -f $custom_file
+    $testurl ${host}/health_check/custom 550 text/plain failed
+    echo
+
+    echo 'TESTING health_check (all) should fail when custom check fails ...'
+    $testurl ${host}/health_check 550 text/plain "$custom_file is missing!"
+    echo
+
+    echo 'TESTING health_check.json (all) should fail when custom check fails ...'
+    $testurl ${host}/health_check.json 555 application/json '"healthy":false'
+    $testurl ${host}/health_check.json 555 application/json "$custom_file is missing!"
+    echo
+
+    echo 'TESTING health_check.xml (all) should fail when custom check fails ...'
+    $testurl ${host}/health_check.xml 555 application/xml '<healthy type="boolean">false</healthy>'
+    echo
+
+    date > $custom_file
+}
+
+echo ========================================================
+echo TESTING WITHOUT CATCHALL in test env
+echo ========================================================
+export RAILS_ENV=test RACK_ENV=test
+
 start_server
 
 # get a static file
-echo
-echo 'TESTING can get a static file ...'
-$testurl ${host}/static.txt 200 text/plain STATIC-FILE
-echo
-
-echo
-echo 'TESTING can get an example controller ...'
-$testurl ${host}/example 200 text/html 'example page'
-echo
-
-echo
-echo 'TESTING direct call to catchall method on example controller ...'
-$testurl ${host}/example/catchall 200 text/html 'catch all route'
-echo
 
 echo
 echo 'TESTING no catchall route active ...'
@@ -158,142 +285,31 @@ case "$actual_rails_version" in
         expected_status=404
         ;;
 esac
+case "$server_arg" in
+passenger) 
+    expected_status=502
+    ;;
+esac
 $testurl ${host}/another/url $expected_status
 
-echo 'TESTING health_check/migration should pass with no database migrations ...'
-mkdir -p db/migrate
-ls db/migrate
-$testurl ${host}/health_check/migration 200 text/plain $success
-echo
+common_tests
 
-echo 'TESTING health_check/migration should fail without initial database migration ...'
-cp $base_dir/test/migrate/nine/* db/migrate
-ls db/migrate
-$testurl ${host}/health_check/migration 550 text/plain failed
-echo
+echo ========================================================
+echo TESTING WITH CATCHALL in production env
+echo ========================================================
+export RAILS_ENV=production RACK_ENV=production
 
-echo 'TESTING health_check/database should pass without initial database migration (since it ignores the difference) ...'
-$testurl ${host}/health_check/database 200 text/plain $success
-echo
-
-echo 'TESTING health_check/site should pass ...'
-$testurl ${host}/health_check/site 200 text/plain $success
-echo
-
-echo 'TESTING health_check/migration should pass after initial database migration ...'
-$rake db:migrate 
-$testurl ${host}/health_check/migration 200 text/plain $success
-echo
-
-echo 'TESTING health_check/migration should fail without all migrations ...'
-cp $base_dir/test/migrate/twelve/* db/migrate
-
-case "$actual_rails_version" in
-    *' '[12].*|*' '3.[01]*)
-        echo removing db/migrate/*.*.rb "($actual_rails_version does not support extra dots in migration names)"
-        rm -f db/migrate/*.*.rb
-        ;;
-esac
-ls db/migrate
-$testurl ${host}/health_check/migration 550 text/plain failed
-echo
-
-echo 'TESTING health_check/migration should pass after both database migrations ...'
-$rake db:migrate 
-$testurl ${host}/health_check/migration 200 text/plain $success
-echo
-
-echo 'TESTING health_check/migration should pass after both database migrations ...'
-$rake db:migrate 
-$testurl ${host}/health_check/migration 200 text/plain $success
-echo
-
-echo 'TESTING health_check/email should fail without smtp available ...'
-$testurl ${host}/health_check/email 550 text/plain failed
-echo
-
-echo 'TESTING health_check/email should pass with smtp available ...'
-$fake_smtp_server &
-fake_smtp_pid=$!
-sleep 5
-$testurl ${host}/health_check/email 200 text/plain $success
-echo
-
-echo 'TESTING health_check (all) should fail without smtp available ...'
-$testurl ${host}/health_check 550 text/plain failed
-echo
-
-echo 'TESTING health_check/all should fail without smtp available ...'
-$testurl ${host}/health_check 550 text/plain failed
-echo
-
-kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
-echo 'TESTING health_check (all) should pass with smtp available ...'
-$fake_smtp_server &
-fake_smtp_pid=$!
-sleep 5
-$testurl ${host}/health_check 200 text/plain $success
-echo
-
-kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
-echo 'TESTING health_check/all should pass with smtp available ...'
-$fake_smtp_server &
-fake_smtp_pid=$!
-sleep 5
-$testurl ${host}/health_check/all 200 text/plain $success
-echo
-
-echo 'TESTING health_check/custom should pass ...'
-$testurl ${host}/health_check/custom 200 text/plain $success
-echo
-
-echo 'TESTING health_check/custom.json should pass ...'
-$testurl ${host}/health_check/custom.json 200 application/json '"healthy":true'
-$testurl ${host}/health_check/custom.json 200 application/json "\"message\":\"$success\""
-echo
-
-echo 'TESTING health_check/custom.xml should pass ...'
-$testurl ${host}/health_check/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
-$testurl ${host}/health_check/custom.xml 200 application/xml "<message>$success</message>"
-echo
-
-echo 'TESTING health_check/custom should fail when custom returns string ...'
-rm -f $custom_file
-$testurl ${host}/health_check/custom 550 text/plain failed
-echo
-
-echo 'TESTING health_check (all) should fail when custom check fails ...'
-$testurl ${host}/health_check 550 text/plain "$custom_file is missing!"
-echo
-
-echo 'TESTING health_check.json (all) should fail when custom check fails ...'
-$testurl ${host}/health_check.json 555 application/json '"healthy":false'
-$testurl ${host}/health_check.json 555 application/json "$custom_file is missing!"
-echo
-
-echo 'TESTING health_check.xml (all) should fail when custom check fails ...'
-$testurl ${host}/health_check.xml 555 application/xml '<healthy type="boolean">false</healthy>'
-echo
-
-date > $custom_file
 date > $catchall_file
 
 stop_server
 start_server
 
 echo
-echo 'TESTING can get an example controller ...'
-$testurl ${host}/example 200 text/html 'example page'
-echo
-
-echo
 echo 'TESTING catchall route active ...'
 $testurl ${host}/another/url 200 text/html 'catch all route'
 echo
 
-echo 'TESTING health_check/site should pass ...'
-$testurl ${host}/health_check/site 200 text/plain $success
-echo
+common_tests
 
 rm -f $catchall_file
 

@@ -139,13 +139,10 @@ then
             echo "Using default webrick server"
             ;;
     *)
-            echo "Using $RAILS_SERVER server"
+            echo "Adding $RAILS_SERVER gem to Gemfile (for use as server)"
             echo "gem '$RAILS_SERVER'" >> Gemfile
             ;;
     esac
-    echo
-    echo Gemfile contents:
-    cat Gemfile
     echo
     echo running bundle install --binstubs
     bundle install --binstubs
@@ -161,6 +158,9 @@ then
     rake="$railsapp/bin/rake"
     # Fix for rvm, otherwise bundle run from rails create fails
     export PATH="`pwd`/bin:$PATH"
+    echo ================= Gemfile ===================
+    cat Gemfile
+    echo
 else
     dest=$railsapp/vendor/plugins/health_check
     echo Installing health_check as plugin in $dest ...
@@ -178,16 +178,24 @@ else
     )
 fi
 
-echo Setting RAILS_ENV=test RACK_ENV=test
-export RAILS_ENV=test RACK_ENV=test
-
+for e in test development production
+do
+    echo ======== config/environments/$e ================
+    cat config/environments/$e 
+    echo
+done
+echo ========================
 case $db in
     jdbcsqlite3)
-        echo
-        echo 'Jruby requires the database to be created before the server is started: running rake db:migrate'
-        $rake db:migrate 
-        echo
-        ;;
+      for e in test development production
+      do
+            echo
+            export RAILS_ENV=$e RACK_ENV=$e
+            echo "Jruby requires the database to be created before the server is started: running RAILS_ENV=$e rake db:migrate"
+            $rake db:migrate 
+            echo
+      done
+      ;;
 esac
 
 echo STATIC-FILE > public/static.txt
