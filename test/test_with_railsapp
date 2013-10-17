@@ -155,8 +155,7 @@ common_tests()
     echo
     case `egrep health_check /tmp/t$$` in
     '')
-      echo ERROR - routes for health_check not defined!
-      exit 3
+      echo WARNING - routes for health_check not listed!
       ;;
     esac
 
