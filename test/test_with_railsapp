@@ -150,6 +150,16 @@ trap "finish FAILED 1" 0
 common_tests()
 {
 
+    echo 'CHECKING routes exist...'
+    $rake db:migrate | tee /tmp/t$$
+    echo
+    case `egrep health_check /tmp/t$$` in
+    '')
+      echo ERROR - routes for health_check not defined!
+      exit 3
+      ;;
+    esac
+
     echo
     echo 'TESTING can get a static file ...'
     $testurl ${host}/static.txt 200 text/plain STATIC-FILE
