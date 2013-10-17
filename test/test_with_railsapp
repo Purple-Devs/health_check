@@ -151,7 +151,7 @@ common_tests()
 {
 
     echo 'CHECKING routes exist...'
-    $rake db:migrate | tee /tmp/t$$
+    $rake routes | tee /tmp/t$$
     echo
     case `egrep health_check /tmp/t$$` in
     '')
