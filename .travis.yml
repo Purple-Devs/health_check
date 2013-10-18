@@ -16,15 +16,11 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 rvm: 
-  - 1.9.3
   - 2.0.0
-  - jruby-19mode
-  - rbx-19mode
 
 gemfile:
   - test/rails_4.0.gemfile
 
-matrix:
 matrix:
   allow_failures:
     - rvm: rbx-19mode
@@ -40,54 +36,26 @@ matrix:
     - rvm: jruby-head
       gemfile: test/rails_edge.gemfile
 
-  exclude:
-    - rvm: 1.8.7
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: rbx-19mode
-      gemfile: test/rails_4.0.gemfile
-
   include:
-    # rails 2.3 march 16 2009 - ruby 1.8.7
-    - rvm: 1.8.7
-      gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
+    # rails edge
+    
+    - rvm: 2.0.0
+      gemfile: test/rails_edge.gemfile
 
-    # rails 3.0 aug 29 2010 - ruby 1.8.7
-    - rvm: 1.8.7
-      gemfile: test/rails_3.0.gemfile
+    - rvm: ruby-head
+      gemfile: test/rails_edge.gemfile
 
-    # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
-    - rvm: 1.8.7
-      gemfile: test/rails_3.1.gemfile
-
-    - rvm: 1.9.2
-      gemfile: test/rails_3.1.gemfile
-
-    # rails 3.2 jan 20, 2012
-    - rvm: 1.8.7
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: 1.9.2
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: ree
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: rbx-19mode
-      gemfile: test/rails_3.2.gemfile
+    - rvm: jruby-head
+      gemfile: test/rails_edge.gemfile
 
     # rails 4.0  June 25, 2013
     
+    - rvm: 1.9.3
+      gemfile: test/rails_4.0.gemfile
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_4.0.gemfile
+
     - rvm: rbx-19mode
       gemfile: test/rails_4.0.gemfile
       env: RAILS_ENV2=development
@@ -108,14 +76,37 @@ matrix:
       gemfile: test/rails_4.0.gemfile
       env: RAILS_SERVER=unicorn
 
-    # rails edge
-    
-    - rvm: 2.0.0
-      gemfile: test/rails_edge.gemfile
+    # rails 3.2 jan 20, 2012
+    - rvm: 1.8.7
+      gemfile: test/rails_3.2.gemfile
 
-    - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
+    - rvm: 1.9.2
+      gemfile: test/rails_3.2.gemfile
 
-    - rvm: jruby-head
-      gemfile: test/rails_edge.gemfile
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
 
+    - rvm: ree
+      gemfile: test/rails_3.2.gemfile
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.2.gemfile
+
+    - rvm: rbx-19mode
+      gemfile: test/rails_3.2.gemfile
+
+    # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+
+    - rvm: 1.9.2
+      gemfile: test/rails_3.1.gemfile
+
+    # rails 3.0 aug 29 2010 - ruby 1.8.7
+    - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+
+    # rails 2.3 march 16 2009 - ruby 1.8.7
+    - rvm: 1.8.7
+      gemfile: test/rails_2.3.gemfile
+      env: RUBYGEMS_VERSION=1.8.25
