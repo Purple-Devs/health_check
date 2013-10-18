@@ -10,7 +10,7 @@ do
         echo "Aborting..."
         exit 2
         ;;
-    */test/rails_[0-9].[0-9]*.gemfile)
+    */test/rails_edge.gemfile|*/test/rails_[0-9].[0-9]*.gemfile)
         if [ -f "$BUNDLE_GEMFILE" ]; then
             break
         fi
@@ -83,7 +83,14 @@ case "$actual_rails_version" in
         $rails railsapp -d $db
         ;;
     *' '[34].*)
-        $rails new railsapp -d $db
+        case "$BUNDLE_GEMFILE" in
+        *rails_edge.gemfile)
+            $rails new railsapp -d $db --edge
+            ;;
+        *)
+            $rails new railsapp -d $db
+            ;;
+        esac
         ;;
     *)
         echo "Unknown rails version"
