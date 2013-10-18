@@ -6,7 +6,7 @@ module HealthCheck
 
     session(:off) if Rails.version < '3.0'
 
-    layout nil
+    layout false if self.respond_to? :layout
 
     def index
       checks = params[:checks] || 'standard'
@@ -52,7 +52,7 @@ module HealthCheck
     # Silence logger as much as we can
 
     def process_with_silent_log(method_name, *args)
-      if logger
+      if logger # and Rails.version < '4.1' # TODO: check if we need this in the real rails 4.1
         @old_logger_level = logger.level
         if Rails.version >= '3.2'
           silence do
