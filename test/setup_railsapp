@@ -181,7 +181,7 @@ else
     )
 fi
 
-for e in test development production
+for e in test ${RAILS_ENV2:-production}
 do
     if [ -f config/environments/$e.rb ]; then
       echo ======== config/environments/$e.rb ================
@@ -199,7 +199,7 @@ echo
 echo ========================
 case $db in
     jdbcsqlite3)
-      for e in test development production
+      for e in test ${RAILS_ENV2:-production}
       do
             echo
             export RAILS_ENV=$e RACK_ENV=$e
