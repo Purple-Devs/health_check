@@ -29,7 +29,7 @@ module HealthCheck
           when "email"
             errors << HealthCheck::Utils.check_email
           when "migrations", "migration"
-            if defined?(ActiveRecord::Migration) and ActiveRecord::Migration.responds+to?(:check_pending!)
+            if defined?(ActiveRecord::Migration) and ActiveRecord::Migration.respond_to?(:check_pending!)
               # Rails 4+
               begin
                 ActiveRecord::Migration.check_pending!
