@@ -29,10 +29,19 @@ module HealthCheck
           when "email"
             errors << HealthCheck::Utils.check_email
           when "migrations", "migration"
-            database_version  = HealthCheck::Utils.get_database_version
-            migration_version = HealthCheck::Utils.get_migration_version
-            if database_version.to_i != migration_version.to_i
-              errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
+            if defined?(ActiveRecord::Migration) and ActiveRecord::Migration.responds+to?(:check_pending!)
+              # Rails 4+
+              begin
+                ActiveRecord::Migration.check_pending!
+              rescue ActiveRecord::PendingMigrationError => ex
+                  errors << ex.message
+              end
+            else
+              database_version  = HealthCheck::Utils.get_database_version
+              migration_version = HealthCheck::Utils.get_migration_version
+              if database_version.to_i != migration_version.to_i
+                errors << "Current database version (#{database_version}) does not match latest migration (#{migration_version}). "
+              end
             end
           when 'cache'
             errors << HealthCheck::Utils.check_cache
