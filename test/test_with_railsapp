@@ -34,7 +34,21 @@ fake_smtp_server="$base_dir/test/fake_smtp_server"
 server_pid=''
 fake_smtp_pid=''
 
-port=53456
+pick_a_port()
+{
+    while :
+    do
+        port=`expr 10000 + $RANDOM`
+        # Check Tcp ports in Listen mode with No address resolution
+        used=`netstat -tln | egrep ":${port} "`
+        if [ -n "$used" ]; then
+            break
+        else
+            echo "Skipping used port: $port: $used"
+        fi
+    done
+}
+
 host=http://127.0.0.1:${port}
 
 start_server()
@@ -44,7 +58,7 @@ start_server()
     mkdir -p db/migrate
 
     # Increment port each time to make sure we have not trouble with address/port already allocated
-    port=`expr 1 + $port`
+    pick_a_port
     host=http://localhost:${port}
     bundle_prefix=''
     if [ -f Gemfile ]
@@ -258,6 +272,10 @@ common_tests()
 
     echo 'TESTING health_check/custom should pass ...'
     $testurl ${host}/health_check/custom 200 text/plain $success
+    echo
+
+    echo 'TESTING health_check/custom.html should pass (returning plain text) ...'
+    $testurl ${host}/health_check/custom.html 200 text/plain $success
     echo
 
     echo 'TESTING health_check/custom.json should pass ...'
