@@ -311,7 +311,6 @@ echo TESTING WITHOUT CATCHALL in test env
 echo ========================================================
 export RAILS_ENV=test RACK_ENV=test
 
-set -x
 start_server
 
 # get a static file
@@ -320,8 +319,6 @@ echo
 echo 'TESTING no catchall route active ...'
 expected_status=404,500,502
 $testurl ${host}/another/url $expected_status
-
-set +x
 
 common_tests
 
