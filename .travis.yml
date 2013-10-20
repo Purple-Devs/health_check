@@ -27,6 +27,9 @@ matrix:
       gemfile: test/rails_4.0.gemfile
       env: RAILS_ENV2=development
 
+    - rvm: 1.9.3
+      gemfile: test/rails_edge.gemfile
+
     - rvm: 2.0.0
       gemfile: test/rails_edge.gemfile
 
@@ -38,6 +41,9 @@ matrix:
 
   include:
     # rails edge
+    
+    - rvm: 1.9.3
+      gemfile: test/rails_edge.gemfile
     
     - rvm: 2.0.0
       gemfile: test/rails_edge.gemfile
@@ -80,8 +86,8 @@ matrix:
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
 
-    - rvm: 1.9.2
-      gemfile: test/rails_3.2.gemfile
+    #- rvm: 1.9.2
+    #  gemfile: test/rails_3.2.gemfile
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
