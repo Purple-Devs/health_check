@@ -1,5 +1,10 @@
 = Change Log =
 
+* 1.4.1 - Rails 4 and route changes
+  * Now handles routes being generated multiple times by some gem / rails / ruby combinations - Previously multiple calls to health_check_routes where ignored, now explicit calls to health_check_route always adds the route but flags that it doesn't have to be added again on the end of the list
+  * Uses ActiveRecord::Migration.check_pending! if available and returns the message if an exception is raised (Rails 4.0+)
+  * Simplified routing rules down to one rule for Rails 3.0+
+  * Includes some changes for rails 4.1 (edge) - but still a work in progress
 * 1.3.1 - Include changes from contributers:
   * Migrations with dots are now handled
   * the list of checks for "full" / "all" can be configured
