@@ -49,7 +49,6 @@ pick_a_port()
     done
 }
 
-host=http://127.0.0.1:${port}
 
 start_server()
 {
@@ -59,7 +58,7 @@ start_server()
 
     # Increment port each time to make sure we have not trouble with address/port already allocated
     pick_a_port
-    host=http://localhost:${port}
+    host=http://127.0.0.1:${port}
     bundle_prefix=''
     if [ -f Gemfile ]
     then
@@ -159,7 +158,6 @@ finish()
 }
 
 trap "finish FAILED 1" 0
-
 
 common_tests()
 {
@@ -314,6 +312,7 @@ echo TESTING WITHOUT CATCHALL in test env
 echo ========================================================
 export RAILS_ENV=test RACK_ENV=test
 
+set -x
 start_server
 
 # get a static file
@@ -322,6 +321,8 @@ echo
 echo 'TESTING no catchall route active ...'
 expected_status=404,500,502
 $testurl ${host}/another/url $expected_status
+
+set +x
 
 common_tests
 
