@@ -34,8 +34,20 @@ fake_smtp_server="$base_dir/test/fake_smtp_server"
 server_pid=''
 fake_smtp_pid=''
 
-port=53456
-host=http://127.0.0.1:${port}
+pick_a_port()
+{
+    while :
+    do
+        port=`expr 10000 + $RANDOM`
+        # Check Tcp ports in Listen mode with No address resolution
+        if (netstat -tln | egrep ":${port} .*:"); then
+            echo "(Skipping used port)"
+        else
+            break
+        fi
+    done
+}
+
 
 start_server()
 {
@@ -44,8 +56,8 @@ start_server()
     mkdir -p db/migrate
 
     # Increment port each time to make sure we have not trouble with address/port already allocated
-    port=`expr 1 + $port`
-    host=http://localhost:${port}
+    pick_a_port
+    host=http://127.0.0.1:${port}
     bundle_prefix=''
     if [ -f Gemfile ]
     then
@@ -146,14 +158,13 @@ finish()
 
 trap "finish FAILED 1" 0
 
-
 common_tests()
 {
 
     echo 'CHECKING routes exist...'
     $rake routes | tee /tmp/t$$
     echo
-    case `egrep health_check /tmp/t$$` in
+    case `egrep health_check /tmp/t$$ || true` in
     '')
       echo WARNING - routes for health_check not listed!
       ;;
@@ -260,6 +271,10 @@ common_tests()
     $testurl ${host}/health_check/custom 200 text/plain $success
     echo
 
+    echo 'TESTING health_check/custom.html should pass (returning plain text) ...'
+    $testurl ${host}/health_check/custom.html 200 text/plain $success
+    echo
+
     echo 'TESTING health_check/custom.json should pass ...'
     $testurl ${host}/health_check/custom.json 200 application/json '"healthy":true'
     $testurl ${host}/health_check/custom.json 200 application/json "\"message\":\"$success\""
@@ -296,6 +311,7 @@ echo TESTING WITHOUT CATCHALL in test env
 echo ========================================================
 export RAILS_ENV=test RACK_ENV=test
 
+set -x
 start_server
 
 # get a static file
@@ -304,6 +320,8 @@ echo
 echo 'TESTING no catchall route active ...'
 expected_status=404,500,502
 $testurl ${host}/another/url $expected_status
+
+set +x
 
 common_tests
 
