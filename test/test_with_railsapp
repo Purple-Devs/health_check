@@ -40,11 +40,10 @@ pick_a_port()
     do
         port=`expr 10000 + $RANDOM`
         # Check Tcp ports in Listen mode with No address resolution
-        used=`netstat -tln | egrep ":${port} " || true`
-        if [ -n "$used" ]; then
-            break
+        if (netstat -tln | egrep ":${port} .*:"); then
+            echo "(Skipping used port)"
         else
-            echo "Skipping used port: $port: $used"
+            break
         fi
     done
 }
