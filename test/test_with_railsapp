@@ -40,7 +40,7 @@ pick_a_port()
     do
         port=`expr 10000 + $RANDOM`
         # Check Tcp ports in Listen mode with No address resolution
-        used=`netstat -tln | egrep ":${port} "`
+        used=`netstat -tln | egrep ":${port} " || true`
         if [ -n "$used" ]; then
             break
         else
@@ -165,7 +165,7 @@ common_tests()
     echo 'CHECKING routes exist...'
     $rake routes | tee /tmp/t$$
     echo
-    case `egrep health_check /tmp/t$$` in
+    case `egrep health_check /tmp/t$$ || true` in
     '')
       echo WARNING - routes for health_check not listed!
       ;;

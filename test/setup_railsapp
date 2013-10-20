@@ -63,7 +63,7 @@ echo Gems in tmp/gems:
 ls tmp/gems
 
 echo Environment:
-env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE'
+env | egrep 'TRAVIS|RAILS|RUBY|_ENV|GEM|BUNDLE' || echo "No relevant variables set"
 
 cd $tmp_dir
 
