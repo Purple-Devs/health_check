@@ -23,10 +23,6 @@ gemfile:
 
 matrix:
   allow_failures:
-    - rvm: rbx-19mode
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development
-
     - rvm: 1.9.3
       gemfile: test/rails_edge.gemfile
 
