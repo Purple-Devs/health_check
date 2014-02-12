@@ -117,11 +117,11 @@ module HealthCheck
               while status != nil && status !~ /^2/
                 status = t.gets
               end
-              t.puts "HELO #{settings[:domain]}"
+              t.puts "HELO #{settings[:domain]}\r"
               while status != nil && status !~ /^250/
                 status = t.gets
               end
-              t.puts "QUIT"
+              t.puts "QUIT\r"
               status = t.gets
             ensure
               t.close
