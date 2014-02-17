@@ -23,6 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency(%q<rails>, [">= 2.3.0"])
   gem.add_development_dependency(%q<rake>, [">= 0.8.3"])
   gem.add_development_dependency(%q<shoulda>, ["~> 2.11.0"])
-  gem.add_development_dependency(%q<sqlite3>, ["~> 1.3.7"])
   gem.add_development_dependency(%q<bundler>, ["~> 1.2"])
 end

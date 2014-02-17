@@ -11,12 +11,12 @@ group :development, :test do
   else
     gem 'sqlite3', "~> 1.3.7"
   end
-end
-
-group :misc do
   # run travis-lint to check .travis.yml
   gem 'travis-lint'
-  # required to run rake test:plugins
-  #gem 'ruby-prof', '>= 0.6.1'
+  platforms :ruby_18 do
+    # mime-types 2.0 requires Ruby version >= 1.9.2
+    gem "mime-types", "< 2.0"
+  end
+
 end
 
