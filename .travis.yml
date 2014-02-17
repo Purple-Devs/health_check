@@ -23,12 +23,6 @@ gemfile:
 
 matrix:
   allow_failures:
-    - rvm: 1.9.3
-      gemfile: test/rails_edge.gemfile
-
-    - rvm: 2.0.0
-      gemfile: test/rails_edge.gemfile
-
     - rvm: 2.1.0
       gemfile: test/rails_edge.gemfile
 
@@ -41,12 +35,6 @@ matrix:
   include:
     # rails edge
     
-    - rvm: 1.9.3
-      gemfile: test/rails_edge.gemfile
-    
-    - rvm: 2.0.0
-      gemfile: test/rails_edge.gemfile
-
     - rvm: 2.1.0
       gemfile: test/rails_edge.gemfile
 
@@ -84,12 +72,9 @@ matrix:
       gemfile: test/rails_4.0.gemfile
       env: RAILS_SERVER=unicorn
 
-    # rails 3.2 jan 20, 2012
+    # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
     - rvm: 1.8.7
       gemfile: test/rails_3.2.gemfile
-
-    #- rvm: 1.9.2
-    #  gemfile: test/rails_3.2.gemfile
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
@@ -104,13 +89,9 @@ matrix:
       gemfile: test/rails_3.2.gemfile
 
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
-    - rvm: 1.8.7
-      gemfile: test/rails_3.1.gemfile
-
     - rvm: 1.9.2
       gemfile: test/rails_3.1.gemfile
 
-    # rails 3.0 aug 29 2010 - ruby 1.8.7
     - rvm: 1.8.7
       gemfile: test/rails_3.0.gemfile
 
@@ -118,3 +99,4 @@ matrix:
     - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
       env: RUBYGEMS_VERSION=1.8.25
+
