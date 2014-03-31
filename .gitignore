@@ -17,25 +17,6 @@ test/tmp
 test/version_tmp
 tmp
 
-## RUBYMINE
-.idea/
-
-## MAC OS
-.DS_Store
-
-## TEXTMATE
-*.tmproj
-tmtags
-
-## EMACS
-*~
-\#*
-.\#*
-
-## VIM
-*.swp
-*~
-
 ## PROJECT::SPECIFIC
 bin/
 test/bin/
@@ -43,7 +24,5 @@ railsapps/
 test/*.gemfile.lock
 ,*
 
-# Local ruby version config
-.rbenv-version
-.ruby-version
-.rvmrc
+# See: https://gist.github.com/ianheggie/9327010
+# for Global git ignore for OS/IDE/temp/backup files
