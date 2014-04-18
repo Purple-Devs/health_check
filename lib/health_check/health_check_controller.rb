@@ -4,8 +4,6 @@
 module HealthCheck
   class HealthCheckController < ActionController::Base
 
-    session(:off) if Rails.version < '3.0'
-
     layout false if self.respond_to? :layout
 
     def index
