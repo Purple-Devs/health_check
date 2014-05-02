@@ -32,7 +32,7 @@ module HealthCheck
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
-          silence_level, logger.level = logger.level, @old_logger_level
+          silence_level, logger.level = logger.level, @old_logger_level || logger.level
           logger.info msg
           logger.level = silence_level
         end
