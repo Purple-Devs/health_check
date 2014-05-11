@@ -16,10 +16,10 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 rvm: 
-  - 2.0.0
+  - 2.1.2
 
 gemfile:
-  - test/rails_4.0.gemfile
+  - test/rails_4.1.gemfile
 
 matrix:
   allow_failures:
@@ -44,12 +44,30 @@ matrix:
     - rvm: jruby-head
       gemfile: test/rails_edge.gemfile
 
+    # rails 4.1  April 8, 2014 
+    
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_SERVER=puma
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_SERVER=passenger
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_SERVER=thin
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_SERVER=unicorn
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_4.1.gemfile
+
     # rails 4.0  June 25, 2013
     
     - rvm: 1.9.3
-      gemfile: test/rails_4.0.gemfile
-
-    - rvm: jruby-19mode
       gemfile: test/rails_4.0.gemfile
 
     - rvm: rbx
@@ -58,34 +76,12 @@ matrix:
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=puma
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=passenger
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=thin
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_SERVER=unicorn
 
     # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
-    - rvm: 1.8.7
-      gemfile: test/rails_3.2.gemfile
-
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
 
     - rvm: ree
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-
-    - rvm: rbx
       gemfile: test/rails_3.2.gemfile
 
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
