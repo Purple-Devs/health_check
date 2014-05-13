@@ -23,8 +23,8 @@ client = server.accept    # Wait for a client to connect
 send(client, "220 dummy-smtp.example.com SMTP")
 cmd = receive(client)
 
-while cmd !~ /^QUIT/
-  if cmd =~ /^HELO/
+while cmd !~ /^QUIT\r/
+  if cmd =~ /^HELO(.*)\r/
     send(client, "250 Welcome to a dummy smtp server")
   else
     send(client, "502 I am so dumb I only understand HELO and QUIT")
