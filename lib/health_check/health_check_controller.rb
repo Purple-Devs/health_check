@@ -32,9 +32,9 @@ module HealthCheck
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
-          silence_level, logger.level = logger.level, @old_logger_level
+          silence_level, logger.level = logger.level, @old_logger_level if Rails.version < '4.1'
           logger.info msg
-          logger.level = silence_level
+          logger.level = silence_level if Rails.version < '4.1'
         end
       end
     end
