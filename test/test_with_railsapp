@@ -306,6 +306,10 @@ common_tests()
     date > $custom_file
 }
 
+
+# required for rails 4.1+ in production mode
+export SECRET_KEY_BASE=cf2f49c38a3fe67416ddf680f4f3187c0fce7dd1b9b117b34d195df75b274e08a04877e23803b2fdf1aa9a655269d94bc4888aa325cf7e721cc47368cfe56a80
+
 echo ========================================================
 echo TESTING WITHOUT CATCHALL in test env
 echo ========================================================
