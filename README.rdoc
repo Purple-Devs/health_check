@@ -24,7 +24,7 @@ On failure a 500 http status is returned with a simple explanation of the failur
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
 
-The health_check controller disables sessions and logging for its actions to minimise the impact of frequent uptime checks on the session store and the log file.
+The health_check controller disables sessions for versions that eagerly load sessions. Only failures are logged for rails < '4.1'.
 
 == Checks
 
@@ -229,7 +229,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2014 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
