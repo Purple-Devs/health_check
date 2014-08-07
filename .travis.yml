@@ -85,9 +85,6 @@ matrix:
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
 
-    - rvm: ree
-      gemfile: test/rails_3.2.gemfile
-
     - rvm: jruby-19mode
       gemfile: test/rails_3.2.gemfile
 
