@@ -164,6 +164,9 @@ then
     echo ================= Gemfile ===================
     cat Gemfile
     echo
+    echo ================= Gemfile.lock ===================
+    cat Gemfile.lock
+    echo
 else
     dest=$railsapp/vendor/plugins/health_check
     echo Installing health_check as plugin in $dest ...
