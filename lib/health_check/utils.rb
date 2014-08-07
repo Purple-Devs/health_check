@@ -47,7 +47,7 @@ module HealthCheck
             errors << HealthCheck::Utils.check_cache
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
-            errors << HealthCheck::Utils.process_checks("email") unless HealthCheck::Utils.default_action_mailer_configuration?
+            errors << HealthCheck::Utils.process_checks("email") if HealthCheck::Utils.mailer_configured?
           when "custom"
             HealthCheck.custom_checks.each do |custom_check|
               errors << custom_check.call(self)
@@ -71,8 +71,8 @@ module HealthCheck
       @@db_migrate_path = value
     end
 
-    def self.default_action_mailer_configuration?
-      ActionMailer::Base.delivery_method == :smtp && HealthCheck::Utils.default_smtp_settings == ActionMailer::Base.smtp_settings
+    def self.mailer_configured?
+      defined?(ActionMailer::Base) && (ActionMailer::Base.delivery_method != :smtp || HealthCheck::Utils.default_smtp_settings != ActionMailer::Base.smtp_settings)
     end
 
     def self.get_database_version
