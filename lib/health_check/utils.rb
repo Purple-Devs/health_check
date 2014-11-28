@@ -99,46 +99,32 @@ module HealthCheck
       end
     end
 
-
     def self.check_sendmail(settings)
       File.executable?(settings[:location]) ? '' : 'no sendmail executable found. '
     end
 
     def self.check_smtp(settings, timeout)
-      status = ''
-      begin
-        if @skip_external_checks
-          status = '221'
-        else
-          Timeout::timeout(timeout) do |timeout_length|
-            t = TCPSocket.new(settings[:address], settings[:port])
-            begin
-              status = t.gets
-              while status != nil && status !~ /^2/
-                status = t.gets
-              end
-              t.puts "HELO #{settings[:domain]}\r"
-              while status != nil && status !~ /^250/
-                status = t.gets
-              end
-              t.puts "QUIT\r"
-              status = t.gets
-            ensure
-              t.close
-            end
-          end
-        end
-      rescue Errno::EBADF => ex
-        status = "Unable to connect to service"
-      rescue Exception => ex
-        status = ex.to_s
+      if @skip_external_checks
+        '221'
+      else
+        HealthCheck::Smtp.new(settings, timeout).check
       end
-      (status =~ /^221/) ? '' : "SMTP: #{status || 'unexpected EOF on socket'}. "
     end
 
     def self.check_cache
       Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
     end
-
   end
 end
+
+
+
+
+
+
+
+
+
+
+
+

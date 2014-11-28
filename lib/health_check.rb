@@ -45,6 +45,7 @@ end
 
 require "health_check/version"
 require 'health_check/utils'
+require 'health_check/smtp'
 require 'health_check/health_check_controller'
 
 if defined?(HealthCheck::Engine)
