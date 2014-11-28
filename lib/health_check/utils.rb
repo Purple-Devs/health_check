@@ -116,15 +116,3 @@ module HealthCheck
     end
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
