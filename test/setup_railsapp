@@ -151,8 +151,9 @@ HealthCheck.setup do |config|
 end
 !
 
+echo Setting INITIAL_BUNDLE_GEMFILE=$BUNDLE_GEMFILE
+INITIAL_BUNDLE_GEMFILE="$BUNDLE_GEMFILE"
 echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
-INITIAL_BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 unset BUNDLE_GEMFILE
 
 if [ -s Gemfile ]
@@ -160,6 +161,7 @@ then
     echo Adding health_check as gem to Gemfile...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
 
+    set -x
     case "$RAILS_SERVER" in
     webrick|'')
             echo "Using default webrick server"
@@ -169,8 +171,9 @@ then
             echo "gem '$RAILS_SERVER'" >> Gemfile
             ;;
     esac
-    egrep REQUIRED $INITIAL_BUNDLE_GEMFILE >> Gemfile
+    egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile
     echo
+    set +x
     echo ================= Gemfile ===================
     cat Gemfile
     echo
