@@ -17,3 +17,7 @@ group :development, :test do
   end
   gem 'shoulda'
 end
+
+# Initial Gemfile has therubyracer commented out
+gem 'therubyrhino', :platform => :jruby # REQUIRED
+gem 'therubyracer', :platform => :ruby # REQUIRED

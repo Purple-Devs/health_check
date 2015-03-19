@@ -1,6 +1,8 @@
 = health_check gem
 
-Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+Simple health check of Rails 4.x+ apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+
+Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x 
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -45,8 +47,6 @@ Note: rails 4.0 also checks migrations by default in development mode and throws
 
 == Installation
 
-=== As a Gem from rubygems (Rails 3.0 and above)
-
 Add the following line to Gemfile
 
     gem "health_check"
@@ -58,23 +58,6 @@ And then execute
 Or install it yourself as:
 
     gem install health_check
-
-=== As a Gem from rubygems (Rails 2.3)
-
-Install the gem using the following command
-
-    gem install health_check
-
-Then add the following line to config/environment.rb within the config block
-
-    config.gem "health_check"
-
-=== As a Plugin (Rails 2.3.x)
-
-Run the following commands from the root of your rails application
-
-    cd vendor/plugins
-    git clone git://github.com/ianheggie/health_check.git
 
 == Configuration
 
