@@ -14,3 +14,10 @@ group :development, :test do
   end
   gem 'shoulda', "~> 2.11.0"
 end
+
+# next version requires ruby 1.9.3
+gem 'i18n', '~> 0.6.11' if RUBY_VERSION < '1.9.3' # REQUIRED
+
+# Initial Gemfile has therubyracer commented out
+gem 'therubyrhino', :platform => :jruby # REQUIRED
+gem 'therubyracer', :platform => :ruby # REQUIRED

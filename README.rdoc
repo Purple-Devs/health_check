@@ -1,6 +1,8 @@
-= health_check gem
+= health_check gem (pre_rails4 branch)
 
 Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+
+Use {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions >= 2.0 for Rails 4.0+
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -24,7 +26,7 @@ On failure a 500 http status is returned with a simple explanation of the failur
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
 
-The health_check controller disables sessions for versions that eagerly load sessions. Only failures are logged for rails < '4.1'.
+The health_check controller disables sessions for versions that eagerly load sessions. Only failures are logged.
 
 == Checks
 
@@ -40,8 +42,6 @@ The health_check controller disables sessions for versions that eagerly load ses
 The email gateway is not checked unless the smtp settings have been changed.
 Specify full or include email in the list of checks to verify the smtp settings
 (eg use 127.0.0.1 instead of localhost).
-
-Note: rails 4.0 also checks migrations by default in development mode and throws an ActiveRecord::PendingMigrationError exception (http error 500) if there is an error
 
 == Installation
 
@@ -232,7 +232,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2014 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2015 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors

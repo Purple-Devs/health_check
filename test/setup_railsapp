@@ -3,6 +3,11 @@
 # Any failure causes exit
 set -e
 
+case "$1" in
+[0-9]*)
+    export BUNDLE_GEMFILE=$PWD/test/rails_$1.gemfile
+    ;;
+esac
 while :
 do
     case "$BUNDLE_GEMFILE" in
@@ -39,15 +44,31 @@ else
   $rehash
 fi
 
-echo "Running bundle --binstubs with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
-if ! bundle --binstubs ; then
+echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+if ! bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
 fi
 $rehash
 
 rails="$base_dir/test/bin/rails"
+
+echo Checking $rails is present ...
+[ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+if [ ! -f $rails ]; then
+    echo "Test aborted (unable to create $rails)"
+    exit 2
+fi
+
 rake="$base_dir/test/bin/rake"
+
+echo Checking $rake is present ...
+[ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
+if [ ! -f $rake ]; then
+    echo "Test aborted (unable to create $rake)"
+    exit 2
+fi
 
 actual_rails_version=`$rails -v`
 
@@ -130,6 +151,7 @@ end
 !
 
 echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
+INITIAL_BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 unset BUNDLE_GEMFILE
 
 if [ -s Gemfile ]
@@ -146,24 +168,38 @@ then
             echo "gem '$RAILS_SERVER'" >> Gemfile
             ;;
     esac
+    echo Adding required Gemfile lines ...
+    egrep REQUIRED $INITIAL_BUNDLE_GEMFILE | tee -a Gemfile
     echo
-    echo running bundle install --binstubs
-    bundle install --binstubs
-    case "$actual_rails_version" in
-    *' '4.*)
-        echo "Running rake rails:update:binstubs to fix up binstubs bundle has overwritten"
-        echo a | rake rails:update:bin
-        ;;
-    esac
-    $rehash
-    echo "Using binstubs in $railsapp/bin for rails and rake commands"
-    rails="$railsapp/bin/rails"
-    rake="$railsapp/bin/rake"
-    # Fix for rvm, otherwise bundle run from rails create fails
-    export PATH="`pwd`/bin:$PATH"
     echo ================= Gemfile ===================
     cat Gemfile
     echo
+    echo running bundle install
+    bundle install
+    $rehash
+    echo "Using binstubs in $railsapp/bin for rails and rake commands"
+    rails="$railsapp/bin/rails"
+
+    echo Checking $rails is present ...
+    [ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
+    [ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+    if [ ! -f $rails ]; then
+        echo "Test aborted (unable to create $rails)"
+        exit 2
+    fi
+
+    rake="$railsapp/bin/rake"
+
+    echo Checking $rake is present ...
+    [ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
+    if [ ! -f $rake ]; then
+        echo "Test aborted (unable to create $rake)"
+        exit 2
+    fi
+
+    $rehash
+    # Fix for rvm, otherwise bundle run from rails create fails
+    export PATH="`pwd`/bin:$PATH"
     echo ================= Gemfile.lock ===================
     cat Gemfile.lock
     echo
@@ -313,18 +349,20 @@ if [ -s config/routes.rb ]; then
 
     case "$var" in
     '')
+      # rails 3.0+
       echo "  # -----------------------------------------"
       echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
       echo "  if File.exists?('$catchall_file')"
       echo "    health_check_routes"
       echo "    # CATCH ALL ROUTE"
-      echo "    get '*path' => 'example#catchall'"
+      echo "    get '*path', :to => 'example#catchall'"
       echo "  end"
       echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  # ---------------------------------------"
       ;;
     *)
+      # rails 2.3
       echo "  # -----------------------------------------"
       echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  # example controller"

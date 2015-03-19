@@ -16,87 +16,64 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 rvm: 
-  - 2.1.2
+  - 1.9.3
 
 gemfile:
-  - test/rails_4.1.gemfile
+  - test/rails_3.2.gemfile
 
 matrix:
   allow_failures:
-    - rvm: 2.1.0
-      gemfile: test/rails_edge.gemfile
-
-    - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-
-    - rvm: jruby-head
-      gemfile: test/rails_edge.gemfile
 
   include:
-    # rails edge
-    
-    - rvm: 2.1.0
-      gemfile: test/rails_edge.gemfile
-
-    - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-
-    - rvm: jruby-head
-      gemfile: test/rails_edge.gemfile
-
-    # rails 4.1  April 8, 2014 
-    
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_SERVER=puma
-
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_SERVER=passenger
-
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_SERVER=thin
-
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development
-
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_SERVER=unicorn
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_4.1.gemfile
-
-    # rails 4.0  June 25, 2013
-    
-    - rvm: 1.9.3
-      gemfile: test/rails_4.0.gemfile
-
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-
     # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
+    
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
+      env: RAILS_SERVER=puma RAILS_VERSION=3.2
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_SERVER=passenger RAILS_VERSION=3.2
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_SERVER=thin RAILS_VERSION=3.2
+
+    - rvm: rbx-2.2.6
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_ENV2=development RAILS_VERSION=3.2
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=3.2
 
     - rvm: jruby-19mode
       gemfile: test/rails_3.2.gemfile
+      env: RAILS_VERSION=3.2
+
+    - rvm: 2.2.0
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_VERSION=3.2
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_VERSION=3.2
+
+    - rvm: jruby-19mode
+      gemfile: test/rails_3.2.gemfile
+      env: RAILS_VERSION=3.2
 
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
     - rvm: 1.9.2
       gemfile: test/rails_3.1.gemfile
+      env: RAILS_VERSION=3.1
 
     - rvm: 1.8.7
       gemfile: test/rails_3.0.gemfile
+      env: RAILS_VERSION=3.0
 
     # rails 2.3 march 16 2009 - ruby 1.8.7
     - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
-      env: RUBYGEMS_VERSION=1.8.25
+      env: RUBYGEMS_VERSION=1.8.25 RAILS_VERSION=2.3
 
