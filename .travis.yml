@@ -15,11 +15,11 @@ bundler_args: "--binstubs"
 
 script: ./test/test_with_railsapp
 
-rvm: 
-  - 2.2.0
+#rvm: 
+#  - 2.2.0
 
-gemfile:
-  - test/rails_4.2.gemfile
+#gemfile:
+#  - test/rails_4.2.gemfile
 
 matrix:
   allow_failures:
@@ -28,8 +28,8 @@ matrix:
       env: RAILS_VERSION=edge
 
     - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_VERSION=4.2
 
   include:
     # ruby / rails edge
@@ -40,7 +40,7 @@ matrix:
 
     - rvm: ruby-head
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=edge
+      env: RAILS_VERSION=4.2
 
     # rails 4.2  Dec, 2014 
     
@@ -70,6 +70,7 @@ matrix:
 
     - rvm: jruby-19mode
       gemfile: test/rails_4.2.gemfile
+      env: RAILS_VERSION=4.2
 
     # rails 4.1  April 8, 2014 
     
@@ -85,8 +86,7 @@ matrix:
 
     - rvm: rbx-2.2.6
       gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development
-      env: RAILS_VERSION=4.0
+      env: RAILS_ENV2=development RAILS_VERSION=4.0
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
