@@ -1,5 +1,12 @@
 #!/bin/bash
 
+err_report() {
+    echo "$0: Error on line $1 - aborted"
+    exit 1
+}
+
+trap 'err_report $LINENO' ERR
+
 # Any failure causes exit
 set -e
 
