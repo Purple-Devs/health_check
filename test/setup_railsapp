@@ -161,7 +161,6 @@ then
     echo Adding health_check as gem to Gemfile...
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
 
-    set -x
     case "$RAILS_SERVER" in
     webrick|'')
             echo "Using default webrick server"
@@ -171,9 +170,8 @@ then
             echo "gem '$RAILS_SERVER'" >> Gemfile
             ;;
     esac
-    egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile
+    egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
     echo
-    set +x
     echo ================= Gemfile ===================
     cat Gemfile
     echo
