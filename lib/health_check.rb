@@ -25,6 +25,12 @@ module HealthCheck
   mattr_accessor :http_status_for_error_object
   self.http_status_for_error_object = 500
 
+  #
+  mattr_accessor :basic_auth_username, :basic_auth_password
+  self.basic_auth_username = nil
+  self.basic_auth_password = nil
+
+
   # Array of custom check blocks
   mattr_accessor :custom_checks
   mattr_accessor :full_checks
