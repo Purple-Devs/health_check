@@ -32,9 +32,7 @@ module HealthCheck
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
-          silence_level, logger.level = logger.level, @old_logger_level if @old_logger_level
           logger.info msg
-          logger.level = silence_level if @old_logger_level
         end
       end
     end
@@ -45,31 +43,6 @@ module HealthCheck
     # turn cookies for CSRF off
     def protect_against_forgery?
       false
-    end
-
-    # Silence logger as much as we can
-
-    if Rails.version < '4.1'
-
-      def process_with_silent_log(method_name, *args)
-        if logger
-          @old_logger_level = logger.level
-          if Rails.version >= '3.2'
-            silence do
-              process_without_silent_log(method_name, *args)
-            end
-          else
-            logger.silence do
-              process_without_silent_log(method_name, *args)
-            end
-          end
-        else
-          process_without_silent_log(method_name, *args)
-        end
-      end
-
-      alias_method_chain :process, :silent_log
-
     end
 
   end
