@@ -1,5 +1,6 @@
 = Change Log =
 
+* 2.0.0 - Removed silence - recommend to use a log filtering gem instead
 * 1.4.1 - Rails 4 and route changes
   * Now handles routes being generated multiple times by some gem / rails / ruby combinations - Previously multiple calls to health_check_routes where ignored, now explicit calls to health_check_route always adds the route but flags that it doesn't have to be added again on the end of the list
   * Uses ActiveRecord::Migration.check_pending! if available and returns the message if an exception is raised (Rails 4.0+)

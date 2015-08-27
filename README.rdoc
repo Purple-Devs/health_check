@@ -155,6 +155,16 @@ Will return a result with Content-Type: application/xml and body like:
 
 See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax example
 
+== Silencing log output
+
+It is recomended that you use silencer, lograge or one of the other log filtering gems.
+
+For example, with lograge use the following to exclude health_check from being logged:
+
+    config.lograge.ignore_actions = ["health_check/health_check#index"]
+
+Likewise you will probably want to exclude health_check from monitoring systems like newrelic.
+
 == Note on Patches/Pull Requests
 
 <em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
