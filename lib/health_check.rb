@@ -31,12 +31,12 @@ module HealthCheck
   mattr_accessor :standard_checks
   self.custom_checks = [ ]
   self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
-  self.standard_checks = [ 'database', 'migrations', 'custom' ]
+  self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
 
   def self.add_custom_check(&block)
     custom_checks << block
   end
-  
+
   def self.setup
     yield self
   end
