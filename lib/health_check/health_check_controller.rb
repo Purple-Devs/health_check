@@ -11,7 +11,7 @@ module HealthCheck
       begin
         errors = HealthCheck::Utils.process_checks(checks)
       rescue Exception => e
-        errors = e.message
+        errors = e.message.blank? ? e.class.to_s : e.message.to_s
       end     
       if errors.blank?
         obj = { :healthy => true, :message => HealthCheck.success }
