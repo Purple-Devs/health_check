@@ -3,10 +3,8 @@
 
 module HealthCheck
 
-  if Rails.version >= '3.0'
-    class Engine < Rails::Engine
-      cattr_accessor :routes_manually_defined
-    end
+  class Engine < Rails::Engine
+    cattr_accessor :routes_already_defined
   end
 
   # Text output upon success
@@ -46,11 +44,6 @@ end
 require "health_check/version"
 require 'health_check/utils'
 require 'health_check/health_check_controller'
-
-if defined?(HealthCheck::Engine)
-  require 'health_check/health_check_routes'
-else
-  require 'health_check/add_23_routes'
-end
+require 'health_check/health_check_routes'
 
 # vi: sw=2 sm ai:

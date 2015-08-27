@@ -98,8 +98,11 @@ To change the configuration of health_check, create a file `config/initializers/
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
 
-If you have a catchall route in a rails 3.0 or later application then add the following line above the catch all route (in `config/routes.rb`):
+If you have a catchall route then add the following line above the catch all route (in `config/routes.rb`):
    health_check_routes
+
+To change the url prefix (eg to /ping), add the following line in `config/routes.rb`:
+   health_check_routes('ping')
 
 == Uptime Monitoring
 
