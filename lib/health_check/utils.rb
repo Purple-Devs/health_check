@@ -28,6 +28,8 @@ module HealthCheck
             HealthCheck::Utils.get_database_version
           when "email"
             errors << HealthCheck::Utils.check_email
+          when "emailconf"
+            errors << HealthCheck::Utils.check_email if HealthCheck::Utils.mailer_configured?
           when "migrations", "migration"
             if defined?(ActiveRecord::Migration) and ActiveRecord::Migration.respond_to?(:check_pending!)
               # Rails 4+
@@ -47,7 +49,6 @@ module HealthCheck
             errors << HealthCheck::Utils.check_cache
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
-            errors << HealthCheck::Utils.process_checks("email") if HealthCheck::Utils.mailer_configured?
           when "custom"
             HealthCheck.custom_checks.each do |custom_check|
               errors << custom_check.call(self)
