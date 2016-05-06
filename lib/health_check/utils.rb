@@ -21,7 +21,6 @@ module HealthCheck
     def self.process_checks(checks)
       errors = ''
       checks.split('_').each do |check|
-        puts "Checking: #{check}"
         case check
           when 'and', 'site'
             # do nothing
@@ -49,11 +48,11 @@ module HealthCheck
           when 'cache'
             errors << HealthCheck::Utils.check_cache
           when 'sidekiq-redis'
-            errors << HealthCheck::Utils.check_sidekiq_redis
+            errors << HealthCheck::CustomHealthChecks.check_sidekiq_redis
           when 'redis'
-            errors << HealthCheck::Utils.check_redis
+            errors << HealthCheck::CustomHealthChecks.check_redis
           when 's3'
-            errors << HealthCheck::Utils.check_s3
+            errors << HealthCheck::CustomHealthChecks.check_s3
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
           when "custom"
@@ -148,31 +147,6 @@ module HealthCheck
 
     def self.check_cache
       Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
-    end
-
-    def self.check_sidekiq_redis
-      Sidekiq.redis { |r| "" if r.ping == "PONG" }
-    rescue => e
-      e.message
-    end
-
-    def self.check_redis
-      "" if Redis.new.ping
-    rescue Exception => e
-      e.message
-    end
-
-    def self.check_s3
-      s3Client = Ah::Gateways::S3.new
-      HealthCheck.buckets.each do |bucket|
-        s3Client.put_object(bucket,'FOO', 'BAR')
-        if !s3Client.get_object(bucket,'FOO').successful?
-          return "Could not read fetch object from s3 bucket: #{bucket}"
-        end
-      end
-      ""
-    rescue Exception => e
-      e.message
     end
 
   end
