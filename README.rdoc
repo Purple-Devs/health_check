@@ -83,7 +83,7 @@ To change the configuration of health_check, create a file `config/initializers/
 
       config.http_status_for_error_object = 500
 
-      # bucket names to test connectivity
+      # bucket names to test connectivity - required only if s3 check used
       config.buckets = []
 
       # You can customize which checks happen on a standard health check
