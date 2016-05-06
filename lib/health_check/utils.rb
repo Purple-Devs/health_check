@@ -47,6 +47,12 @@ module HealthCheck
             end
           when 'cache'
             errors << HealthCheck::Utils.check_cache
+          when 'sidekiq-redis'
+            errors << HealthCheck::CustomHealthChecks.check_sidekiq_redis
+          when 'redis'
+            errors << HealthCheck::CustomHealthChecks.check_redis
+          when 's3'
+            errors << HealthCheck::CustomHealthChecks.check_s3
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
           when "custom"
@@ -60,6 +66,8 @@ module HealthCheck
         end
       end
       return errors
+    rescue => e
+      return e.message
     end
 
 

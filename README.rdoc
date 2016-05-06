@@ -2,7 +2,7 @@
 
 Simple health check of Rails 4.x+ apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x 
+Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -83,11 +83,14 @@ To change the configuration of health_check, create a file `config/initializers/
 
       config.http_status_for_error_object = 500
 
+      # bucket names to test connectivity - required only if s3 check used
+      config.buckets = []
+
       # You can customize which checks happen on a standard health check
       config.standard_checks = [ 'database', 'migrations', 'custom' ]
 
       # You can set what tests are run with the 'full' or 'all' parameter
-      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
+      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'sidekiq-redis', 's3']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do
@@ -129,7 +132,7 @@ The hash contains two keys:
 * healthy - true if requested checks pass (boolean)
 * message - text message ("success" or error message)
 
-The following commands 
+The following commands
 
   curl -v localhost:3000/health_check.json
   curl -v localhost:3000/health_check/email.json
@@ -189,9 +192,9 @@ Likewise you will probably want to exclude health_check from monitoring systems 
 === Automated testing and other checks
 
 * {<img src="https://badge.fury.io/rb/health_check.png" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
-* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI 
+* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI
 * {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
-* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies 
+* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies
 
 === Manual testing
 
@@ -242,4 +245,3 @@ Thanks go to the various people who have given feedback and suggestions via the 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request (Code with BDD tests are favoured)
-
