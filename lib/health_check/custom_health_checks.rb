@@ -18,7 +18,12 @@ module HealthCheck
       HealthCheck.buckets.each do |bucket|
         aws_s3_client.put_object(bucket: bucket, key: 'FOO', body: 'BAR')
         unless aws_s3_client.get_object(bucket: bucket, key: 'FOO').successful?
-          return create_error 's3', "Could not fetch object from s3 bucket: #{bucket}"
+          return create_error 's3', "Could not get object from s3 bucket: #{bucket}"
+        end
+
+        aws_s3_client.delete_object(bucket: bucket, key: 'FOO')
+        if aws_s3_client.get_object(bucket: bucket, key: 'FOO').successful?
+          return create_error 's3', "Test object was not deleted from s3 bucket: #{bucket}"
         end
       end
       ""
