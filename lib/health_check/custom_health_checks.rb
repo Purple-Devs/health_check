@@ -15,14 +15,17 @@ module HealthCheck
 
     def self.check_s3
       return create_error 's3', "Could not connect to aws" if aws_s3_client.nil?
+
+      health_check_filename = 'health-check'
+
       HealthCheck.buckets.each do |bucket|
-        aws_s3_client.put_object(bucket: bucket, key: 'FOO', body: 'BAR')
-        unless aws_s3_client.get_object(bucket: bucket, key: 'FOO').successful?
+        aws_s3_client.put_object(bucket: bucket, key: health_check_filename, body: 'BAR')
+        unless aws_s3_client.get_object(bucket: bucket, key: health_check_filename).successful?
           return create_error 's3', "Could not get object from s3 bucket: #{bucket}"
         end
 
-        aws_s3_client.delete_object(bucket: bucket, key: 'FOO')
-        if aws_s3_client.get_object(bucket: bucket, key: 'FOO').successful?
+        aws_s3_client.delete_object(bucket: bucket, key: health_check_filename)
+        if aws_s3_client.get_object(bucket: bucket, key: health_check_filename).successful?
           return create_error 's3', "Test object was not deleted from s3 bucket: #{bucket}"
         end
       end
