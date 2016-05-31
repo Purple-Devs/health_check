@@ -13,8 +13,11 @@ group :development, :test do
   end
   # run travis-lint to check .travis.yml
   gem 'travis-lint'
+  # redis based checks
   gem 'sidekiq'
   gem 'redis'
+  gem 'resque'
+  # s3 check
   gem 'aws-sdk'
   platforms :ruby_18 do
     # mime-types 2.0 requires Ruby version >= 1.9.2

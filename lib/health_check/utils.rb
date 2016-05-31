@@ -47,6 +47,8 @@ module HealthCheck
             end
           when 'cache'
             errors << HealthCheck::Utils.check_cache
+          when 'resque-redis'
+            errors << HealthCheck::ResqueHealthCheck.check
           when 'sidekiq-redis'
             errors << HealthCheck::SidekiqHealthCheck.check
           when 'redis'
