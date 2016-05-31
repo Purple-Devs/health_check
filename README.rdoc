@@ -37,6 +37,10 @@ The health_check controller disables sessions for versions that eagerly load ses
 * migration - checks that the database migration level matches that in db/migrations
 * cache - checks that a value can be written to the cache
 * site - checks rails is running sufficiently to render text
+* s3 - checks proper permissions to s3 buckets
+* redis - checks Redis connectivity
+* sidekiq-redis - checks Sidekiq connectivity to Redis
+* resque-redis - checks Resque connectivity to Redis
 * custom - runs checks added via config.add_custom_check
 
 The email gateway is not checked unless the smtp settings have been changed.
