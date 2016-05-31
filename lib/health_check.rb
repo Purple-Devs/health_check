@@ -25,7 +25,7 @@ module HealthCheck
 
   # s3 buckets
   mattr_accessor :buckets
-  self.buckets = []
+  self.buckets = {}
 
   # Array of custom check blocks
   mattr_accessor :custom_checks
@@ -45,8 +45,11 @@ module HealthCheck
 
 end
 
-require "health_check/version"
-require 'health_check/custom_health_checks'
+require 'health_check/version'
+require 'health_check/base_health_check'
+require 'health_check/s3_health_check'
+require 'health_check/redis_health_check'
+require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
 require 'health_check/health_check_controller'
 require 'health_check/health_check_routes'

@@ -48,11 +48,11 @@ module HealthCheck
           when 'cache'
             errors << HealthCheck::Utils.check_cache
           when 'sidekiq-redis'
-            errors << HealthCheck::CustomHealthChecks.check_sidekiq_redis
+            errors << HealthCheck::SidekiqHealthCheck.check
           when 'redis'
-            errors << HealthCheck::CustomHealthChecks.check_redis
+            errors << HealthCheck::RedisHealthCheck.check
           when 's3'
-            errors << HealthCheck::CustomHealthChecks.check_s3
+            errors << HealthCheck::S3HealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
           when "custom"
