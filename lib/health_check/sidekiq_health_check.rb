@@ -3,7 +3,7 @@ module HealthCheck
     extend BaseHealthCheck
 
     def self.check
-      if (defined?(::Sidekiq)).nil?
+      unless defined?(::Sidekiq)
         raise "Wrong configuration. Missing 'sidekiq' gem"
       end
       ::Sidekiq.redis { |r| '' if r.ping == 'PONG' }

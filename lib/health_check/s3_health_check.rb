@@ -4,7 +4,7 @@ module HealthCheck
 
     class << self
       def check
-        if (defined?(::Aws)).nil?
+        unless defined?(::Aws)
           raise "Wrong configuration. Missing 'aws-sdk' gem"
         end
         return create_error 's3', 'Could not connect to aws' if aws_s3_client.nil?

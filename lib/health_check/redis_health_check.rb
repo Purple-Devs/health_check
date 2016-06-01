@@ -3,7 +3,7 @@ module HealthCheck
     extend BaseHealthCheck
 
     def self.check
-      if (defined?(::Redis)).nil?
+      unless defined?(::Redis)
         raise "Wrong configuration. Missing 'redis' gem"
       end
       '' if ::Redis.new.ping

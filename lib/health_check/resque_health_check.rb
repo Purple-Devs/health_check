@@ -3,7 +3,7 @@ module HealthCheck
      extend BaseHealthCheck
 
      def self.check
-       if (defined?(::Resque)).nil?
+       unless defined?(::Resque)
          raise "Wrong configuration. Missing 'resque' gem"
        end
        '' if ::Resque.redis.ping == 'PONG'
