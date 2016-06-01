@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in health_check.gemspec
-
 # TODO: fix shoulda version doesn't work with ruby 2.2
 ruby '1.9.3' if RUBY_VERSION > '1.9.3'
+
+# Specify your gem's dependencies in health_check.gemspec
 
 gemspec
 
@@ -22,4 +22,3 @@ group :development, :test do
   end
 
 end
-
