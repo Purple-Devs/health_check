@@ -1,3 +1,5 @@
+require 'aws-sdk'
+
 module HealthCheck
   class S3HealthCheck
     extend BaseHealthCheck
@@ -29,14 +31,14 @@ module HealthCheck
 
         aws_configuration = {
           region: Rails.application.secrets.aws_default_region,
-          credentials: Aws::Credentials.new(
+          credentials: ::Aws::Credentials.new(
             Rails.application.secrets.aws_access_key_id,
             Rails.application.secrets.aws_secret_access_key
           ),
           force_path_style: true
         }
 
-        Aws::S3::Client.new aws_configuration
+        ::Aws::S3::Client.new aws_configuration
       end
 
       def aws_s3_client
