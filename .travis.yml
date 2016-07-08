@@ -60,9 +60,10 @@ matrix:
       gemfile: test/rails_4.2.gemfile
       env: RAILS_SERVER=thin RAILS_VERSION=4.2
 
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development RAILS_VERSION=4.0
+    # No longer supported by travis
+    #- rvm: rbx-2.2.6
+    #  gemfile: test/rails_4.0.gemfile
+    #  env: RAILS_ENV2=development RAILS_VERSION=4.0
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
@@ -84,9 +85,10 @@ matrix:
       gemfile: test/rails_4.0.gemfile
       env: RAILS_VERSION=4.0
 
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development RAILS_VERSION=4.0
+    # No longer supported by travis
+    #- rvm: rbx-2.2.6
+    #  gemfile: test/rails_4.0.gemfile
+    #  env: RAILS_ENV2=development RAILS_VERSION=4.0
 
     - rvm: 2.0.0
       gemfile: test/rails_4.0.gemfile
