@@ -23,24 +23,30 @@ script: ./test/test_with_railsapp
 
 matrix:
   allow_failures:
-    - rvm: 2.2.0
+    - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge
 
     - rvm: ruby-head
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
   include:
     # ruby / rails edge
     
-    - rvm: 2.2.0
+    - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge
 
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
+
     - rvm: ruby-head
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
     # rails 4.2  Dec, 2014 
     
