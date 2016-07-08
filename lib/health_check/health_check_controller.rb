@@ -17,8 +17,8 @@ module HealthCheck
         obj = { :healthy => true, :message => HealthCheck.success }
         respond_to do |format|
           format.html { render :text => HealthCheck.success, :content_type => 'text/plain' }
-          format.json { render :xml => obj.to_json }
-          format.xml { render :xml => obj.to_xml }
+          format.json { render :json => obj }
+          format.xml { render :xml => obj }
           format.any { render :text => HealthCheck.success, :content_type => 'text/plain' }
         end
       else
@@ -26,8 +26,8 @@ module HealthCheck
         obj = { :healthy => false, :message => msg }
         respond_to do |format|
           format.html { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
-          format.json { render :xml => obj.to_json, :status => HealthCheck.http_status_for_error_object}
-          format.xml { render :xml => obj.to_xml, :status => HealthCheck.http_status_for_error_object }
+          format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
+          format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
           format.any { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
