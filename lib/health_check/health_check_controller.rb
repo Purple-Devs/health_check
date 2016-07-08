@@ -14,6 +14,7 @@ module HealthCheck
         errors = e.message.blank? ? e.class.to_s : e.message.to_s
       end     
       if errors.blank?
+        response.headers['Last-Modified'] = Time.now.httpdate
         obj = { :healthy => true, :message => HealthCheck.success }
         respond_to do |format|
           format.html { render :text => HealthCheck.success, :content_type => 'text/plain' }
