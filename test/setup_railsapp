@@ -59,16 +59,16 @@ fi
 $rehash
 
 rails="$base_dir/test/bin/rails"
+rake="$base_dir/test/bin/rake"
 
 echo Checking $rails is present ...
+[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
 [ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
 [ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
 fi
-
-rake="$base_dir/test/bin/rake"
 
 if [ ! -f $rake ]; then
     echo "Running bundle --binstub rake ..."
@@ -187,15 +187,16 @@ then
     $rehash
     echo "Using binstubs in $railsapp/bin for rails and rake commands"
     rails="$railsapp/bin/rails"
+    rake="$railsapp/bin/rake"
 
     echo Checking $rails is present ...
+    [ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
     [ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
     [ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
     if [ ! -f $rails ]; then
         echo "Test aborted (unable to create $rails)"
         exit 2
     fi
-    rake="$railsapp/bin/rake"
 
     echo Checking $rake is present ...
     [ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'

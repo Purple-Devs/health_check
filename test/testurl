@@ -52,7 +52,7 @@ if ARGV[3] and ARGV[3] != ''
   if page_content.to_s.include? ARGV[3]
     puts "PASS (found #{ARGV[3]})"
   else
-    puts "FAIL (could not find #{ARGV[3]})" 
+    puts "FAIL (expected to find #{ARGV[3]}) - page contents:" , page_content.to_s, 'END-OF-CONTENTS'
     exit 3
   end
 end

@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead:
 
-ruby '1.9.3' if RUBY_VERSION < '1.9.3'
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
 gem 'rails'
 gem 'rake'
