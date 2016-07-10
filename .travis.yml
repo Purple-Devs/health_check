@@ -86,11 +86,13 @@ matrix:
 
     # rails 4.1  April 8, 2014 
     
-    - rvm: 2.2.2
-      gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_VERSION=4.1
 
-    - rvm: ruby-head
-      gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
+    # rails 4.0
+    
+    - rvm: 1.9.3
+      gemfile: test/rails_4.0.gemfile
+      env: RAILS_VERSION=4.0
 
