@@ -2,24 +2,18 @@
 
 source 'https://rubygems.org'
 
-# Bundle edge Rails instead:
-
 ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
-gem 'rails'
-gem 'rake'
-gem 'rack'
+gem 'rails', '~> 5.0.0'
+gem 'rake', '>= 0.8.7'
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
     gem 'jruby-openssl'
     gem 'activerecord-jdbcsqlite3-adapter'
   else
-    gem 'sqlite3'
+    gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
 end
 
-# Initial Gemfile has therubyracer commented out
-gem 'therubyrhino', :platform => :jruby # REQUIRED
-gem 'therubyracer', :platform => :ruby # REQUIRED
