@@ -1,3 +1,5 @@
+sudo: false
+cache: bundler
 language: ruby
 notifications:
   email:
@@ -15,32 +17,40 @@ bundler_args: "--binstubs"
 
 script: ./test/test_with_railsapp
 
-#rvm: 
-#  - 2.2.0
-
-#gemfile:
-#  - test/rails_4.2.gemfile
-
 matrix:
   allow_failures:
-    - rvm: 2.2.0
+    - rvm: 2.3.1
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge
 
     - rvm: ruby-head
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge
+
+    - rvm: ruby-head
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
   include:
     # ruby / rails edge
     
-    - rvm: 2.2.0
+    - rvm: 2.3.1
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge
 
     - rvm: ruby-head
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge
+
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
+
+    - rvm: ruby-head
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
     # rails 4.2  Dec, 2014 
     
@@ -52,17 +62,19 @@ matrix:
       gemfile: test/rails_4.2.gemfile
       env: RAILS_SERVER=puma RAILS_VERSION=4.2
 
-    - rvm: 2.1.2
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=passenger RAILS_VERSION=4.2
+    # Can't find i18n?? because it can't compile?
+    #- rvm: 2.1.2
+    #  gemfile: test/rails_4.2.gemfile
+    #  env: RAILS_SERVER=passenger RAILS_VERSION=4.2
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
       env: RAILS_SERVER=thin RAILS_VERSION=4.2
 
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development RAILS_VERSION=4.0
+    # No longer supported by travis
+    #- rvm: rbx-2.2.6
+    #  gemfile: test/rails_4.0.gemfile
+    #  env: RAILS_ENV2=development RAILS_VERSION=4.0
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
@@ -74,21 +86,11 @@ matrix:
 
     # rails 4.1  April 8, 2014 
     
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=4.1
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
-    # rails 4.0  June 25, 2013
-    
-    - rvm: 1.9.3
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_VERSION=4.0
-
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_ENV2=development RAILS_VERSION=4.0
-
-    - rvm: 2.0.0
-      gemfile: test/rails_4.0.gemfile
-      env: RAILS_VERSION=4.0
+    - rvm: ruby-head
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
 
