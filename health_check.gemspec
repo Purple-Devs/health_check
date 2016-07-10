@@ -20,8 +20,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.extra_rdoc_files = [ "README.rdoc" ]
   gem.require_paths = ["lib"]
-  gem.required_ruby_version = '>= 2.2.2'
-  gem.add_dependency(%q<rails>, [">= 5.0"])
+  gem.required_ruby_version = '>= 1.9.3'
+  gem.add_dependency(%q<rails>, [">= 4.0"])
   gem.add_development_dependency(%q<rake>, [">= 0.8.3"])
   gem.add_development_dependency(%q<shoulda>, ["~> 2.11.0"])
   gem.add_development_dependency(%q<bundler>, ["~> 1.2"])
