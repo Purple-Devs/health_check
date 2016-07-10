@@ -17,7 +17,12 @@ group :development, :test do
   end
   gem 'shoulda'
 
-
+  # redis based checks
+  gem 'sidekiq', :require => !!ENV['SIDEKIQ']
+  gem 'redis', :require => !!ENV['REDIS']
+  gem 'resque', :require => !!ENV['RESQUE']
+  # s3 check
+  gem 'aws-sdk', :require => !!ENV['AWS']
 end
 
 # mime-types 2.0 requires Ruby version >= 1.9.2
