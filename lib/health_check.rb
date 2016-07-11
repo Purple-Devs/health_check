@@ -32,7 +32,7 @@ module HealthCheck
   mattr_accessor :full_checks
   mattr_accessor :standard_checks
   self.custom_checks = [ ]
-  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'sidekiq-redis', 'resque-redis', 's3']
+  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
 
   def self.add_custom_check(&block)
