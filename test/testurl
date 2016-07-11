@@ -28,6 +28,7 @@ page_content = response.body
 
 puts "  response code: #{response.code} #{response.message}"
 puts "  content_type: #{response.content_type}"
+response.header.each_header {|key,value| puts "    #{key}: #{value}" }
 puts "  body: #{page_content}"
 
 if ARGV[1] and ARGV[1] != ''
