@@ -7,20 +7,19 @@ module HealthCheck
     layout false if self.respond_to? :layout
 
     def index
-      seconds_since_epoch = Time.now.utc.to_i 
-      if HealthCheck.max_age.to_i > 1
-        etag = "#{seconds_since_epoch / HealthCheck.max_age.to_i}*#{HealthCheck.max_age}"
-      else
-        etag = "#{seconds_since_epoch}*#{HealthCheck.max_age}"
+      last_modified = Time.now.utc
+      max_age = HealthCheck.max_age
+      if max_age > 1
+        last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
-      if stale?(:etag => etag)
+      if stale?(:last_modified => last_modified)
         checks = params[:checks] || 'standard'
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e
           errors = e.message.blank? ? e.class.to_s : e.message.to_s
         end     
-        response.headers['Cache-control'] = 'private, no-cache, must-revalidate' + (HealthCheck.max_age > 0 ? ", max-age=#{HealthCheck.max_age}" : '')
+        response.headers['Cache-control'] = 'private, no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
         if errors.blank?
           obj = { :healthy => true, :message => HealthCheck.success }
           respond_to do |format|
