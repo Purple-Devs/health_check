@@ -23,6 +23,10 @@ module HealthCheck
   mattr_accessor :http_status_for_error_object
   self.http_status_for_error_object = 500
 
+  # max-age of response
+  mattr_accessor :max_age
+  self.max_age = 1
+
   # s3 buckets
   mattr_accessor :buckets
   self.buckets = {}
