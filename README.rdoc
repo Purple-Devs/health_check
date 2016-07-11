@@ -38,10 +38,10 @@ The health_check controller disables sessions for versions that eagerly load ses
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
-* redis\[-if-present\] - checks Redis connectivity
-* resque-redis\[-if-present\] - checks Resque connectivity to Redis
-* s3\[-if-present\] - checks proper permissions to s3 buckets
-* sidekiq-redis\[-if-present\] - checks Sidekiq connectivity to Redis
+* redis / redis-if-present - checks Redis connectivity
+* resque-redis / resque-redis-if-present - checks Resque connectivity to Redis
+* s3 / s3-if-present - checks proper permissions to s3 buckets
+* sidekiq-redis / sidekiq-redis-if-present - checks Sidekiq connectivity to Redis
 * site - checks rails is running sufficiently to render text
 
 Some checks have a *-if-present form, which only runs the check if the corresponding library has been required.
