@@ -18,4 +18,3 @@ group :development, :test do
   gem 'mime-types', RUBY_VERSION < '1.9.2' ? '< 2.0' : (defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3.0' : '>= 3.0')
 
 end
-

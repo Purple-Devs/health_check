@@ -33,12 +33,18 @@ The health_check controller disables sessions for versions that eagerly load ses
 
 * standard (default) - site, database and migrations checks are run plus email if ActionMailer is defined and it is not using the default configuration
 * all / full - all checks are run (can be overriden in config block)
+* cache - checks that a value can be written to the cache
+* custom - runs checks added via config.add_custom_check
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
-* cache - checks that a value can be written to the cache
+* redis\[-if-present\] - checks Redis connectivity
+* resque-redis\[-if-present\] - checks Resque connectivity to Redis
+* s3\[-if-present\] - checks proper permissions to s3 buckets
+* sidekiq-redis\[-if-present\] - checks Sidekiq connectivity to Redis
 * site - checks rails is running sufficiently to render text
-* custom - runs checks added via config.add_custom_check
+
+Some checks have a *-if-present form, which only runs the check if the corresponding library has been required.
 
 The email gateway is not checked unless the smtp settings have been changed.
 Specify full or include email in the list of checks to verify the smtp settings
@@ -84,6 +90,9 @@ To change the configuration of health_check, create a file `config/initializers/
 
       config.http_status_for_error_object = 500
 
+      # bucket names to test connectivity - required only if s3 check used, access permissions can be mixed
+      config.buckets = {'bucket_name' => [:R, :W, :D]}
+
       # You can customize which checks happen on a standard health check, eg to set an explicit list use:
       config.standard_checks = [ 'database', 'migrations', 'custom' ]
 
@@ -91,7 +100,7 @@ To change the configuration of health_check, create a file `config/initializers/
       config.standard_checks -= [ 'emailconf' ]
 
       # You can set what tests are run with the 'full' or 'all' parameter
-      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
+      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', sidekiq-redis', 's3']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do
@@ -133,7 +142,7 @@ The hash contains two keys:
 * healthy - true if requested checks pass (boolean)
 * message - text message ("success" or error message)
 
-The following commands 
+The following commands
 
   curl -v localhost:3000/health_check.json
   curl -v localhost:3000/health_check/email.json
@@ -193,9 +202,9 @@ Likewise you will probably want to exclude health_check from monitoring systems 
 === Automated testing and other checks
 
 * {<img src="https://badge.fury.io/rb/health_check.png" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
-* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI 
+* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI
 * {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
-* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies 
+* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies
 
 === Manual testing
 
@@ -246,4 +255,3 @@ Thanks go to the various people who have given feedback and suggestions via the 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request (Code with BDD tests are favoured)
-

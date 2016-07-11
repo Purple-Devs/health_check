@@ -17,7 +17,6 @@ module HealthCheck
 
     cattr_accessor :default_smtp_settings
 
-
     def self.process_checks(checks)
       errors = ''
       checks.split('_').each do |check|
@@ -47,6 +46,22 @@ module HealthCheck
             end
           when 'cache'
             errors << HealthCheck::Utils.check_cache
+          when 'resque-redis-if-present'
+            errors << HealthCheck::ResqueHealthCheck.check if defined?(::Resque)
+          when 'sidekiq-redis-if-present'
+            errors << HealthCheck::SidekiqHealthCheck.check if defined?(::Sidekiq)
+          when 'redis-if-present'
+            errors << HealthCheck::RedisHealthCheck.check if defined?(::Redis)
+          when 's3-if-present'
+            errors << HealthCheck::S3HealthCheck.check if defined?(::Aws)
+          when 'resque-redis'
+            errors << HealthCheck::ResqueHealthCheck.check
+          when 'sidekiq-redis'
+            errors << HealthCheck::SidekiqHealthCheck.check
+          when 'redis'
+            errors << HealthCheck::RedisHealthCheck.check
+          when 's3'
+            errors << HealthCheck::S3HealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
           when "custom"
@@ -60,8 +75,9 @@ module HealthCheck
         end
       end
       return errors
+    rescue => e
+      return e.message
     end
-
 
     def self.db_migrate_path
       # Lazy initialisation so Rails.root will be defined
@@ -99,7 +115,6 @@ module HealthCheck
           ''
       end
     end
-
 
     def self.check_sendmail(settings)
       File.executable?(settings[:location]) ? '' : 'no sendmail executable found. '
