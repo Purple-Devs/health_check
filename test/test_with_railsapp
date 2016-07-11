@@ -166,6 +166,13 @@ finish()
         tail -50 $railsapp/log/test.log
     fi
 
+    if [ -s $railsapp/log/production.log ]
+    then
+        echo ========================================================
+        echo Last 50 lines of production log
+        tail -50 $railsapp/log/production.log
+    fi
+
     stop_server
     trap "" 0
     echo ========================================================
@@ -406,8 +413,17 @@ common_tests()
         echo
     fi
 
-    date > $custom_file
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING log files to check for deprecation warnings ..."
+        if egrep ' is deprecated' $railsapp/log/[tp][er][so][td]*.log 
+        then
+            echo Found deprecation warnings - failed test
+            exit 99
+        fi
+    fi
 
+    date > $custom_file
 }
 
 
