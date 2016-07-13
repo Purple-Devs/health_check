@@ -5,6 +5,7 @@ module HealthCheck
   class HealthCheckController < ActionController::Base
 
     layout false if self.respond_to? :layout
+    before_filter :authenticate
 
     def index
       checks = params[:checks] || 'standard'
@@ -12,7 +13,7 @@ module HealthCheck
         errors = HealthCheck::Utils.process_checks(checks)
       rescue Exception => e
         errors = e.message
-      end     
+      end
       if errors.blank?
         obj = { :healthy => true, :message => HealthCheck.success }
         respond_to do |format|
@@ -41,6 +42,13 @@ module HealthCheck
 
 
     protected
+
+    def authenticate
+      return unless HealthCheck.basic_auth_username && HealthCheck.basic_auth_password
+      authenticate_or_request_with_http_basic do |username, password|
+        username == HealthCheck.basic_auth_username && password == HealthCheck.basic_auth_password
+      end
+    end
 
     # turn cookies for CSRF off
     def protect_against_forgery?
