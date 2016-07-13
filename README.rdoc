@@ -100,7 +100,7 @@ To change the configuration of health_check, create a file `config/initializers/
       config.standard_checks -= [ 'emailconf' ]
 
       # You can set what tests are run with the 'full' or 'all' parameter
-      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', sidekiq-redis', 's3']
+      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', 'sidekiq-redis', 's3']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do
