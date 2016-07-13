@@ -12,7 +12,7 @@ module HealthCheck
       if max_age > 1
         last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
-      if stale?(:last_modified => last_modified)
+      if stale?(:last_modified => last_modified, :public => (max_age > 1))
         checks = params[:checks] || 'standard'
         begin
           errors = HealthCheck::Utils.process_checks(checks)
