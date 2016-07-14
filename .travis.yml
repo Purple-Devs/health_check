@@ -39,10 +39,6 @@ matrix:
       gemfile: test/rails_3.2.gemfile
       env: RAILS_SERVER=thin RAILS_VERSION=3.2
 
-    - rvm: rbx-2.2.6
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_ENV2=development RAILS_VERSION=3.2
-
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
       env: RAILS_SERVER=unicorn RAILS_VERSION=3.2
