@@ -17,19 +17,19 @@ module HealthCheck
         response.headers['Last-Modified'] = Time.now.httpdate
         obj = { :healthy => true, :message => HealthCheck.success }
         respond_to do |format|
-          format.html { render :text => HealthCheck.success, :content_type => 'text/plain' }
+          format.html { render :plain => HealthCheck.success }
           format.json { render :json => obj }
           format.xml { render :xml => obj }
-          format.any { render :text => HealthCheck.success, :content_type => 'text/plain' }
+          format.any { render :plain => HealthCheck.success }
         end
       else
         msg = "health_check failed: #{errors}"
         obj = { :healthy => false, :message => msg }
         respond_to do |format|
-          format.html { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+          format.html { render :plain => msg, :status => HealthCheck.http_status_for_error_text  }
           format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
           format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-          format.any { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+          format.any { render :plain => msg, :status => HealthCheck.http_status_for_error_text  }
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
