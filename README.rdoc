@@ -188,6 +188,16 @@ For example, with lograge use the following to exclude health_check from being l
 
 Likewise you will probably want to exclude health_check from monitoring systems like newrelic.
 
+== Caching
+
+Cache-control is set with
+* public if max_age is > 1 and basic_auth_username is not set (otherwise private)
+* no-cache
+* must-revalidate
+* max-age (default 1)
+
+Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
+
 == Note on Patches/Pull Requests
 
 <em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
