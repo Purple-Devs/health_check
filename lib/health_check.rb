@@ -23,7 +23,8 @@ module HealthCheck
   mattr_accessor :http_status_for_error_object
   self.http_status_for_error_object = 500
 
-  # max-age of response
+  # max-age of response in seconds
+  # cache-control is public when max_age > 1 and basic authentication is used 
   mattr_accessor :max_age
   self.max_age = 1
 

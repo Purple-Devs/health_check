@@ -107,6 +107,12 @@ To change the configuration of health_check, create a file `config/initializers/
         CustomHealthCheck.perform_check # any code that returns blank on success and non blank string upon failure
       end
 
+      # max-age of response in seconds
+      # cache-control is public when max_age > 1 and basic_auth_username is not set
+      # You can force private without authentication for longer max_age by
+      # setting basic_auth_username but not basic_auth_password
+      config.max_age = 1
+
       # Protect health endpoints with basic auth
       # These default to nil and the endpoint is not protected
       config.basic_auth_username = 'my_username'

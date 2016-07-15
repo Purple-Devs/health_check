@@ -13,7 +13,7 @@ module HealthCheck
       if max_age > 1
         last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
-      if stale?(:last_modified => last_modified, :public => (max_age > 1))
+      if stale?(:last_modified => last_modified, :public => (max_age > 1) && ! basic_auth_username)
         # Rails 4.0 doesn't have :plain, but it is deprecated later on
         plain_key = Rails.version < '4.1' ? :text : :plain
         checks = params[:checks] || 'standard'
