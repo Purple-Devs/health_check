@@ -24,10 +24,6 @@ matrix:
       env: RAILS_VERSION=edge
 
     - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge
-
-    - rvm: ruby-head
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0
 
@@ -38,12 +34,12 @@ matrix:
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge
 
-    - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge
-
     # ruby 5.0  Jun. 2016
     
+    - rvm: 2.3.1
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0
+
     - rvm: 2.2.2
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0
