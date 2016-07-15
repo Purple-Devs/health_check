@@ -13,6 +13,8 @@ module HealthCheck
         last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
       if stale?(:last_modified => last_modified, :public => (max_age > 1))
+        # Rails 4.0 doesn't have :plain, but it is deprecated later on
+        plain_key = Rails.version < '4.1' ? :text : :plain
         checks = params[:checks] || 'standard'
         begin
           errors = HealthCheck::Utils.process_checks(checks)
@@ -23,19 +25,19 @@ module HealthCheck
         if errors.blank?
           obj = { :healthy => true, :message => HealthCheck.success }
           respond_to do |format|
-            format.html { render :text => HealthCheck.success, :content_type => 'text/plain' }
+            format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
             format.json { render :json => obj }
             format.xml { render :xml => obj }
-            format.any { render :text => HealthCheck.success, :content_type => 'text/plain' }
+            format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
           end
         else
           msg = "health_check failed: #{errors}"
           obj = { :healthy => false, :message => msg }
           respond_to do |format|
-            format.html { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+            format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
             format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
             format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-            format.any { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+            format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
           end
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
