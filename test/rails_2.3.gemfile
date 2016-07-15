@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 ruby "1.8.7"
 
 gem 'rails', "~> 2.3.15"
-# rails requires rake >= 0.8.3 
+gem 'rake', ">= 0.8.3", "< 11.0"
 
 gem 'rdoc'
 gem 'rdoc-data'
