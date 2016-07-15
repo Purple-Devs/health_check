@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', "~> 3.0.19"
-gem 'rake', '>= 0.8.3', '< 11.0'
+gem 'rake', '>= 0.8.3', '< 11.0'        # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
