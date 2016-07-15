@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.extra_rdoc_files = [ "README.rdoc" ]
   gem.require_paths = ["lib"]
   gem.add_dependency(%q<rails>, [">= 2.3.0"])
-  gem.add_development_dependency(%q<rake>, [">= 0.8.3"])
+  gem.add_development_dependency(%q<rake>, [">= 0.8.3", "< 11.0"])
   gem.add_development_dependency(%q<shoulda>, ["~> 2.11.0"])
   gem.add_development_dependency(%q<bundler>, ["~> 1.2"])
 end
