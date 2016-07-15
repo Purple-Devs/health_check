@@ -14,23 +14,25 @@ module HealthCheck
       rescue Exception => e
         errors = e.message.blank? ? e.class.to_s : e.message.to_s
       end     
+      # Rails 4.0 doesn't have :plain, but it is deprecated later on
+      plain_key = Rails.version < '4.1' ? :text : :plain
       if errors.blank?
         response.headers['Last-Modified'] = Time.now.httpdate
         obj = { :healthy => true, :message => HealthCheck.success }
         respond_to do |format|
-          format.html { render :text => HealthCheck.success, :content_type => 'text/plain' }
+          format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
           format.json { render :json => obj }
           format.xml { render :xml => obj }
-          format.any { render :text => HealthCheck.success, :content_type => 'text/plain' }
+          format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
         end
       else
         msg = "health_check failed: #{errors}"
         obj = { :healthy => false, :message => msg }
         respond_to do |format|
-          format.html { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+          format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain' }
           format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
           format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-          format.any { render :text => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+          format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain' }
         end
         # Log a single line as some uptime checkers only record that it failed, not the text returned
         if logger
