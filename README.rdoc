@@ -107,6 +107,10 @@ To change the configuration of health_check, create a file `config/initializers/
         CustomHealthCheck.perform_check # any code that returns blank on success and non blank string upon failure
       end
 
+      # Protect health endpoints with basic auth
+      # These default to nil and the endpoint is not protected
+      config.basic_auth_username = 'my_username'
+      config.basic_auth_password = 'my_password'
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").

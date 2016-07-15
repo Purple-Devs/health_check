@@ -27,6 +27,11 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
+  # Basic Authentication
+  mattr_accessor :basic_auth_username, :basic_auth_password
+  self.basic_auth_username = nil
+  self.basic_auth_password = nil
+
   # Array of custom check blocks
   mattr_accessor :custom_checks
   mattr_accessor :full_checks
