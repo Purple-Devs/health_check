@@ -8,35 +8,42 @@ module HealthCheck
     before_filter :authenticate
 
     def index
-      checks = params[:checks] || 'standard'
-      begin
-        errors = HealthCheck::Utils.process_checks(checks)
-      rescue Exception => e
-        errors = e.message.blank? ? e.class.to_s : e.message.to_s
-      end     
-      # Rails 4.0 doesn't have :plain, but it is deprecated later on
-      plain_key = Rails.version < '4.1' ? :text : :plain
-      if errors.blank?
-        response.headers['Last-Modified'] = Time.now.httpdate
-        obj = { :healthy => true, :message => HealthCheck.success }
-        respond_to do |format|
-          format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-          format.json { render :json => obj }
-          format.xml { render :xml => obj }
-          format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-        end
-      else
-        msg = "health_check failed: #{errors}"
-        obj = { :healthy => false, :message => msg }
-        respond_to do |format|
-          format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain' }
-          format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
-          format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-          format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain' }
-        end
-        # Log a single line as some uptime checkers only record that it failed, not the text returned
-        if logger
-          logger.info msg
+      last_modified = Time.now.utc
+      max_age = HealthCheck.max_age
+      if max_age > 1
+        last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
+      end
+      if stale?(:last_modified => last_modified, :public => (max_age > 1))
+        # Rails 4.0 doesn't have :plain, but it is deprecated later on
+        plain_key = Rails.version < '4.1' ? :text : :plain
+        checks = params[:checks] || 'standard'
+        begin
+          errors = HealthCheck::Utils.process_checks(checks)
+        rescue Exception => e
+          errors = e.message.blank? ? e.class.to_s : e.message.to_s
+        end     
+        response.headers['Cache-control'] = 'private, no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
+        if errors.blank?
+          obj = { :healthy => true, :message => HealthCheck.success }
+          respond_to do |format|
+            format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
+            format.json { render :json => obj }
+            format.xml { render :xml => obj }
+            format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
+          end
+        else
+          msg = "health_check failed: #{errors}"
+          obj = { :healthy => false, :message => msg }
+          respond_to do |format|
+            format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+            format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
+            format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
+            format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
+          end
+          # Log a single line as some uptime checkers only record that it failed, not the text returned
+          if logger
+            logger.info msg
+          end
         end
       end
     end
