@@ -20,6 +20,8 @@ group :development, :test do
     # mime-types 2.0 requires Ruby version >= 1.9.2
     gem "mime-types", "< 2.0"
   end
+  #gem 'rake', ">= 0.8.3", "< 11.0"
+  #gem 'rack', "< 2.0"
 
 end
 
