@@ -48,6 +48,10 @@ echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+else
+    echo bundle passed - lock file contains:
+    cat $BUNDLE_GEMFILE.lock
+    echo
 fi
 $rehash
 
