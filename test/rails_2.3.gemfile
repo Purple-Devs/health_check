@@ -14,7 +14,9 @@ gem 'rdoc'
 gem 'rdoc-data'
 
 # mime-types 2.0 requires Ruby version >= 1.9.2
-gem "mime-types", "< 2.0"
+gem "mime-types", "< 2.0" if RUBY_VERSION < '1.9.2' # REQUIRED
+# 0.7 requires ruby 1.9.3
+gem 'i18n', '< 0.7' if RUBY_VERSION < '1.9.3' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
