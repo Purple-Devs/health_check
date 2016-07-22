@@ -80,7 +80,7 @@ actual_rails_version=`$rails -v`
 
 echo Installing health_check as a gem into $tmp_dir/gems
 rm -f pkg/health_check-*.gem
-if env GEM_HOME=$tmp_dir/gems rake install
+if env GEM_HOME=$tmp_dir/gems $rake install
 then
     echo rake install passed
 else

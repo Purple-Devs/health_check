@@ -7,6 +7,15 @@ ruby '1.9.3' if RUBY_VERSION > '1.9.3'
 
 gemspec
 
+# mime-types 2.0 requires Ruby version >= 1.9.2
+gem "mime-types", "< 2.0" if RUBY_VERSION < '1.9.2' # REQUIRED
+# 0.7 requires ruby 1.9.3
+gem 'i18n', '< 0.7' if RUBY_VERSION < '1.9.3' # REQUIRED
+# rack 2.0 requires ruby 2.2.2, rails 3.2 requires rack ~> 1.4.5
+gem 'rack', "< 1.5" # REQUIRED
+
+gem 'rack-cache', '< 1.3' if RUBY_VERSION < '1.9.3'
+
 group :development, :test do
   if defined?(JRUBY_VERSION)
     gem 'jruby-openssl'
