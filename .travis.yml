@@ -69,7 +69,8 @@ matrix:
       env: RAILS_VERSION=3.0
 
     # rails 2.3 march 16 2009 - ruby 1.8.7
+    # railslts.com
     - rvm: 1.8.7
-      gemfile: test/rails_2.3.gemfile
+      gemfile: test/rails_2.3_lts.gemfile
       env: RUBYGEMS_VERSION=1.8.25 RAILS_VERSION=2.3
 
