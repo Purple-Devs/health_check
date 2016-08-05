@@ -45,6 +45,14 @@ module HealthCheck
             end
           when 'cache'
             errors << HealthCheck::Utils.check_cache
+          when 'resque-redis'
+            errors << HealthCheck::ResqueHealthCheck.check
+          when 'sidekiq-redis'
+            errors << HealthCheck::SidekiqHealthCheck.check
+          when 'redis'
+            errors << HealthCheck::RedisHealthCheck.check
+          when 's3'
+            errors << HealthCheck::S3HealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
             errors << HealthCheck::Utils.process_checks("email") if HealthCheck::Utils.mailer_configured?

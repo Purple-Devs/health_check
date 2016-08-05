@@ -13,6 +13,14 @@ group :development, :test do
     gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda', "~> 2.11.0"
+
+  # redis based checks
+  gem 'sidekiq', :require => !!ENV['SIDEKIQ']
+  gem 'redis', :require => !!ENV['REDIS']
+  gem 'resque', :require => !!ENV['RESQUE']
+  # s3 check
+  gem 'aws-sdk', :require => !!ENV['AWS']
+
 end
 
 # mime-types 2.0 requires Ruby version >= 1.9.2

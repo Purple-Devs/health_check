@@ -36,6 +36,10 @@ The health_check controller disables sessions for versions that eagerly load ses
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
 * cache - checks that a value can be written to the cache
+* redis\[-if-present\] - checks Redis connectivity
+* resque-redis\[-if-present\] - checks Resque connectivity to Redis
+* s3\[-if-present\] - checks proper permissions to s3 buckets
+* sidekiq-redis\[-if-present\] - checks Sidekiq connectivity to Redis
 * site - checks rails is running sufficiently to render text
 * custom - runs checks added via config.add_custom_check
 
@@ -94,6 +98,10 @@ To change the configuration of health_check, create a file `config/initializers/
 
       config.http_status_for_error_text = 500
 
+      # You can customize which checks happen on a standard health check
+      # bucket names to test connectivity - required only if s3 check used, access permissions can be mixed
+      config.buckets = {'bucket_name' => [:R, :W, :D]}
+
       # http status code used when an error object is output (json or xml)
       # Set to 200 if you want your want to distinguish between partial (healthy property == false) and
       # total failure of rails application (http status of 500 etc)
@@ -104,7 +112,7 @@ To change the configuration of health_check, create a file `config/initializers/
       config.standard_checks = [ 'database', 'migrations', 'custom' ]
 
       # You can set what tests are run with the 'full' or 'all' parameter
-      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
+      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', sidekiq-redis', 's3']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do

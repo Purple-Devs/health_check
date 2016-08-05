@@ -30,13 +30,16 @@ module HealthCheck
   self.basic_auth_username = nil
   self.basic_auth_password = nil
 
+  # s3 buckets
+  mattr_accessor :buckets
+  self.buckets = {}
 
   # Array of custom check blocks
   mattr_accessor :custom_checks
   mattr_accessor :full_checks
   mattr_accessor :standard_checks
   self.custom_checks = [ ]
-  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache']
+  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'sidekiq-redis', 'resque-redis', 's3']
   self.standard_checks = [ 'database', 'migrations', 'custom' ]
 
   def self.add_custom_check(&block)
@@ -50,6 +53,11 @@ module HealthCheck
 end
 
 require "health_check/version"
+require 'health_check/base_health_check'
+require 'health_check/resque_health_check'
+require 'health_check/s3_health_check'
+require 'health_check/redis_health_check'
+require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
 require 'health_check/health_check_controller'
 
