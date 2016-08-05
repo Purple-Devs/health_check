@@ -55,6 +55,8 @@ module HealthCheck
             errors << HealthCheck::RedisHealthCheck.check if defined?(::Redis)
           when 's3-if-present'
             errors << HealthCheck::S3HealthCheck.check if defined?(::Aws)
+          when 'elasticsearch-if-present'
+            errors << HealthCheck::ElasticsearchHealthCheck.check if defined?(::Elasticsearch)
           when 'resque-redis'
             errors << HealthCheck::ResqueHealthCheck.check
           when 'sidekiq-redis'
@@ -63,6 +65,8 @@ module HealthCheck
             errors << HealthCheck::RedisHealthCheck.check
           when 's3'
             errors << HealthCheck::S3HealthCheck.check
+          when 'elasticsearch'
+            errors << HealthCheck::ElasticsearchHealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks, called_from_middleware)
           when "middleware"

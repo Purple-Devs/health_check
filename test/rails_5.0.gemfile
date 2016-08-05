@@ -20,6 +20,7 @@ group :development, :test do
   gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
+  gem 'elasticsearch', :require => !ENV['ELASTICSEARCH_URL'].nil?
   # s3 check
   gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end

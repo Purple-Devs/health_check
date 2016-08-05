@@ -46,6 +46,7 @@ The health_check controller disables sessions for versions that eagerly load ses
 * resque-redis / resque-redis-if-present - checks Resque connectivity to Redis
 * s3 / s3-if-present - checks proper permissions to s3 buckets
 * sidekiq-redis / sidekiq-redis-if-present - checks Sidekiq connectivity to Redis
+* elasticsearch / elasticsearch-if-present - checks Elasticsearch connectivity
 * site - checks rails is running sufficiently to render text
 
 Some checks have a *-if-present form, which only runs the check if the corresponding library has been required.
