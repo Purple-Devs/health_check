@@ -45,5 +45,6 @@ group :development, :test do
   gem 'resque', :require => !!ENV['RESQUE']
   # s3 check
   gem 'aws-sdk', :require => !!ENV['AWS']
+  gem 'elasticsearch', :require => !!ENV['ELASTICSEARCH_URL']
 
 end
