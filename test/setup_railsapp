@@ -52,7 +52,7 @@ else
 fi
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
-if ! bundle ; then
+if ! bundle install ; then
     echo "Test aborted (missing required gems)"
     exit 2
 fi
@@ -82,6 +82,9 @@ actual_rails_version=`$rails -v`
 
 [ -d lib/health_check ] || exec echo setup_railsapp MUST be executed in the base of the health_check gem/clone of git repository
 
+export GEM_PATH="$tmp_dir/gems:`gem environment gempath`"
+echo Set GEM_PATH=$GEM_PATH
+
 echo Installing health_check as a gem into $tmp_dir/gems
 rm -f pkg/health_check-*.gem
 if env GEM_HOME=$tmp_dir/gems $rake install
@@ -93,9 +96,6 @@ else
     echo gem install worked, but flagging it as a FAIL anyway since rake install failed!
     exit 2
 fi
-
-export GEM_PATH="$tmp_dir/gems:`gem environment gempath`"
-echo Set GEM_PATH=$GEM_PATH
 
 echo Gems in tmp/gems:
 ls tmp/gems
