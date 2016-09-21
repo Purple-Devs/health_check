@@ -27,6 +27,10 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
+  # health check uri path for middleware check
+  mattr_accessor :uri
+  self.uri = 'health_check'
+
   # Array of custom check blocks
   mattr_accessor :custom_checks
   mattr_accessor :full_checks
