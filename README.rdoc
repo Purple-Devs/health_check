@@ -2,7 +2,8 @@
 
 Simple health check of Rails 4.x+ apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x
+Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x;
+Use {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions ~> 2.0 for Rails 4.x and 5.x;
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -32,16 +33,18 @@ The health_check controller disables sessions for versions that eagerly load ses
 
 * standard (default) - site, database and migrations checks are run plus email if ActionMailer is defined and it is not using the default configuration
 * all / full - all checks are run (can be overriden in config block)
+* cache - checks that a value can be written to the cache
+* custom - runs checks added via config.add_custom_check
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
-* cache - checks that a value can be written to the cache
+* redis / redis-if-present - checks Redis connectivity
+* resque-redis / resque-redis-if-present - checks Resque connectivity to Redis
+* s3 / s3-if-present - checks proper permissions to s3 buckets
+* sidekiq-redis / sidekiq-redis-if-present - checks Sidekiq connectivity to Redis
 * site - checks rails is running sufficiently to render text
-* s3 - checks proper permissions to s3 buckets
-* redis - checks Redis connectivity
-* sidekiq-redis - checks Sidekiq connectivity to Redis
-* resque-redis - checks Resque connectivity to Redis
-* custom - runs checks added via config.add_custom_check
+
+Some checks have a *-if-present form, which only runs the check if the corresponding library has been required.
 
 The email gateway is not checked unless the smtp settings have been changed.
 Specify full or include email in the list of checks to verify the smtp settings
@@ -90,17 +93,30 @@ To change the configuration of health_check, create a file `config/initializers/
       # bucket names to test connectivity - required only if s3 check used, access permissions can be mixed
       config.buckets = {'bucket_name' => [:R, :W, :D]}
 
-      # You can customize which checks happen on a standard health check
+      # You can customize which checks happen on a standard health check, eg to set an explicit list use:
       config.standard_checks = [ 'database', 'migrations', 'custom' ]
 
+      # Or to exclude one check:
+      config.standard_checks -= [ 'emailconf' ]
+
       # You can set what tests are run with the 'full' or 'all' parameter
-      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', sidekiq-redis', 's3']
+      config.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'resque-redis', 'sidekiq-redis', 's3']
 
       # Add one or more custom checks that return a blank string if ok, or an error message if there is an error
       config.add_custom_check do
         CustomHealthCheck.perform_check # any code that returns blank on success and non blank string upon failure
       end
 
+      # max-age of response in seconds
+      # cache-control is public when max_age > 1 and basic_auth_username is not set
+      # You can force private without authentication for longer max_age by
+      # setting basic_auth_username but not basic_auth_password
+      config.max_age = 1
+
+      # Protect health endpoints with basic auth
+      # These default to nil and the endpoint is not protected
+      config.basic_auth_username = 'my_username'
+      config.basic_auth_password = 'my_password'
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
@@ -175,6 +191,16 @@ For example, with lograge use the following to exclude health_check from being l
     config.lograge.ignore_actions = ["health_check/health_check#index"]
 
 Likewise you will probably want to exclude health_check from monitoring systems like newrelic.
+
+== Caching
+
+Cache-control is set with
+* public if max_age is > 1 and basic_auth_username is not set (otherwise private)
+* no-cache
+* must-revalidate
+* max-age (default 1)
+
+Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
 
 == Note on Patches/Pull Requests
 

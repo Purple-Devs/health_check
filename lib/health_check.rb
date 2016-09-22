@@ -23,20 +23,31 @@ module HealthCheck
   mattr_accessor :http_status_for_error_object
   self.http_status_for_error_object = 500
 
+  # max-age of response in seconds
+  # cache-control is public when max_age > 1 and basic authentication is used
+  mattr_accessor :max_age
+  self.max_age = 1
+
   # s3 buckets
   mattr_accessor :buckets
   self.buckets = {}
 
+
   # health check uri path for middleware check
   mattr_accessor :uri
   self.uri = 'health_check'
+
+  # Basic Authentication
+  mattr_accessor :basic_auth_username, :basic_auth_password
+  self.basic_auth_username = nil
+  self.basic_auth_password = nil
 
   # Array of custom check blocks
   mattr_accessor :custom_checks
   mattr_accessor :full_checks
   mattr_accessor :standard_checks
   self.custom_checks = [ ]
-  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis', 'sidekiq-redis', 'resque-redis', 's3']
+  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
 
   def self.add_custom_check(&block)

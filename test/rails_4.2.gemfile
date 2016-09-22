@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '1.9.3' if RUBY_VERSION < '1.9.3'
+ruby RUBY_VERSION < '1.9.3' ? '1.9.3' : RUBY_VERSION
 
 gem 'rails', "~> 4.2.0"
 gem 'rake', '>= 0.8.3'
@@ -16,10 +16,15 @@ group :development, :test do
     gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
+
   # redis based checks
-  gem 'sidekiq'
-  gem 'redis'
-  gem 'resque'
+  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
+  gem 'redis', :require => !ENV['REDIS_URL'].nil?
+  gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk'
+  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
+
+# mime-types 2.0 requires Ruby version >= 1.9.2
+# mime-types 3.0 requires Ruby version >= 2.0
+gem 'mime-types', RUBY_VERSION < '1.9.2' ? '< 2.0' : (defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0') # REQUIRED
