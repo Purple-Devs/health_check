@@ -32,7 +32,6 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
-
   # health check uri path for middleware check
   mattr_accessor :uri
   self.uri = 'health_check'
@@ -69,5 +68,6 @@ require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
 require 'health_check/health_check_controller'
 require 'health_check/health_check_routes'
+require 'health_check/middleware_health_check'
 
 # vi: sw=2 sm ai:
