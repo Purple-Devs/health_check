@@ -2,8 +2,10 @@
 
 Simple health check of Rails 4.x+ apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-Use {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions < 2.0 for Rails 2.3 and 3.x;
-Use {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions ~> 2.0 for Rails 4.x and 5.x;
+Use 
+* {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions ~> 2.0 for Rails 4.x and 5.x;
+* {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions ~> 1.7 for Rails 3.x;
+* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3;
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
