@@ -125,23 +125,13 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
-case "$actual_rails_version" in
-    *' '[12].*)
-        $rails railsapp -d $db
-        ;;
-    *' '[34].*)
-        case "$BUNDLE_GEMFILE" in
-        *rails_edge.gemfile)
-            $rails new railsapp -d $db --edge
-            ;;
-        *)
-            $rails new railsapp -d $db
-            ;;
-        esac
-        ;;
-    *)
-        echo "Unknown rails version"
-        ;;
+case "$BUNDLE_GEMFILE" in
+*rails_edge.gemfile)
+    $rails new railsapp -d $db --edge
+    ;;
+*)
+    $rails new railsapp -d $db
+    ;;
 esac
 
 cd $railsapp
@@ -365,7 +355,6 @@ EOF
 
 if [ -s config/routes.rb ]; then
   mv -f config/routes.rb config/routes.rb-old
-  var=`ruby -n -e 'print $1 if /^[^#]+ do \|([^\|]+)\|/' config/routes.rb-old`
   (
     ruby -n -e 'print if not /^end/..9999' config/routes.rb-old | tee /tmp/t$$
     if [ ! -s /tmp/t$$ ]; then
@@ -373,35 +362,17 @@ if [ -s config/routes.rb ]; then
       sed -e '/^end/,$d' config/routes.rb-old
     fi
 
-    case "$var" in
-    '')
-      # rails 3.0+
-      echo "  # -----------------------------------------"
-      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
-      echo "  if File.exists?('$catchall_file')"
-      echo "    health_check_routes"
-      echo "    # CATCH ALL ROUTE"
-      echo "    get '*path', :to => 'example#catchall'"
-      echo "  end"
-      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  # ---------------------------------------"
-      ;;
-    *)
-      # rails 2.3
-      echo "  # -----------------------------------------"
-      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  # example controller"
-      echo "  ${var}.connect 'example(/:action(/:id))(.:format)', :controller => 'example'"
-      echo "  if File.exists?('$catchall_file')"
-      echo "    # health_check routes already at the top in rails 2.3! do not need to call health_check_routes"
-      echo "    # CATCH ALL ROUTE"
-      echo "    ${var}.connect '*path', :controller => 'example', :action => 'catchall'"
-      echo "  end"
-      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  # ---------------------------------------"
-      ;;
-    esac
+    # rails 3.0+
+    echo "  # -----------------------------------------"
+    echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
+    echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
+    echo "  if File.exists?('$catchall_file')"
+    echo "    health_check_routes"
+    echo "    # CATCH ALL ROUTE"
+    echo "    get '*path', :to => 'example#catchall'"
+    echo "  end"
+    echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
+    echo "  # ---------------------------------------"
     ruby -n -e 'print if /^end/..9999' config/routes.rb-old | tee /tmp/t$$ 
     if [ ! -s /tmp/t$$ ]; then
       echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
