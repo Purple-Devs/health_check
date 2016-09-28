@@ -4,7 +4,7 @@
 module HealthCheck
 
   class Engine < Rails::Engine
-    cattr_accessor :routes_already_defined
+    cattr_accessor :routes_explicitly_defined 
   end
 
   # Text output upon success
