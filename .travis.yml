@@ -9,7 +9,9 @@ notifications:
 before_install:
   - gem update --system $RUBYGEMS_VERSION
   - gem --version
-  - gem install bundler
+  # Temporary version lock until Bundler >= 1.13.2
+  # https://github.com/bundler/bundler/issues/4975
+  - gem install bundler -v 1.12
   - bundle --version
   - mkdir -p tmp/bundle
 
