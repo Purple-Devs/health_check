@@ -9,6 +9,7 @@ trap 'err_report $LINENO' ERR
 
 # Any failure causes exit
 set -e
+export DISABLE_SPRING=1
 
 cleanup_db()
 {
@@ -78,6 +79,7 @@ start_server()
         bundle_prefix='bundle exec'
     fi
     server_arg=${RAILS_SERVER:-webrick}
+    echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
     case "$server_arg" in
     puma) 
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
@@ -103,6 +105,7 @@ start_server()
         ;;
     esac
     server_pid=$!
+    echo Server pid: $server_pid
     sleep 3
     echo
     echo 'Checking server is up ...'
@@ -163,6 +166,13 @@ finish()
         tail -50 $railsapp/log/test.log
     fi
 
+    if [ -s $railsapp/log/production.log ]
+    then
+        echo ========================================================
+        echo Last 50 lines of production log
+        tail -50 $railsapp/log/production.log
+    fi
+
     stop_server
     trap "" 0
     echo ========================================================
@@ -182,9 +192,9 @@ common_tests()
         echo "${test_no}: CHECKING routes exist..."
         $rake routes | tee /tmp/t$$
         echo
-        case `egrep health_check /tmp/t$$ || true` in
+        case `egrep ${route_prefix} /tmp/t$$ || true` in
         '')
-          echo WARNING - routes for health_check not listed!
+          echo WARNING - routes for ${route_prefix} not listed!
           ;;
         esac
         echo
@@ -193,11 +203,12 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING can get a static file ..."
-        case "$RAILS_ENV=`egrep serve_static_files config/environments/production.rb`" in
-        production*static*)
+        case "$RAILS_ENV=`egrep '^\s*config.serve_static_[asetfil]* *= *false' config/environments/${RAILS_ENV}.rb`" in
+        production*static*false*)
             echo "  SKIPPED (disabled in production)"
             ;;
         *)
+            grep serve_static_files config/environments/${RAILS_ENV}.rb config/[a-z]*.rb || echo no serve_static_files entry
             $testurl ${host}/static.txt 200 text/plain STATIC-FILE
             ;;
         esac
@@ -220,46 +231,46 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should pass with no database migrations ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should pass with no database migrations ..."
         ls db/migrate
-        $testurl ${host}/health_check/migration 200 text/plain $success
+        $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should fail without initial database migration ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should fail without initial database migration ..."
         cp $base_dir/test/migrate/nine/* db/migrate
         ls db/migrate
-        $testurl ${host}/health_check/migration 550 text/plain failed
+        $testurl ${host}/${route_prefix}/migration 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/database should pass without initial database migration (since it ignores the difference) ..."
-        $testurl ${host}/health_check/database 200 text/plain $success
+        echo "${test_no}: TESTING ${route_prefix}/database should pass without initial database migration (since it ignores the difference) ..."
+        $testurl ${host}/${route_prefix}/database 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/site should pass ..."
-        $testurl ${host}/health_check/site 200 text/plain $success
+        echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+        $testurl ${host}/${route_prefix}/site 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should pass after initial database migration ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should pass after initial database migration ..."
         $rake db:migrate
-        $testurl ${host}/health_check/migration 200 text/plain $success
+        $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should fail without all migrations ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should fail without all migrations ..."
         cp $base_dir/test/migrate/twelve/* db/migrate
 
         case "$actual_rails_version" in
@@ -269,146 +280,158 @@ common_tests()
                 ;;
         esac
         ls db/migrate
-        $testurl ${host}/health_check/migration 550 text/plain failed
+        $testurl ${host}/${route_prefix}/migration 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should pass after both database migrations ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should pass after both database migrations ..."
         $rake db:migrate
-        $testurl ${host}/health_check/migration 200 text/plain $success
+        $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/migration should pass after both database migrations ..."
+        echo "${test_no}: TESTING ${route_prefix}/migration should pass after both database migrations ..."
         $rake db:migrate
-        $testurl ${host}/health_check/migration 200 text/plain $success
+        $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/email should fail without smtp available ..."
-        $testurl ${host}/health_check/email 550 text/plain failed
+        echo "${test_no}: TESTING ${route_prefix}/email should fail without smtp available ..."
+        $testurl ${host}/${route_prefix}/email 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/email should pass with smtp available ..."
+        echo "${test_no}: TESTING ${route_prefix}/email should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
-        $testurl ${host}/health_check/email 200 text/plain $success
+        $testurl ${host}/${route_prefix}/email 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check (all) should fail without smtp available ..."
-        $testurl ${host}/health_check 550 text/plain failed
+        echo "${test_no}: TESTING ${route_prefix} (all) should fail without smtp available ..."
+        $testurl ${host}/${route_prefix} 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/all should fail without smtp available ..."
-        $testurl ${host}/health_check 550 text/plain failed
+        echo "${test_no}: TESTING ${route_prefix}/all should fail without smtp available ..."
+        $testurl ${host}/${route_prefix} 550 text/plain failed
         echo
     fi
 
     kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check (all) should pass with smtp available ..."
+        echo "${test_no}: TESTING ${route_prefix} (all) should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
-        $testurl ${host}/health_check 200 text/plain $success
+        $testurl ${host}/${route_prefix} 200 text/plain $success
         echo
     fi
 
     kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/all should pass with smtp available ..."
+        echo "${test_no}: TESTING ${route_prefix}/all should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
-        $testurl ${host}/health_check/all 200 text/plain $success
+        $testurl ${host}/${route_prefix}/all 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/custom should pass ..."
-        $testurl ${host}/health_check/custom 200 text/plain $success
+        echo "${test_no}: TESTING ${route_prefix}/custom should pass ..."
+        $testurl ${host}/${route_prefix}/custom 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/custom.html should pass (returning plain text) ..."
-        $testurl ${host}/health_check/custom.html 200 text/plain $success
+        echo "${test_no}: TESTING ${route_prefix}/custom.html should pass (returning plain text) ..."
+        $testurl ${host}/${route_prefix}/custom.html 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/custom.json should pass ..."
-        $testurl ${host}/health_check/custom.json 200 application/json '"healthy":true'
-        $testurl ${host}/health_check/custom.json 200 application/json "\"message\":\"$success\""
+        echo "${test_no}: TESTING ${route_prefix}/custom.json should pass ..."
+        $testurl ${host}/${route_prefix}/custom.json 200 application/json '"healthy":true'
+        $testurl ${host}/${route_prefix}/custom.json 200 application/json "\"message\":\"$success\""
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/custom.xml should pass ..."
-        $testurl ${host}/health_check/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
-        $testurl ${host}/health_check/custom.xml 200 application/xml "<message>$success</message>"
+        echo "${test_no}: TESTING ${route_prefix}/custom.xml should pass ..."
+        $testurl ${host}/${route_prefix}/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
+        $testurl ${host}/${route_prefix}/custom.xml 200 application/xml "<message>$success</message>"
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     rm -f $custom_file
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check/custom should fail when custom returns string ..."
-        $testurl ${host}/health_check/custom 550 text/plain failed
+        echo "${test_no}: TESTING ${route_prefix}/custom should fail when custom returns string ..."
+        $testurl ${host}/${route_prefix}/custom 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check (all) should fail when custom check fails ..."
-        $testurl ${host}/health_check 550 text/plain "$custom_file is missing!"
+        echo "${test_no}: TESTING ${route_prefix} (all) should fail when custom check fails ..."
+        $testurl ${host}/${route_prefix} 550 text/plain "$custom_file is missing!"
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check.json (all) should fail when custom check fails ..."
-        $testurl ${host}/health_check.json 555 application/json '"healthy":false'
-        $testurl ${host}/health_check.json 555 application/json "$custom_file is missing!"
+        echo "${test_no}: TESTING ${route_prefix}.json (all) should fail when custom check fails ..."
+        $testurl ${host}/${route_prefix}.json 555 application/json '"healthy":false'
+        $testurl ${host}/${route_prefix}.json 555 application/json "$custom_file is missing!"
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING health_check.xml (all) should fail when custom check fails ..."
-        $testurl ${host}/health_check.xml 555 application/xml '<healthy type="boolean">false</healthy>'
+        echo "${test_no}: TESTING ${route_prefix}.xml (all) should fail when custom check fails ..."
+        $testurl ${host}/${route_prefix}.xml 555 application/xml '<healthy type="boolean">false</healthy>'
         echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING log files to check for deprecation warnings ..."
+        if egrep ' is deprecated|DEPRECATION WARNING' $railsapp/log/[tp][er][so][td]*.log 
+        then
+            echo Found deprecation warnings - failed test
+            exit 99
+        fi
     fi
 
     date > $custom_file
-
 }
 
 
 # required for rails 4.1+ in production mode
 export SECRET_KEY_BASE=cf2f49c38a3fe67416ddf680f4f3187c0fce7dd1b9b117b34d195df75b274e08a04877e23803b2fdf1aa9a655269d94bc4888aa325cf7e721cc47368cfe56a80
+
+# required for rails 5 to server static files
+export RAILS_SERVE_STATIC_FILES=on
 
 case "$run_test" in
 ???)
@@ -422,6 +445,8 @@ case "$run_test" in
     start_server
 
     # get a static file
+
+    route_prefix=health_check
 
     echo
     echo 'TESTING no catchall route active ...'

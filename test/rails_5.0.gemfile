@@ -2,11 +2,10 @@
 
 source 'https://rubygems.org'
 
-ruby RUBY_VERSION < '1.9.3' ? '1.9.3' : RUBY_VERSION
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
-gem 'rails', "~> 4.1.0"
-gem 'rake', '>= 0.8.3'
-gem "rack", '~> 1.5.2'
+gem 'rails', '~> 5.0.0'
+gem 'rake', '>= 0.8.7'
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
@@ -16,7 +15,7 @@ group :development, :test do
     gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
-
+  
   # redis based checks
   gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
@@ -25,9 +24,3 @@ group :development, :test do
   gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
-# Initial Gemfile has therubyracer commented out
-gem 'therubyrhino', :platform => :jruby # REQUIRED
-gem 'therubyracer', :platform => :ruby # REQUIRED
-# mime-types 2.0 requires Ruby version >= 1.9.2
-# mime-types 3.0 requires Ruby version >= 2.0
-gem 'mime-types', RUBY_VERSION < '1.9.2' ? '< 2.0' : (defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0') # REQUIRED

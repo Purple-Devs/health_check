@@ -1,5 +1,22 @@
 = Change Log =
 
+* 2.2.1
+  * Adjust private/public cache-control based on max_age set
+* 2.2.0
+  * Add max_age so we can control the caching of responses, don't run tests if Last-modified still matches
+  * Added basic auth - Thanks omadahealth
+  * A few macinations due to gem changes and avoidning triggering deprecation notices
+  * Add single quote to README to make the configuration file valid - Thanks Ryan Selk <ryanselk@gmail.com>
+  * Fixed README formatting
+* 2.1.0
+  * Updated contributed tests so there is both the forced check and a *-if-present check which tests if the gem's class is loaded
+  * Added resque-redis check - Thanks filiphaftek <filip.haftek@airhelp.com>
+  * In addition to adding a test file to S3, we will also try to delete it to confirm that delete operations are possible - Thanks Anton Dimitrov <dimitrov.anton@gmail.com>
+  * Added redis, sidekiq-redis and s3 health-checks - Thanks Filip <filip.haftek@airhelp.com>
+  * Fix render options - Thanks Yuji Hanamura <yuji.developer@gmail.com>
+  * Fix to always return a 200 status code on success rather than 304 (adds Last-Modified) - Thanks macgregordennis <macgregordennis@gmail.com>
+  * Added Rails 5.0 tests
+
 * 2.0.0 - Removed silence - recommend to use a log filtering gem instead
 * 1.4.1 - Rails 4 and route changes
   * Now handles routes being generated multiple times by some gem / rails / ruby combinations - Previously multiple calls to health_check_routes where ignored, now explicit calls to health_check_route always adds the route but flags that it doesn't have to be added again on the end of the list

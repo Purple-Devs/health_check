@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead:
 
-ruby '1.9.3' if RUBY_VERSION < '1.9.3'
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
 gem 'rails'
 gem 'rake'
@@ -18,12 +18,13 @@ group :development, :test do
     gem 'sqlite3'
   end
   gem 'shoulda'
+  
   # redis based checks
-  gem 'sidekiq'
-  gem 'redis'
-  gem 'resque'
+  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
+  gem 'redis', :require => !ENV['REDIS_URL'].nil?
+  gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk'
+  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
 # Initial Gemfile has therubyracer commented out
