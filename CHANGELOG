@@ -1,6 +1,8 @@
 = Change Log =
 
-* pre_rails4 branch
+* rails2.3 branch
+*1.6.1 - rails 2.3 only version
+ * rails 2.3 only version
 *1.6.0
  * Added basic auth support - Thanks Kyle Conarro <kyle.conarro@gmail.com>
  * Explicitly limit rails to < 4.0 for this branch
