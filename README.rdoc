@@ -1,8 +1,9 @@
-= health_check gem (pre_rails4 branch)
+= health_check gem (rails2.3 branch)
 
 Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-Use {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions >= 2.0 for Rails 4.0+
+Use {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.0 for Rails 2.3.
+See {master}[https://github.com/ianheggie/health_check/tree/master] branch for using with later versions.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -45,7 +46,7 @@ Specify full or include email in the list of checks to verify the smtp settings
 
 == Installation
 
-=== As a Gem from rubygems (Rails 3.0 and above)
+=== As a Gem from rubygems (if you have modified your rails to use bundler)
 
 Add the following line to Gemfile
 
