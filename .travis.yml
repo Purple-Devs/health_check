@@ -16,10 +16,10 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 rvm: 
-  - 1.9.3
+  - 1.8.7
 
 gemfile:
-  - test/rails_3.2.gemfile
+  - test/rails_2.3.gemfile
 
 matrix:
   allow_failures:
@@ -28,49 +28,6 @@ matrix:
       env: RUBYGEMS_VERSION=1.8.25 RAILS_VERSION=2.3
 
   include:
-    # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
-    
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=3.2
-
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=passenger RAILS_VERSION=3.2
-
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=thin RAILS_VERSION=3.2
-
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=3.2
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
-
-    - rvm: 2.2.0
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
-
-    - rvm: 1.9.3
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
-
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
-
-    # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
-    - rvm: 1.9.3
-      gemfile: test/rails_3.1.gemfile
-      env: RAILS_VERSION=3.1
-
-    - rvm: 1.8.7
-      gemfile: test/rails_3.0.gemfile
-      env: RAILS_VERSION=3.0
-
     # rails 2.3 march 16 2009 - ruby 1.8.7
     # railslts.com
     - rvm: 1.8.7
