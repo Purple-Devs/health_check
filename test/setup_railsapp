@@ -365,6 +365,7 @@ EOF
 
 if [ -s config/routes.rb ]; then
   mv -f config/routes.rb config/routes.rb-old
+  var=`ruby -n -e 'print $1 if /^[^#]+ do \|([^\|]+)\|/' config/routes.rb-old`
   (
     ruby -n -e 'print if not /^end/..9999' config/routes.rb-old | tee /tmp/t$$
     if [ ! -s /tmp/t$$ ]; then
