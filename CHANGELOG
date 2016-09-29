@@ -2,6 +2,8 @@
 
 * WIP
  * Fix route reload issue
+ * Fix for bundle/jruby conflict
+ * Removed ref to rails 2.3, 3.*
 
 * 2.2.1
   * Adjust private/public cache-control based on max_age set
