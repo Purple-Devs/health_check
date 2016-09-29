@@ -3,10 +3,8 @@
 
 module HealthCheck
 
-  if Rails.version >= '3.0'
-    class Engine < Rails::Engine
-      cattr_accessor :routes_manually_defined
-    end
+  class Engine < Rails::Engine
+    cattr_accessor :routes_explicitly_defined 
   end
 
   # Text output upon success
