@@ -5,7 +5,7 @@ module HealthCheck
   class HealthCheckController < ActionController::Base
 
     layout false if self.respond_to? :layout
-    before_filter :authenticate
+    before_action :authenticate
 
     def index
       last_modified = Time.now.utc
