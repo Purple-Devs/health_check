@@ -3,6 +3,9 @@
 * pre_rails4 branch
 *1.7.0 
  * Split away from rails2.3 branch
+ * removed rails 2.3 artifacts
+ * Fixed route reload issue
+
 *1.6.0
  * Added basic auth support - Thanks Kyle Conarro <kyle.conarro@gmail.com>
  * Explicitly limit rails to < 4.0 for this branch
