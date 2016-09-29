@@ -1,5 +1,8 @@
 = Change Log =
 
+* WIP
+ * Fix route reload issue
+
 * 2.2.1
   * Adjust private/public cache-control based on max_age set
 * 2.2.0
