@@ -3,7 +3,7 @@
 * pre_rails4 branch
 *1.7.0 
  * Split away from rails2.3 branch
- * removed rails 2.3 artifacts
+ * removed rails 2.3 and 4.0 artifacts
  * Fixed route reload issue
 
 *1.6.0
