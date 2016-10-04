@@ -81,11 +81,12 @@ matrix:
       gemfile: test/rails_4.2.gemfile
       env: RAILS_SERVER=unicorn RAILS_VERSION=4.2
 
+    # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
     # https://github.com/bundler/bundler/issues/4975
-    - rvm: jruby-19mode
-      gemfile: test/rails_4.2.gemfile
-      env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=4.2
+    #- rvm: jruby-19mode
+    #  gemfile: test/rails_4.2.gemfile
+    #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=4.2
 
     # rails 4.1  April 8, 2014 
     
