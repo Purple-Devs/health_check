@@ -24,13 +24,17 @@ module HealthCheck
   self.http_status_for_error_object = 500
 
   # max-age of response in seconds
-  # cache-control is public when max_age > 1 and basic authentication is used 
+  # cache-control is public when max_age > 1 and basic authentication is used
   mattr_accessor :max_age
   self.max_age = 1
 
   # s3 buckets
   mattr_accessor :buckets
   self.buckets = {}
+
+  # health check uri path for middleware check
+  mattr_accessor :uri
+  self.uri = 'health_check'
 
   # Basic Authentication
   mattr_accessor :basic_auth_username, :basic_auth_password
@@ -64,5 +68,6 @@ require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
 require 'health_check/health_check_controller'
 require 'health_check/health_check_routes'
+require 'health_check/middleware_health_check'
 
 # vi: sw=2 sm ai:
