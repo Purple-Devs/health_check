@@ -58,8 +58,8 @@ $rehash
 rails="$base_dir/test/bin/rails"
 
 echo Checking $rails is present ...
-[ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_}  binstub rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -68,7 +68,7 @@ fi
 rake="$base_dir/test/bin/rake"
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
@@ -191,14 +191,14 @@ then
     cat Gemfile
     echo
     echo running bundle install
-    bundle install
+    bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
     $rehash
     echo "Using binstubs in $railsapp/bin for rails and rake commands"
     rails="$railsapp/bin/rails"
 
     echo Checking $rails is present ...
-    [ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
-    [ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+    [ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub railties || echo '(ignored bundle exit status)'
+    [ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rails || echo '(ignored bundle exit status)'
     if [ ! -f $rails ]; then
         echo "Test aborted (unable to create $rails)"
         exit 2
@@ -207,7 +207,7 @@ then
     rake="$railsapp/bin/rake"
 
     echo Checking $rake is present ...
-    [ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
+    [ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rake || echo '(ignored bundle exit status)'
     if [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2

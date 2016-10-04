@@ -11,7 +11,7 @@ before_install:
   - bundle --version
   - mkdir -p tmp/bundle
 
-bundler_args: "--binstubs"
+bundler_args: ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} "--binstubs"
 
 script: ./test/test_with_railsapp
 
