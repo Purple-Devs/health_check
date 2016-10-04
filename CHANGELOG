@@ -1,7 +1,10 @@
 = Change Log =
 
-* WIP
+* 2.3.0
  * Fix route reload issue
+ * Various fixes to get tests working with bundle/jruby and other gem issues
+ * Document additional branches
+ * Fix route reload issue (auto routing previosuly conflicted with devise)
 
 * 2.2.1
   * Adjust private/public cache-control based on max_age set
