@@ -59,18 +59,6 @@ matrix:
       gemfile: test/rails_3.2.gemfile
       env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
 
-    # rails 4.1  April 8, 2014 
-    
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_VERSION=4.1
-
-    # rails 4.1  April 8, 2014 
-    
-    - rvm: 2.1.2
-      gemfile: test/rails_4.1.gemfile
-      env: RAILS_VERSION=4.1
-
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
     - rvm: 1.9.3
       gemfile: test/rails_3.1.gemfile
