@@ -44,9 +44,10 @@ matrix:
       gemfile: test/rails_3.2.gemfile
       env: RAILS_SERVER=unicorn RAILS_VERSION=3.2
 
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-      env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
+    # Excluded since it takes way too long!
+    #- rvm: jruby-19mode
+    #  gemfile: test/rails_3.2.gemfile
+    #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
 
     - rvm: 2.2.0
       gemfile: test/rails_3.2.gemfile
@@ -56,9 +57,10 @@ matrix:
       gemfile: test/rails_3.2.gemfile
       env: RAILS_VERSION=3.2
 
-    - rvm: jruby-19mode
-      gemfile: test/rails_3.2.gemfile
-      env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
+    # Excluded since it takes way too long!
+    #- rvm: jruby-19mode
+    #  gemfile: test/rails_3.2.gemfile
+    #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
 
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
     - rvm: 1.9.3
