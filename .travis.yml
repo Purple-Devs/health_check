@@ -9,6 +9,7 @@ before_install:
   - gem --version
   - gem install bundler ${BUNDLER_VERSION:+-v} ${BUNDLER_VERSION}
   - bundle --version
+  - bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} --version
   - mkdir -p tmp/bundle
 
 bundler_args: "--binstubs"
