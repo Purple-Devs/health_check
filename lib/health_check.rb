@@ -4,7 +4,7 @@
 module HealthCheck
 
   class Engine < Rails::Engine
-    cattr_accessor :routes_explicitly_defined 
+    cattr_accessor :routes_explicitly_defined
   end
 
   # Text output upon success
@@ -34,7 +34,7 @@ module HealthCheck
 
   # health check uri path for middleware check
   mattr_accessor :uri
-  self.uri = 'health_check'
+  self.uri = '/health_check'
 
   # Basic Authentication
   mattr_accessor :basic_auth_username, :basic_auth_password
