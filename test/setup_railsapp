@@ -1,5 +1,7 @@
 #!/bin/bash
 
+route_prefix=medical_check
+
 err_report() {
     echo "$0: Error on line $1 - aborted"
     exit 1
@@ -38,6 +40,11 @@ do
     export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
 done
 
+if [ -n  "$MIDDLEWARE" ]; then
+  echo -n "Add as middleware [N/y] : "
+  read MIDDLEWARE
+  export MIDDLEWARE
+fi
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems test/bin test/rails*.gemfile.lock
 
 mkdir -p tmp/gems
@@ -160,6 +167,7 @@ HealthCheck.setup do |config|
   config.smtp_timeout = 60.0
   config.http_status_for_error_text = 550
   config.http_status_for_error_object = 555
+  config.uri = '$route_prefix'
 
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'
@@ -354,6 +362,46 @@ end
 
 EOF
 
+echo =======================================
+
+case "$MIDDLEWARE" in
+[Yy]*)
+  if [ -s config/appliction.rb ]; then
+    mv -f config/appliction.rb config/appliction.rb-old
+    (
+      ruby -n -e 'print if not /^end/..9999' config/appliction.rb-old | tee /tmp/t$$
+      if [ ! -s /tmp/t$$ ]; then
+        echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
+        sed -e '/^end/,$d' config/appliction.rb-old
+      fi
+
+      echo "  # -----------------------------------------"
+      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "  if File.exists?('$middleware_file')"
+      echo "    config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
+      echo "  end"
+      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "  # ---------------------------------------"
+      ruby -n -e 'print if /^end/..9999' config/appliction.rb-old | tee /tmp/t$$
+      if [ ! -s /tmp/t$$ ]; then
+        echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
+        sed -n -e '/^end/,$p' config/appliction.rb-old
+      fi
+    ) 3>&1 > config/appliction.rb
+
+    #echo =============== config/appliction.rb-old ========================
+    #cat config/appliction.rb-old
+    echo =============== config/appliction.rb ========================
+    cat config/appliction.rb
+  else
+    echo NO config/appliction.rb file!!
+  fi
+
+  echo =======================================
+
+  ;;
+esac
+
 if [ -s config/routes.rb ]; then
   mv -f config/routes.rb config/routes.rb-old
   (
@@ -368,7 +416,15 @@ if [ -s config/routes.rb ]; then
     echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
     echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
     echo "  if File.exists?('$catchall_file')"
-    echo "    health_check_routes"
+    case "$MIDDLEWARE" in
+    [Yy]*)
+        echo "    # not required - installed as middleware: health_check_routes"
+        ;;
+    *)
+        echo "      health_check_routes"
+        ;;
+    esac
+    echo "    end"
     echo "    # CATCH ALL ROUTE"
     echo "    get '*path', :to => 'example#catchall'"
     echo "  end"

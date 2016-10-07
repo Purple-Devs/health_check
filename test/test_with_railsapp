@@ -1,5 +1,7 @@
 #!/bin/bash
 
+route_prefix=medical_check
+
 err_report() {
     echo "$0: Error on line $1 - aborted"
     exit 1
@@ -439,8 +441,6 @@ case "$run_test" in
     start_server
 
     # get a static file
-
-    route_prefix=health_check
 
     echo
     echo 'TESTING no catchall route active ...'
