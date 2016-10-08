@@ -421,10 +421,9 @@ if [ -s config/routes.rb ]; then
         echo "    # not required - installed as middleware: health_check_routes"
         ;;
     *)
-        echo "      health_check_routes"
+        echo "    health_check_routes"
         ;;
     esac
-    echo "    end"
     echo "    # CATCH ALL ROUTE"
     echo "    get '*path', :to => 'example#catchall'"
     echo "  end"
