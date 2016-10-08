@@ -449,7 +449,7 @@ case "$run_test" in
 
     echo 'TESTING default route has been overriden ...'
     expected_status=404,500,502
-    $testurl ${host}/health_check $expected_status
+    $testurl ${host}/health_check/site $expected_status
 
     common_tests 1
     ;;
