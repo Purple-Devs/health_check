@@ -458,7 +458,7 @@ common_tests()
             $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
         else
             echo "${test_no}: TESTING ${route_prefix}/middleware_site should fail ..."
-            $testurl ${host}/${route_prefix}/middleware_site 555 text/plain failed
+            $testurl ${host}/${route_prefix}/middleware_site 550 text/plain failed
         fi
         echo
     fi
