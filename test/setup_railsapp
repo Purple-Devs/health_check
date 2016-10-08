@@ -40,7 +40,7 @@ do
     export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
 done
 
-if [ -n  "$MIDDLEWARE" ]; then
+if [ -z  "$MIDDLEWARE" ]; then
   echo -n "Add as middleware [N/y] : "
   read MIDDLEWARE
   export MIDDLEWARE
