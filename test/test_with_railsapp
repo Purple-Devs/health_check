@@ -45,7 +45,7 @@ cd $railsapp
 date > $custom_file
 rm -f $catchall_file
 
-case `egrep '^[^#]*MiddlewareHealthcheck' config/appliction.rb` in
+case `egrep '^[^#]*MiddlewareHealthcheck' config/application.rb` in
 '')
   export has_middleware=false
   ;;
