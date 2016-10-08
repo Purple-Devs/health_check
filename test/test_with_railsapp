@@ -45,6 +45,16 @@ cd $railsapp
 date > $custom_file
 rm -f $catchall_file
 
+case `egrep '^[^#]*MiddlewareHealthcheck' config/appliction.rb` in
+'')
+  export has_middleware=false
+  ;;
+?*)
+  export has_middleware=true
+  ;;
+esac
+
+
 testurl="$base_dir/test/testurl"
 fake_smtp_server="$base_dir/test/fake_smtp_server"
 
@@ -255,6 +265,8 @@ common_tests()
         echo
     fi
 
+
+
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
@@ -269,6 +281,36 @@ common_tests()
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
+
+    #test with coruppted DB
+    rm -rf db.bak
+    cp -R db db.bak
+    for f in db/*.sqlite3
+    do
+        echo CORRUPTED > $f
+    done
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/database should fail if the database has been corrupted ..."
+
+        $testurl ${host}/${route_prefix}/database 550 text/plain failed
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+        $testurl ${host}/${route_prefix}/site 200 text/plain $success
+        if $has_middleware; then
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+        fi
+        echo
+    fi
+
+    # Restore database
+    cp -f db.bak/*.sqlite3 db/
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
@@ -406,6 +448,18 @@ common_tests()
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}.xml (all) should fail when custom check fails ..."
         $testurl ${host}/${route_prefix}.xml 555 application/xml '<healthy type="boolean">false</healthy>'
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        if $has_middleware; then
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+        else
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should fail ..."
+            $testurl ${host}/${route_prefix}/middleware_site 555 text/plain failed
+        fi
         echo
     fi
 

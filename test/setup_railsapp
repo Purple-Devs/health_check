@@ -377,9 +377,7 @@ case "$MIDDLEWARE" in
 
       echo "  # -----------------------------------------"
       echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  if File.exists?('$middleware_file')"
-      echo "    config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
-      echo "  end"
+      echo "  config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
       echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
       echo "  # ---------------------------------------"
       ruby -n -e 'print if /^end/..9999' config/appliction.rb-old | tee /tmp/t$$
