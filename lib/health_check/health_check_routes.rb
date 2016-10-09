@@ -7,7 +7,8 @@ module ActionDispatch::Routing
     end
 
     def add_health_check_routes(prefix = nil)
-      get "#{prefix || 'health_check'}(/:checks)(.:format)", :to => 'health_check/health_check#index'
+      HealthCheck.uri = prefix if prefix
+      match "#{HealthCheck.uri}(/:checks)(.:format)", :to => 'health_check/health_check#index', via: [:get, :post]
     end
 
   end

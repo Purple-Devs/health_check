@@ -1,5 +1,7 @@
 #!/bin/bash
 
+route_prefix=medical_check
+
 err_report() {
     echo "$0: Error on line $1 - aborted"
     exit 1
@@ -42,6 +44,16 @@ run_test=$2
 cd $railsapp
 date > $custom_file
 rm -f $catchall_file
+
+case `egrep '^[^#]*MiddlewareHealthcheck' config/application.rb` in
+'')
+  export has_middleware=false
+  ;;
+?*)
+  export has_middleware=true
+  ;;
+esac
+
 
 testurl="$base_dir/test/testurl"
 fake_smtp_server="$base_dir/test/fake_smtp_server"
@@ -253,6 +265,8 @@ common_tests()
         echo
     fi
 
+
+
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
@@ -267,6 +281,36 @@ common_tests()
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
     fi
+
+    #test with coruppted DB
+    rm -rf db.bak
+    cp -R db db.bak
+    for f in db/*.sqlite3
+    do
+        echo CORRUPTED > $f
+    done
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/database should fail if the database has been corrupted ..."
+
+        $testurl ${host}/${route_prefix}/database 550 text/plain failed
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+        $testurl ${host}/${route_prefix}/site 200 text/plain $success
+        if $has_middleware; then
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+        fi
+        echo
+    fi
+
+    # Restore database
+    cp -f db.bak/*.sqlite3 db/
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
@@ -409,6 +453,18 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        if $has_middleware; then
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+        else
+            echo "${test_no}: TESTING ${route_prefix}/middleware_site should fail ..."
+            $testurl ${host}/${route_prefix}/middleware_site 550 text/plain failed
+        fi
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING log files to check for deprecation warnings ..."
         if egrep ' is deprecated|DEPRECATION WARNING' $railsapp/log/[tp][er][so][td]*.log 
         then
@@ -440,12 +496,14 @@ case "$run_test" in
 
     # get a static file
 
-    route_prefix=health_check
-
     echo
     echo 'TESTING no catchall route active ...'
     expected_status=404,500,502
     $testurl ${host}/another/url $expected_status
+
+    echo 'TESTING default route has been overriden ...'
+    expected_status=404,500,502
+    $testurl ${host}/health_check/site $expected_status
 
     common_tests 1
     ;;

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+route_prefix=medical_check
+
 err_report() {
     echo "$0: Error on line $1 - aborted"
     exit 1
@@ -38,6 +40,11 @@ do
     export BUNDLE_GEMFILE=$PWD/test/rails_$x.gemfile
 done
 
+if [ -z  "$MIDDLEWARE" ]; then
+  echo -n "Add as middleware [N/y] : "
+  read MIDDLEWARE
+  export MIDDLEWARE
+fi
 rm -rf tmp/Gemfile* tmp/railsapp tmp/bin tmp/gems test/bin test/rails*.gemfile.lock
 
 mkdir -p tmp/gems
@@ -160,6 +167,7 @@ HealthCheck.setup do |config|
   config.smtp_timeout = 60.0
   config.http_status_for_error_text = 550
   config.http_status_for_error_object = 555
+  config.uri = '$route_prefix'
 
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'
@@ -354,6 +362,45 @@ end
 
 EOF
 
+echo =======================================
+
+case "$MIDDLEWARE" in
+[Yy]*)
+  if [ -s config/application.rb ]; then
+    mv -f config/application.rb config/application.rb-old
+    (
+      ruby -n -e 'print if not /^  *end/..9999' config/application.rb-old | tee /tmp/t$$
+      if [ ! -s /tmp/t$$ ]; then
+        echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
+        sed -e '/^  *end/,$d' config/application.rb-old
+      fi
+
+      echo "    # -----------------------------------------"
+      echo "    # START OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "    config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
+      echo "    # END OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "    # ---------------------------------------"
+      ruby -n -e 'print if /^  *end/..9999' config/application.rb-old | tee /tmp/t$$
+      if [ ! -s /tmp/t$$ ]; then
+        echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
+        sed -n -e '/^  *end/,$p' config/application.rb-old
+      fi
+    ) 3>&1 > config/application.rb
+
+    #echo =============== config/application.rb-old ========================
+    #cat config/application.rb-old
+    echo =============== config/application.rb ========================
+    cat config/application.rb
+  else
+    echo FAILED: NO config/application.rb file!!
+    exit 2
+  fi
+
+  echo =======================================
+
+  ;;
+esac
+
 if [ -s config/routes.rb ]; then
   mv -f config/routes.rb config/routes.rb-old
   (
@@ -386,7 +433,8 @@ if [ -s config/routes.rb ]; then
   echo =============== config/routes.rb ========================
   cat config/routes.rb
 else
-  echo NO config/routes.rb file!!
+  echo FAILED: NO config/routes.rb file!!
+  exit 2
 fi
 echo =======================================
 
