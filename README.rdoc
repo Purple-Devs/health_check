@@ -24,7 +24,9 @@ health_check provides various monitoring URIs, for example:
       <message>success</message>
     </hash>
 
-On failure a 500 http status is returned with a simple explanation of the failure
+You may also issue POST calls instead of GET to these urls.
+
+On failure (detected by health_check) a 500 http status is returned with a simple explanation of the failure
 
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
