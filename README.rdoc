@@ -129,14 +129,11 @@ You may call add_custom_check multiple times with different tests. These tests w
 If you have a catchall route then add the following line above the catch all route (in `config/routes.rb`):
    health_check_routes
 
-To change the url prefix (eg to /ping), add the following line in `config/routes.rb`:
-   health_check_routes('ping')
-
 === Installing As Middleware
 
-Install health_check as middleware if you want the option to skip processing by later entries in the Rails middleware stack
-(eg to ignore DB errors from QueryCache). Include "middleware" in the list of checks to have the checks processed by middleware
-health check. The middleware check will fail if you have not installed health_check as middleware.
+Install health_check as middleware if you want to ignore exceptions from later parts of the Rails middleware stack,
+eg DB connection errors from QueryCache. Include "middleware" in the list of checks to have the checks processed by the middleware
+health check rather than the full stack check. The "middleware" check will fail if you have not installed health_check as middleware.
 
 To install health_check as middleware add the following line to the config/application.rb:
     config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck

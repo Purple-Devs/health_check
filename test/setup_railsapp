@@ -375,11 +375,11 @@ case "$MIDDLEWARE" in
         sed -e '/^  *end/,$d' config/application.rb-old
       fi
 
-      echo "  # -----------------------------------------"
-      echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
-      echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "  # ---------------------------------------"
+      echo "    # -----------------------------------------"
+      echo "    # START OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "    config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
+      echo "    # END OF SECTION FOR TESTING HEALTH_CHECK"
+      echo "    # ---------------------------------------"
       ruby -n -e 'print if /^  *end/..9999' config/application.rb-old | tee /tmp/t$$
       if [ ! -s /tmp/t$$ ]; then
         echo "WARNING: ruby -n -e failed silently - using sed instead!! (rbx-19mode has that problem)" >&3
@@ -415,14 +415,7 @@ if [ -s config/routes.rb ]; then
     echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
     echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
     echo "  if File.exists?('$catchall_file')"
-    case "$MIDDLEWARE" in
-    [Yy]*)
-        echo "    # not required - installed as middleware: health_check_routes"
-        ;;
-    *)
-        echo "    health_check_routes"
-        ;;
-    esac
+    echo "    health_check_routes"
     echo "    # CATCH ALL ROUTE"
     echo "    get '*path', :to => 'example#catchall'"
     echo "  end"
