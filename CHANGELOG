@@ -1,5 +1,10 @@
 = Change Log =
 
+* 2.4.0
+ * Added tests for middleware
+ * Changed contributed middleware code to conform to existing url scheme
+ * Allow both GET and POST calls
+ * Prefer config.uri for changing route prefix
 * 2.3.0
  * Fix route reload issue
  * Various fixes to get tests working with bundle/jruby and other gem issues

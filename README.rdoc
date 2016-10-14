@@ -24,7 +24,9 @@ health_check provides various monitoring URIs, for example:
       <message>success</message>
     </hash>
 
-On failure a 500 http status is returned with a simple explanation of the failure
+You may also issue POST calls instead of GET to these urls.
+
+On failure (detected by health_check) a 500 http status is returned with a simple explanation of the failure
 
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
@@ -73,6 +75,9 @@ Or install it yourself as:
 To change the configuration of health_check, create a file `config/initializers/health_check.rb` and add a configuration block like:
 
     HealthCheck.setup do |config|
+
+      # uri prefix
+      config.uri = 'health_check'
 
       # Text output upon success
       config.success = 'success'
@@ -126,14 +131,17 @@ You may call add_custom_check multiple times with different tests. These tests w
 If you have a catchall route then add the following line above the catch all route (in `config/routes.rb`):
    health_check_routes
 
-To change the url prefix (eg to /ping), add the following line in `config/routes.rb`:
-   health_check_routes('ping')
-
 === Installing As Middleware
 
-To use health_check as middleware add the following line to the config/application.rb:
-  `config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck`
-In config/initializers/health_check.rb config.uri can be changed to other than default 'health_check'
+Install health_check as middleware if you want to ignore exceptions from later parts of the Rails middleware stack,
+eg DB connection errors from QueryCache. Include "middleware" in the list of checks to have the checks processed by the middleware
+health check rather than the full stack check. The "middleware" check will fail if you have not installed health_check as middleware.
+
+To install health_check as middleware add the following line to the config/application.rb:
+    config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck
+
+Note: health_check is installed as a full rails engine even if it has been installed as middleware. This is so the
+standard checks continue to test the complete rails stack.
 
 == Uptime Monitoring
 

@@ -23,45 +23,40 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 matrix:
+  fast_finish: true
+
   allow_failures:
     - rvm: 2.3.1
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
 
     - rvm: ruby-head
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
+      env: RAILS_VERSION=5.0 MIDDLEWARE=YES
 
   include:
-    # ruby / rails edge
+    # -------------------------------------
+    # Standard
     
-    - rvm: 2.3.1
-      gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge
-
     # ruby 5.0  Jun. 2016
     
     - rvm: 2.3.1
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
+      env: RAILS_VERSION=5.0 MIDDLEWARE=no
 
     - rvm: 2.2.2
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
-
-    - rvm: ruby-head
-      gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0
+      env: RAILS_VERSION=5.0 MIDDLEWARE=no
 
     # rails 4.2  Dec, 2014 
     
     - rvm: 2.2.0
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2
+      env: RAILS_VERSION=4.2 MIDDLEWARE=no
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=4.2
+      env: RAILS_SERVER=puma RAILS_VERSION=4.2 MIDDLEWARE=no
 
     # Can't find i18n?? because it can't compile?
     #- rvm: 2.1.2
@@ -70,7 +65,7 @@ matrix:
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=thin RAILS_VERSION=4.2
+      env: RAILS_SERVER=thin RAILS_VERSION=4.2 MIDDLEWARE=no
 
     # No longer supported by travis
     #- rvm: rbx-2.2.6
@@ -79,7 +74,7 @@ matrix:
 
     - rvm: 2.1.2
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
 
     # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
@@ -92,11 +87,81 @@ matrix:
     
     - rvm: 2.1.2
       gemfile: test/rails_4.1.gemfile
-      env: RAILS_VERSION=4.1
+      env: RAILS_VERSION=4.1 MIDDLEWARE=no
 
     # rails 4.0
     
     - rvm: 1.9.3
       gemfile: test/rails_4.0.gemfile
-      env: RAILS_VERSION=4.0
+      env: RAILS_VERSION=4.0 MIDDLEWARE=no
+
+    # -------------------------------------
+    # INSTALLED AS MIDDLEWARE
+    
+    # ruby / rails edge
+    
+    - rvm: 2.3.1
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
+
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.3.1
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0 MIDDLEWARE=YES
+
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0 MIDDLEWARE=YES
+
+    - rvm: ruby-head
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0 MIDDLEWARE=YES
+
+    # rails 4.2  Dec, 2014 
+    
+    - rvm: 2.2.0
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_VERSION=4.2 MIDDLEWARE=YES
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=puma RAILS_VERSION=4.2 MIDDLEWARE=YES
+
+    # Can't find i18n?? because it can't compile?
+    #- rvm: 2.1.2
+    #  gemfile: test/rails_4.2.gemfile
+    #  env: RAILS_SERVER=passenger RAILS_VERSION=4.2
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=thin RAILS_VERSION=4.2 MIDDLEWARE=YES
+
+    # No longer supported by travis
+    #- rvm: rbx-2.2.6
+    #  gemfile: test/rails_4.0.gemfile
+    #  env: RAILS_ENV2=development RAILS_VERSION=4.0 MIDDLEWARE=YES
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
+
+    # Disabled because it takes way too long (40+ mins)
+    # Temporary version lock until Bundler >= 1.13.2
+    # https://github.com/bundler/bundler/issues/4975
+    #- rvm: jruby-19mode
+    #  gemfile: test/rails_4.2.gemfile
+    #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=4.2 MIDDLEWARE=YES
+
+    # rails 4.1  April 8, 2014 
+    
+    - rvm: 2.1.2
+      gemfile: test/rails_4.1.gemfile
+      env: RAILS_VERSION=4.1 MIDDLEWARE=YES
+
+    # rails 4.0
+    
+    - rvm: 1.9.3
+      gemfile: test/rails_4.0.gemfile
+      env: RAILS_VERSION=4.0 MIDDLEWARE=YES
 
