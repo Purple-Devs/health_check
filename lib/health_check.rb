@@ -34,7 +34,7 @@ module HealthCheck
 
   # health check uri path for middleware check
   mattr_accessor :uri
-  self.uri = '/health_check'
+  self.uri = 'health_check'
 
   # Basic Authentication
   mattr_accessor :basic_auth_username, :basic_auth_password

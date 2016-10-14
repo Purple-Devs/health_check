@@ -1,8 +1,6 @@
 module HealthCheck
   class MiddlewareHealthcheck
 
-    URI_SUFFIX_REGEX = /\..*$/
-
     def initialize(app)
       @app = app
     end
