@@ -57,4 +57,26 @@ if ARGV[3] and ARGV[3] != ''
   end
 end
 
+if ARGV[4] and ARGV[4] != ''
+  has_header = false
+  response.header.each_header do |key,value|
+    if key == ARGV[4]
+      puts "PASS (found header: #{ARGV[4]})"
+      has_header = true
+        if ARGV[5] and ARGV[5] != ''
+          if value.to_s.include? ARGV[5]
+            puts "PASS (found #{ARGV[5]} in value)"
+          else
+            puts "FAIL (expected to find #{ARGV[5]} in value)"
+            exit 3
+          end
+        end
+    end
+  end
+  unless has_header
+    puts "FAIL (expected to find header key: #{ARGV[4]})"
+    exit 3
+  end
+end
+
 exit 0

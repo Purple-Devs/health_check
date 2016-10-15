@@ -11,6 +11,7 @@ tmp_dir=$base_dir/tmp
 railsapp=$tmp_dir/railsapp
 custom_file="$railsapp/tmp/custom_check.ok"
 catchall_file="$railsapp/tmp/catchall_route.enabled"
+max_age27_file="$railsapp/tmp/max_age27.enabled"
 success=successful
 
 rehash=''

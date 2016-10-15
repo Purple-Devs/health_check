@@ -488,7 +488,7 @@ case "$run_test" in
     ;;
 *)
     echo ========================================================
-    echo TESTING WITHOUT CATCHALL in test env
+    echo TESTING WITHOUT CATCHALL in test env, default max_age
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
 
@@ -513,7 +513,7 @@ esac
 case "$run_test" in
 ''|???)
     echo ========================================================
-    echo TESTING WITH CATCHALL in ${RAILS_ENV2:-production} env
+    echo TESTING WITH CATCHALL in ${RAILS_ENV2:-production} env, max_age = 27
     echo ========================================================
     export RAILS_ENV=${RAILS_ENV2:-production} RACK_ENV=${RAILS_ENV2:-production}
 
@@ -525,6 +525,7 @@ case "$run_test" in
     esac
 
     date > $catchall_file
+    date > $max_age27_file
 
     start_server
 
