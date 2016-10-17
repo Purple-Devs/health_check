@@ -7,7 +7,7 @@ module HealthCheck
 
     def call(env)
       uri = env['PATH_INFO']
-      if uri =~ /^\/?#{HealthCheck.uri}\/([-_0-9a-zA-Z]*)middleware_?([-_0-9a-zA-Z]*)(\.(\w*))?/
+      if uri =~ /^\/?#{HealthCheck.uri}\/([-_0-9a-zA-Z]*?)middleware_?([-_0-9a-zA-Z]*)(\.(\w*))?/
         checks = $1 + ($1 != '' && $2 != '' ? '_' : '') + $2
         checks = 'standard' if checks == ''
         response_type = $4
