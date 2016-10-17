@@ -168,14 +168,14 @@ HealthCheck.setup do |config|
   abort "default config.http_status_for_error_text should not be #{config.http_status_for_error_text.inspect}" unless config.http_status_for_error_text == 500
   abort "default config.http_status_for_error_object should not be #{config.http_status_for_error_object.inspect}" unless config.http_status_for_error_object == 500
   abort "default config.uri should not be #{config.uri.inspect}" unless config.uri == "health_check"
-  abort "default config.max_age should not be #{config.max_age.inspect}" unless config.max_age == 1
+  abort "default config.max_age should not be #{config.max_age.inspect}" unless config.max_age == 0
 
   config.success = "$success"
   config.smtp_timeout = 60.0
   config.http_status_for_error_text = 550
   config.http_status_for_error_object = 555
   config.uri = '$route_prefix'
-  config.max_age = 27 if File.exists?("$max_age27_file")
+  config.max_age = 3600 if File.exists?("$max_age_hour_file")
 
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'

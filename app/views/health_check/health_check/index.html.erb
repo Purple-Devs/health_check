@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>health_check: <%=h @title %></title>
+</head>
+<body
+<% if healthy -%>
+style="background-color: DarkGreen; color: White"
+<% else -%>
+style="background-color: Red"
+<% end -%>
+>
+<%=h @body %>
+</body>
+</html>

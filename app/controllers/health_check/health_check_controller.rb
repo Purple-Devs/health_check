@@ -10,46 +10,45 @@ module HealthCheck
     def index
       last_modified = Time.now.utc
       max_age = HealthCheck.max_age
-      if max_age > 1
+      if max_age > 0
         last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
       public = (max_age > 1) && ! HealthCheck.basic_auth_username
       if stale?(:last_modified => last_modified, :public => public)
         # Rails 4.0 doesn't have :plain, but it is deprecated later on
         plain_key = Rails.version < '4.1' ? :text : :plain
+        html_key = Rails.version < '4.1' ? :text : :html
         checks = params[:checks] || 'standard'
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e
           errors = e.message.blank? ? e.class.to_s : e.message.to_s
         end     
-        #response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
+        # response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
+        # response.cache_control[:'max-age'] = max_age if max_age >= 1
+        # response.cache_control[:'no-cache'] = true if max_age < 1
+        # response.cache_control[:'must-revalidate'] = true if max_age >= 1
 
-        response.cache_control[:'max-age'] = max_age if max_age >= 1
-        response.cache_control[:'no-cache'] = true if max_age < 1
-        response.cache_control[:'must-revalidate'] = true if max_age >= 1
-
-        if errors.blank?
-          obj = { :healthy => true, :message => HealthCheck.success }
-          respond_to do |format|
-            format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-            format.json { render :json => obj }
-            format.xml { render :xml => obj }
-            format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-          end
+        @healthy = errors.blank?
+        @title = @healthy ? 'PASS' : 'FAIL'
+        if @healthy
+          @msg = HealthCheck.success
+          text_status = object_status = 200
         else
-          msg = "health_check failed: #{errors}"
-          obj = { :healthy => false, :message => msg }
-          respond_to do |format|
-            format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
-            format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
-            format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-            format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
-          end
+          @msg = "health_check failed: #{errors}"
+          text_status = HealthCheck.http_status_for_error_text
+          object_status = HealthCheck.http_status_for_error_object
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
-            logger.info msg
+            logger.info @msg
           end
+        end
+        obj = { :healthy => @healthy, :message => @msg }
+        respond_to do |format|
+          format.html { render '/health_check/health_check/index.html.erb', layout:false, :content_type => 'text/html', :status => text_status }
+          format.json { render :json => obj, :status => object_status}
+          format.xml { render :xml => obj, :status => object_status}
+          format.any { render '/health_check/health_check/index.txt.erb', layout:false, :content_type => 'text/plain', :status => text_status }
         end
       end
     end

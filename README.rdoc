@@ -56,6 +56,14 @@ Specify full or include email in the list of checks to verify the smtp settings
 
 Note: rails 4.0 also checks migrations by default in development mode and throws an ActiveRecord::PendingMigrationError exception (http error 500) if there is an error
 
+== Formats
+
+Health check by default outputs in plain/text format, but you can also request:
+* html - with white writting on red or green background (useful for a manual status page with small iframes for each server)
+* json - in json format
+* xml - in xml format
+* txt (default) - in plain text format
+
 == Installation
 
 Add the following line to Gemfile
@@ -206,11 +214,9 @@ Likewise you will probably want to exclude health_check from monitoring systems 
 
 == Caching
 
-Cache-control is set with
-* public          if max_age is > 1 and basic_auth_username is not set (otherwise private)
-* no-cache        if max-age < 1
-* must-revalidate if max-age >= 1
-* max-age         if max-age >= 1
+If max_age > 0 and basic_auth_username is not set then the page is marked as public (otherwise it is marked as private).
+
+Rails also sets 'max-age=0' and 'must-revalidate' for private pages.
 
 Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
 

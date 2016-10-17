@@ -1,11 +1,8 @@
 # Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
 # See MIT-LICENSE for details.
 
-module HealthCheck
 
-  class Engine < Rails::Engine
-    cattr_accessor :routes_explicitly_defined 
-  end
+module HealthCheck
 
   # Text output upon success
   mattr_accessor :success
@@ -24,9 +21,10 @@ module HealthCheck
   self.http_status_for_error_object = 500
 
   # max-age of response in seconds
-  # cache-control is public when max_age > 1 and basic authentication is used
+  # cache-control is public when max_age > 0 and basic authentication is not used
+  # cache-control is private, max-age=0, must-revalidate when max_age = 0 or basic authentication is used
   mattr_accessor :max_age
-  self.max_age = 1
+  self.max_age = 0
 
   # s3 buckets
   mattr_accessor :buckets
@@ -49,6 +47,15 @@ module HealthCheck
   self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
 
+  # html response
+  mattr_accessor :html_template
+  mattr_accessor :passed_style
+  mattr_accessor :failed_style
+  self.html_template = ''
+  self.passed_style = 'background-color: DarkGreen; color: White'
+  self.failed_style = 'background-color: Red; color: Black'
+
+
   def self.add_custom_check(&block)
     custom_checks << block
   end
@@ -59,6 +66,7 @@ module HealthCheck
 
 end
 
+require 'health_check/engine'
 require 'health_check/version'
 require 'health_check/base_health_check'
 require 'health_check/resque_health_check'
@@ -66,7 +74,7 @@ require 'health_check/s3_health_check'
 require 'health_check/redis_health_check'
 require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
-require 'health_check/health_check_controller'
+#require 'health_check/health_check_controller'
 require 'health_check/health_check_routes'
 require 'health_check/middleware_health_check'
 
