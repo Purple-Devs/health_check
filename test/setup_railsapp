@@ -41,7 +41,7 @@ do
 done
 
 if [ -z  "$MIDDLEWARE" ]; then
-  echo -n "Add as middleware [N/y] : "
+  echo -n "Add as middleware (as well as rails full engine) [N/y] : "
   read MIDDLEWARE
   export MIDDLEWARE
 fi
