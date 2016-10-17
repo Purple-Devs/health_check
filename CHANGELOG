@@ -1,5 +1,10 @@
 = Change Log =
 
+
+* 2.5.0
+ * Added Colourful html format (If you have set up your own route, set the default format to 'txt')
+ * Added tests for cache-control and clarified what rails sets
+ * max_age=0 is now the default and required for cache-control: private
 * 2.4.0
  * Added tests for middleware
  * Changed contributed middleware code to conform to existing url scheme

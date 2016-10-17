@@ -24,9 +24,10 @@ module HealthCheck
   self.http_status_for_error_object = 500
 
   # max-age of response in seconds
-  # cache-control is public when max_age > 1 and basic authentication is used
+  # cache-control is public when max_age > 0 and basic authentication is not used
+  # cache-control is private, max-age=0, must-revalidate when max_age = 0 or basic authentication is used
   mattr_accessor :max_age
-  self.max_age = 1
+  self.max_age = 0
 
   # s3 buckets
   mattr_accessor :buckets
@@ -48,6 +49,15 @@ module HealthCheck
   self.custom_checks = [ ]
   self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
+
+  # html response
+  mattr_accessor :html_template
+  mattr_accessor :passed_style
+  mattr_accessor :failed_style
+  self.html_template = '<html><head><title>health_check: %s</title></head><body style="%s">%s</body></html>'
+  self.passed_style = 'background-color: DarkGreen; color: White'
+  self.failed_style = 'background-color: Red; color: Black'
+
 
   def self.add_custom_check(&block)
     custom_checks << block

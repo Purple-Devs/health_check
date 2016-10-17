@@ -245,15 +245,12 @@ common_tests()
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/site should pass with correct headers ..."
         $testurl ${host}/${route_prefix}/site 200 text/plain $success last-modified
-        $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control must-revalidate
-        if [ -f $max_age27_file ]; then
-            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control max-age=27
+        if [ -f $max_age_hour_file ]; then
             $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control public
-            #$testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control must-revalidate
         else
-            # max-age - default = 1
-            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control max-age=1
             $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control private
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control must-revalidate
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control max-age=0
         fi
         echo
     fi
@@ -417,8 +414,10 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom.html should pass (returning plain text) ..."
-        $testurl ${host}/${route_prefix}/custom.html 200 text/plain $success
+        echo "${test_no}: TESTING ${route_prefix}/custom.html should pass (returning colourful html text) ..."
+        $testurl ${host}/${route_prefix}/custom.html 200 text/html '<title>health_check: PASS</title>' 
+        $testurl ${host}/${route_prefix}/custom.html 200 text/html $success
+        $testurl ${host}/${route_prefix}/custom.html 200 text/html 'background-color: DarkGreen'
         echo
     fi
 
@@ -443,6 +442,31 @@ common_tests()
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/custom should fail when custom returns string ..."
         $testurl ${host}/${route_prefix}/custom 550 text/plain failed
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/custom.html should fail (returning colourful html text) ..."
+        $testurl ${host}/${route_prefix}/custom.html 200 text/html '<title>health_check: FAIL</title>' 
+        $testurl ${host}/${route_prefix}/custom.html 550 text/html failed
+        $testurl ${host}/${route_prefix}/custom.html 550 text/html 'background-color: Red'
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/custom.json should fail ..."
+        $testurl ${host}/${route_prefix}/custom.json 550 application/json '"healthy":false'
+        $testurl ${host}/${route_prefix}/custom.json 550 application/json "\"message\":\"health_check failed: "
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/custom.xml should fail ..."
+        $testurl ${host}/${route_prefix}/custom.xml 550 application/xml '<healthy type="boolean">false</healthy>'
+        $testurl ${host}/${route_prefix}/custom.xml 550 application/xml "<message>health_check failed:"
         echo
     fi
 
@@ -542,7 +566,7 @@ case "$run_test" in
     esac
 
     date > $catchall_file
-    date > $max_age27_file
+    date > $max_age_hour_file
 
     start_server
 
