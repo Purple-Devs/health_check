@@ -207,10 +207,10 @@ Likewise you will probably want to exclude health_check from monitoring systems 
 == Caching
 
 Cache-control is set with
-* public if max_age is > 1 and basic_auth_username is not set (otherwise private)
-* no-cache
-* must-revalidate
-* max-age (default 1)
+* public          if max_age is > 1 and basic_auth_username is not set (otherwise private)
+* no-cache        if max-age < 1
+* must-revalidate if max-age >= 1
+* max-age         if max-age >= 1
 
 Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
 

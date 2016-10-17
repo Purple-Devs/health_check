@@ -243,6 +243,23 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/site should pass with correct headers ..."
+        $testurl ${host}/${route_prefix}/site 200 text/plain $success last-modified
+        $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control must-revalidate
+        if [ -f $max_age27_file ]; then
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control max-age=27
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control public
+            #$testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control must-revalidate
+        else
+            # max-age - default = 1
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control max-age=1
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success cache-control private
+        fi
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/migration should pass with no database migrations ..."
         ls db/migrate
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
