@@ -24,10 +24,6 @@ module HealthCheck
         rescue Exception => e
           errors = e.message.blank? ? e.class.to_s : e.message.to_s
         end     
-        # response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
-        # response.cache_control[:'max-age'] = max_age if max_age >= 1
-        # response.cache_control[:'no-cache'] = true if max_age < 1
-        # response.cache_control[:'must-revalidate'] = true if max_age >= 1
 
         @healthy = errors.blank?
         @title = @healthy ? 'PASS' : 'FAIL'
