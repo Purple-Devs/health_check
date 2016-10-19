@@ -6,31 +6,30 @@ module HealthCheck
     end
 
     def call(env)
-      uri = env['PATH_INFO']
-      if uri =~ /^\/?#{HealthCheck.uri}\/?([-_0-9a-zA-Z]*)(\.(\w*))?/
-        checks = $1.empty? ? 'standard' : $1
+      if env['PATH_INFO'] =~ /^\/?#{HealthCheck.uri}\/?([-_0-9a-zA-Z]*)(\.(\w*))?/
         response_type = $3 || 'plain'
         begin
-          errors = HealthCheck::Utils.process_checks(checks)
-        rescue => e
-          errors = e.message.blank? ? e.class.to_s : e.message.to_s
+          start_time = Process.clock_gettime(Benchmark::BENCHMARK_CLOCK)
+          @app.call(env)
+        rescue Exception => exception
+          msg = exception.message.blank? ? exception.class.to_s : exception.message.to_s
+          msg = "health_check failed: #{msg}"
+          if response_type == 'xml'
+            content_type = 'text/xml'
+            msg = { healthy: healthy, message: msg }.to_xml
+          elsif response_type == 'json'
+            content_type = 'application/json'
+            msg = { healthy: healthy, message: msg }.to_json
+          elsif response_type == 'plain'
+            content_type = 'text/plain'
+          end
+          total_time = (Process.clock_gettime(Benchmark::BENCHMARK_CLOCK) - start_time) * 1000 #ms
+          Rails.logger.info "Completed 500 Failure in #{total_time}ms"
+          [ 500, { 'Content-Type' => content_type }, [msg] ]
         end
-        healthy = errors.blank?
-        msg = healthy ? HealthCheck.success : "health_check failed: #{errors}"
-        if response_type == 'xml'
-          content_type = 'text/xml'
-          msg = { healthy: healthy, message: msg }.to_xml
-        elsif response_type == 'json'
-          content_type = 'application/json'
-          msg = { healthy: healthy, message: msg }.to_json
-        elsif response_type == 'plain'
-          content_type = 'text/plain'
-        end
-        [ (healthy ? 200 : 500), { 'Content-Type' => content_type }, [msg] ]
       else
         @app.call(env)
       end
     end
-
   end
 end
