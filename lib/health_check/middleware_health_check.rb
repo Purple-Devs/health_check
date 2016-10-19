@@ -6,8 +6,8 @@ module HealthCheck
     end
 
     def call(env)
-      if env['PATH_INFO'] =~ /^\/?#{HealthCheck.uri}\/?([-_0-9a-zA-Z]*)(\.(\w*))?/
-        response_type = $3 || 'plain'
+      if env['PATH_INFO'] =~ /^\/?#{HealthCheck.uri}(\/([-_0-9a-zA-Z]*))?(\.(\w*))?$/
+        response_type = $4 || 'plain'
         begin
           start_time = Process.clock_gettime(Benchmark::BENCHMARK_CLOCK)
           @app.call(env)
