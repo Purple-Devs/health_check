@@ -93,16 +93,16 @@ start_server()
     server_arg=${RAILS_SERVER:-webrick}
     echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
     case "$server_arg" in
-    puma) 
+    puma)
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
         ;;
-    passenger) 
+    passenger)
         $bundle_prefix passenger start -p $port &
         ;;
-    thin) 
+    thin)
         $bundle_prefix thin start -p $port &
         ;;
-    unicorn) 
+    unicorn)
         $bundle_prefix unicorn_rails -l 127.0.0.1:$port &
         ;;
     *)
@@ -303,8 +303,8 @@ common_tests()
         echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
         $testurl ${host}/${route_prefix}/site 200 text/plain $success
         if $has_middleware; then
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
-            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+            echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success
         fi
         echo
     fi
@@ -454,11 +454,11 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         if $has_middleware; then
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
-            $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
+            echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+            $testurl ${host}/${route_prefix}/site 200 text/plain $success
         else
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should fail ..."
-            $testurl ${host}/${route_prefix}/middleware_site 550 text/plain failed
+            echo "${test_no}: TESTING ${route_prefix}/site should fail ..."
+            $testurl ${host}/${route_prefix}/site 550 text/plain failed
         fi
         echo
     fi
@@ -466,7 +466,7 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING log files to check for deprecation warnings ..."
-        if egrep ' is deprecated|DEPRECATION WARNING' $railsapp/log/[tp][er][so][td]*.log 
+        if egrep ' is deprecated|DEPRECATION WARNING' $railsapp/log/[tp][er][so][td]*.log
         then
             echo Found deprecation warnings - failed test
             exit 99
