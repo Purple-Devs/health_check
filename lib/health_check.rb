@@ -23,6 +23,18 @@ module HealthCheck
   mattr_accessor :http_status_for_error_object
   self.http_status_for_error_object = 500
 
+  # http status code used when the ip is not allowed for the request
+  mattr_accessor :http_status_for_ip_whitelist_error_text
+  self.http_status_for_ip_whitelist_error_text = 503
+
+  # http status code used when the ip is not allowed for the request (json or xml)
+  mattr_accessor :http_status_for_ip_whitelist_error_object
+  self.http_status_for_ip_whitelist_error_object = 503
+
+  # ips allowed to perform requests
+  mattr_accessor :origin_ip_whitelist
+  self.origin_ip_whitelist = []
+
   # max-age of response in seconds
   # cache-control is public when max_age > 1 and basic authentication is used
   mattr_accessor :max_age

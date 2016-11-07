@@ -6,6 +6,7 @@ module HealthCheck
 
     layout false if self.respond_to? :layout
     before_action :authenticate
+    before_action :check_origin_ip
 
     def index
       last_modified = Time.now.utc
@@ -15,14 +16,12 @@ module HealthCheck
       end
       public = (max_age > 1) && ! HealthCheck.basic_auth_username
       if stale?(:last_modified => last_modified, :public => public)
-        # Rails 4.0 doesn't have :plain, but it is deprecated later on
-        plain_key = Rails.version < '4.1' ? :text : :plain
         checks = params[:checks] || 'standard'
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e
           errors = e.message.blank? ? e.class.to_s : e.message.to_s
-        end     
+        end
         response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
         if errors.blank?
           obj = { :healthy => true, :message => HealthCheck.success }
@@ -59,10 +58,29 @@ module HealthCheck
       end
     end
 
+    def check_origin_ip
+      return if HealthCheck.origin_ip_whitelist.blank?
+      return if HealthCheck.origin_ip_whitelist.any? { |whitelisted_ip| whitelisted_ip == request.ip }
+
+      msg = 'Health check is not allowed for the requesting IP'
+      obj = { :healthy => false, :message => msg }
+
+      respond_to do |format|
+        format.html { render plain_key => msg, :status => HealthCheck.http_status_for_ip_whitelist_error_text, :content_type => 'text/plain'  }
+        format.json { render :json => obj, :status => HealthCheck.http_status_for_ip_whitelist_error_object}
+        format.xml { render :xml => obj, :status => HealthCheck.http_status_for_ip_whitelist_error_object }
+        format.any { render plain_key => msg, :status => HealthCheck.http_status_for_ip_whitelist_error_text, :content_type => 'text/plain'  }
+      end
+    end
+
     # turn cookies for CSRF off
     def protect_against_forgery?
       false
     end
 
+    def plain_key
+      # Rails 4.0 doesn't have :plain, but it is deprecated later on
+      Rails.version < '4.1' ? :text : :plain
+    end
   end
 end
