@@ -178,12 +178,9 @@ See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax exam
 
 == Testing
 
-=== Automated testing and other checks
+=== Automated testing
 
-* {<img src="https://badge.fury.io/rb/health_check.png" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
-* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI 
-* {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
-* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies 
+* {<img src="https://travis-ci.org/ianheggie/health_check.svg?branch=pre_rails4">}[https://travis-ci.org/ianheggie/health_check.svg?branch=pre_rails4]  - Travis CI 
 
 === Manual testing
 
