@@ -16,7 +16,8 @@ module HealthCheck
       end
       public = (max_age > 1) && ! HealthCheck.basic_auth_username
       if stale?(:last_modified => last_modified, :public => public)
-        checks = params[:checks] || 'standard'
+        checks = params[:checks] ? params[:checks].split('_') : ['standard']
+        checks -= HealthCheck.middleware_checks if HealthCheck.installed_as_middleware
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e

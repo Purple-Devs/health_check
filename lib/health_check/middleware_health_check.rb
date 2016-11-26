@@ -7,12 +7,20 @@ module HealthCheck
 
     def call(env)
       uri = env['PATH_INFO']
-      if uri =~ /^\/?#{HealthCheck.uri}\/([-_0-9a-zA-Z]*)middleware_?([-_0-9a-zA-Z]*)(\.(\w*))?/
-        checks = $1 + ($1 != '' && $2 != '' ? '_' : '') + $2
-        checks = 'standard' if checks == ''
+      if uri =~ /^#{Regexp.escape HealthCheck.uri}(\/([-_0-9a-zA-Z]*))?(\.(\w*))?$/
+        checks = $2.to_s == '' ? ['standard'] : $2.split('_')
         response_type = $4
+        HealthCheck.installed_as_middleware = true
+        errors = ''
+        middleware_checks = checks & HealthCheck.middleware_checks
+        full_stack_checks = (checks - HealthCheck.middleware_checks) - ['and']
         begin
-          errors = HealthCheck::Utils.process_checks(checks)
+          # Process the checks to be run from middleware
+          errors = HealthCheck::Utils.process_checks(middleware_checks, true)
+          # Process remaining checks through the full stack if there are any
+          unless full_stack_checks.empty?
+            return @app.call(env)
+          end
         rescue => e
           errors = e.message.blank? ? e.class.to_s : e.message.to_s
         end
