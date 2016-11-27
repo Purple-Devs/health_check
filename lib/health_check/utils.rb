@@ -66,7 +66,7 @@ module HealthCheck
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks, called_from_middleware)
           when "middleware"
-            errors << "Health check not installed as middleware." unless called_from_middleware
+            errors << "Health check not called from middleware - probably not installed as middleware." unless called_from_middleware
           when "custom"
             HealthCheck.custom_checks.each do |custom_check|
               errors << custom_check.call(self)
