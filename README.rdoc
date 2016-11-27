@@ -76,7 +76,7 @@ To change the configuration of health_check, create a file `config/initializers/
 
     HealthCheck.setup do |config|
 
-      # uri prefix
+      # uri prefix (no leading slash)
       config.uri = 'health_check'
 
       # Text output upon success
