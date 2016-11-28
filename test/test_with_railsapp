@@ -484,21 +484,52 @@ common_tests()
     date > $custom_file
 }
 
-
 # required for rails 4.1+ in production mode
 export SECRET_KEY_BASE=cf2f49c38a3fe67416ddf680f4f3187c0fce7dd1b9b117b34d195df75b274e08a04877e23803b2fdf1aa9a655269d94bc4888aa325cf7e721cc47368cfe56a80
 
 # required for rails 5 to server static files
 export RAILS_SERVE_STATIC_FILES=on
 
+export IP_WHITELIST='123.123.123.123'
+
 case "$run_test" in
-???)
+''|?)
+    echo ========================================================
+    echo TESTING whitelist WITHOUT CATCHALL in test env
+    echo ========================================================
+    export RAILS_ENV=test RACK_ENV=test
+
+    start_server
+
+    # get a static file
+
+    echo
+    echo 'TESTING middleware prohibited ...'
+    expected_status=403
+    $testurl ${host}/${route_prefix}/middleware $expected_status
+
+    echo 'TESTING controller prohibited ...'
+    expected_status=403
+    $testurl ${host}/${route_prefix}/site $expected_status
+
     ;;
-*)
+esac
+
+export IP_WHITELIST=''
+
+case "$run_test" in
+''|1??)
     echo ========================================================
     echo TESTING WITHOUT CATCHALL in test env
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
+
+    case "$run_trest" in
+     '')
+        stop_server
+        cleanup_db
+        ;;
+    esac
 
     start_server
 
@@ -513,13 +544,14 @@ case "$run_test" in
     expected_status=404,500,502
     $testurl ${host}/health_check/site $expected_status
 
-    common_tests 1
+    common_tests 101
     ;;
 esac
 
+export IP_WHITELIST='127.0.0.1'
 
 case "$run_test" in
-''|???)
+''|2??)
     echo ========================================================
     echo TESTING WITH CATCHALL in ${RAILS_ENV2:-production} env
     echo ========================================================
@@ -541,7 +573,7 @@ case "$run_test" in
     $testurl ${host}/another/url 200 text/html 'catch all route'
     echo
 
-    common_tests 101
+    common_tests 201
     ;;
 esac
 
