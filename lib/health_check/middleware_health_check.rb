@@ -71,7 +71,7 @@ module HealthCheck
     end
 
     def authenticated(env)
-      ! (HealthCheck.basic_auth_username && HealthCheck.basic_auth_password)
+      (HealthCheck.basic_auth_username && HealthCheck.basic_auth_password).to_s == ''
     end
 
   end

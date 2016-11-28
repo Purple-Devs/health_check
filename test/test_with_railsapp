@@ -503,13 +503,13 @@ case "$run_test" in
 
     start_server
 
-    echo '1: TESTING controller prohibited ...'
+    echo '1: TESTING controller prohibited by ip...'
     expected_status=403
     $testurl ${host}/${route_prefix}/site $expected_status
 
     if $has_middleware; then
         echo
-        echo '2: TESTING middleware prohibited ...'
+        echo '2: TESTING middleware prohibited by ip...'
         expected_status=403
         $testurl ${host}/${route_prefix}/middleware $expected_status
     fi
@@ -537,16 +537,14 @@ case "$run_test" in
 
     start_server
 
-    echo '3: TESTING controller without authentication insists on authentication ...'
     expected_status=401
+    echo '3: TESTING controller without authentication insists on authentication ...'
     AUTH_USER= $testurl ${host}/${route_prefix}/site $expected_status
 
     echo '4: TESTING controller with wrong password insists on authentication ...'
-    expected_status=401
     AUTH_PASSWORD=wrong $testurl ${host}/${route_prefix}/site $expected_status
 
     echo '5: TESTING controller with wrong user insists on authentication ...'
-    expected_status=401
     AUTH_USER=wrong $testurl ${host}/${route_prefix}/site $expected_status
 
     echo '6: TESTING controller with authentication works ...'
@@ -561,12 +559,10 @@ case "$run_test" in
 
         echo
         echo '8: TESTING middleware with wrong password insists on authentication ...'
-        expected_status=401
         AUTH_PASSWORD=wrong $testurl ${host}/${route_prefix}/middleware $expected_status
 
         echo
         echo '9: TESTING middleware with wrong user insists on authentication ...'
-        expected_status=401
         AUTH_USER=wrong $testurl ${host}/${route_prefix}/middleware $expected_status
 
         echo
@@ -577,8 +573,6 @@ case "$run_test" in
         echo
         echo "Skipped middleware tests as it is not configured..."
     fi
-
-
     ;;
 esac
 
