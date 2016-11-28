@@ -24,12 +24,8 @@ module HealthCheck
   self.http_status_for_error_object = 500
 
   # http status code used when the ip is not allowed for the request
-  mattr_accessor :http_status_for_ip_whitelist_error_text
-  self.http_status_for_ip_whitelist_error_text = 403
-
-  # http status code used when the ip is not allowed for the request (json or xml)
-  mattr_accessor :http_status_for_ip_whitelist_error_object
-  self.http_status_for_ip_whitelist_error_object = 403
+  mattr_accessor :http_status_for_ip_whitelist_error
+  self.http_status_for_ip_whitelist_error = 403
 
   # ips allowed to perform requests
   mattr_accessor :origin_ip_whitelist

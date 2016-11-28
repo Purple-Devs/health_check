@@ -61,9 +61,9 @@ module HealthCheck
     def check_origin_ip
       unless HealthCheck.origin_ip_whitelist.blank? ||
           HealthCheck.origin_ip_whitelist.include?(request.ip)
-        send_response 'Health check is not allowed for the requesting IP',
-                      HealthCheck.http_status_for_ip_whitelist_error_text,
-                      HealthCheck.http_status_for_ip_whitelist_error_object
+        render plain_key => 'Health check is not allowed for the requesting IP',
+               :status => HealthCheck.http_status_for_ip_whitelist_error,
+               :content_type => 'text/plain'
       end
     end
 

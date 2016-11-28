@@ -6,58 +6,38 @@ module HealthCheck
     end
 
     def call(env)
-      uri = env['PATH_INFO']
-      if uri =~ /^\/#{Regexp.escape HealthCheck.uri}(\/([-_0-9a-zA-Z]*))?(\.(\w*))?$/
-        checks = $2.to_s == '' ? ['standard'] : $2.split('_')
-        response_type = $4
+      (response_type, middleware_checks, full_stack_checks) = parse_env(env)
+      if response_type
+        if error_response = (ip_blocked(env) || not_authenticated(env))
+          return error_response
+        end
         HealthCheck.installed_as_middleware = true
         errors = ''
-        middleware_checks = checks & HealthCheck.middleware_checks
-        full_stack_checks = (checks - HealthCheck.middleware_checks) - ['and']
-        object_error_code = HealthCheck.http_status_for_error_object
-        text_error_code = HealthCheck.http_status_for_error_text
-        req = Rack::Request.new(env)
-        extra_headers = { }
-        if ip_ok(env)
-          if authenticated(env)
-            begin
-              # Process the checks to be run from middleware
-              errors = HealthCheck::Utils.process_checks(middleware_checks, true)
-              # Process remaining checks through the full stack if there are any
-              unless full_stack_checks.empty?
-                return @app.call(env)
-              end
-            rescue => e
-              errors = e.message.blank? ? e.class.to_s : e.message.to_s
-            end
-            healthy = errors.blank?
-            msg = healthy ? HealthCheck.success : "health_check failed: #{errors}"
-          else
-            healthy = false
-            msg = 'Authentication required'
-            text_error_code = object_error_code = 401
-            extra_headers = { 'WWW-Authenticate' => 'Basic realm="Health Check"' }
+        begin
+          # Process the checks to be run from middleware
+          errors = HealthCheck::Utils.process_checks(middleware_checks, true)
+          # Process remaining checks through the full stack if there are any
+          unless full_stack_checks.empty?
+            return @app.call(env)
           end
-        else
-          healthy = false
-          msg = 'Health check is not allowed for the requesting IP'
-          text_error_code = HealthCheck.http_status_for_ip_whitelist_error_text
-          object_error_code = HealthCheck.http_status_for_ip_whitelist_error_object
+        rescue => e
+          errors = e.message.blank? ? e.class.to_s : e.message.to_s
         end
-
+        healthy = errors.blank?
+        msg = healthy ? HealthCheck.success : "health_check failed: #{errors}"
         if response_type == 'xml'
           content_type = 'text/xml'
           msg = { healthy: healthy, message: msg }.to_xml
-          error_code = object_error_code
+          error_code = HealthCheck.http_status_for_error_object
         elsif response_type == 'json'
           content_type = 'application/json'
           msg = { healthy: healthy, message: msg }.to_json
-          error_code = object_error_code
+          error_code = HealthCheck.http_status_for_error_object
         else
           content_type = 'text/plain'
-          error_code = text_error_code
+          error_code = HealthCheck.http_status_for_error_text
         end
-        [ (healthy ? 200 : error_code), { 'Content-Type' => content_type }.merge(extra_headers), [msg] ]
+        [ (healthy ? 200 : error_code), { 'Content-Type' => content_type }, [msg] ]
       else
         @app.call(env)
       end
@@ -65,20 +45,39 @@ module HealthCheck
 
     protected
 
-    def ip_ok(env)
-      return true if HealthCheck.origin_ip_whitelist.blank?
-      req = Rack::Request.new(env)
-      HealthCheck.origin_ip_whitelist.include?(req.ip)
+    def parse_env(env)
+      uri = env['PATH_INFO']
+      if uri =~ /^\/#{Regexp.escape HealthCheck.uri}(\/([-_0-9a-zA-Z]*))?(\.(\w*))?$/
+        checks = $2.to_s == '' ? ['standard'] : $2.split('_')
+        response_type = $4.to_s
+        middleware_checks = checks & HealthCheck.middleware_checks
+        full_stack_checks = (checks - HealthCheck.middleware_checks) - ['and']
+        [response_type, middleware_checks, full_stack_checks ]
+      end
     end
 
-    def authenticated(env)
-      auth = MiddlewareHealthcheck::Request.new(env)
-      return false unless auth.provided? && auth.basic?
-      if Rack::Utils.secure_compare(HealthCheck.basic_auth_username, auth.username) && Rack::Utils.secure_compare(HealthCheck.basic_auth_password, auth.password)
-        env['REMOTE_USER'] = auth.username
-        return true
+    def ip_blocked(env)
+      return false if HealthCheck.origin_ip_whitelist.blank?
+      req = Rack::Request.new(env)
+      unless HealthCheck.origin_ip_whitelist.include?(req.ip)
+        [ HealthCheck.http_status_for_ip_whitelist_error,
+          { 'Content-Type' => 'text/plain' },
+          [ 'Health check is not allowed for the requesting IP' ]
+        ]
       end
-      false
+    end
+
+    def not_authenticated(env)
+      return false unless HealthCheck.basic_auth_username && HealthCheck.basic_auth_password
+      auth = MiddlewareHealthcheck::Request.new(env)
+      if auth.provided? && auth.basic? && Rack::Utils.secure_compare(HealthCheck.basic_auth_username, auth.username) && Rack::Utils.secure_compare(HealthCheck.basic_auth_password, auth.password)
+        env['REMOTE_USER'] = auth.username
+        return false
+      end
+      [ 401,
+        { 'Content-Type' => 'text/plain', 'WWW-Authenticate' => 'Basic realm="Health Check"' },
+        [ ]
+      ]
     end
 
     class Request < Rack::Auth::AbstractRequest
