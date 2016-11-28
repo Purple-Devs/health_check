@@ -526,6 +526,13 @@ case "$run_test" in
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
 
+    case "$run_trest" in
+     '')
+        stop_server
+        cleanup_db
+        ;;
+    esac
+
     start_server
 
     echo
