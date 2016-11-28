@@ -53,7 +53,7 @@ module HealthCheck
 
     def authenticate
       return unless HealthCheck.basic_auth_username && HealthCheck.basic_auth_password
-      authenticate_or_request_with_http_basic do |username, password|
+      authenticate_or_request_with_http_basic('Health Check') do |username, password|
         username == HealthCheck.basic_auth_username && password == HealthCheck.basic_auth_password
       end
     end

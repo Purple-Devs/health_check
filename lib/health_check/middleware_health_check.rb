@@ -17,6 +17,7 @@ module HealthCheck
         object_error_code = HealthCheck.http_status_for_error_object
         text_error_code = HealthCheck.http_status_for_error_text
         req = Rack::Request.new(env)
+        extra_headers = { }
         if ip_ok(env)
           if authenticated(env)
             begin
@@ -34,7 +35,8 @@ module HealthCheck
           else
             healthy = false
             msg = 'Authentication required'
-            text_error_code = object_error_code = 403
+            text_error_code = object_error_code = 401
+            extra_headers = { 'WWW-Authenticate' => 'Basic realm="Health Check"' }
           end
         else
           healthy = false
@@ -55,7 +57,7 @@ module HealthCheck
           content_type = 'text/plain'
           error_code = text_error_code
         end
-        [ (healthy ? 200 : error_code), { 'Content-Type' => content_type }, [msg] ]
+        [ (healthy ? 200 : error_code), { 'Content-Type' => content_type }.merge(extra_headers), [msg] ]
       else
         @app.call(env)
       end
@@ -66,12 +68,35 @@ module HealthCheck
     def ip_ok(env)
       return true if HealthCheck.origin_ip_whitelist.blank?
       req = Rack::Request.new(env)
-      puts "IP: #{req.ip.inspect}"
       HealthCheck.origin_ip_whitelist.include?(req.ip)
     end
 
     def authenticated(env)
-      (HealthCheck.basic_auth_username && HealthCheck.basic_auth_password).to_s == ''
+      auth = MiddlewareHealthcheck::Request.new(env)
+      return false unless auth.provided? && auth.basic?
+      if Rack::Utils.secure_compare(HealthCheck.basic_auth_username, auth.username) && Rack::Utils.secure_compare(HealthCheck.basic_auth_password, auth.password)
+        env['REMOTE_USER'] = auth.username
+        return true
+      end
+      false
+    end
+
+    class Request < Rack::Auth::AbstractRequest
+      def basic?
+        "basic" == scheme
+      end
+
+      def credentials
+        @credentials ||= params.unpack("m*").first.split(/:/, 2)
+      end
+
+      def username
+        credentials.first
+      end
+
+      def password
+        credentials.last
+      end
     end
 
   end
