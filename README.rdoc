@@ -292,7 +292,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2014 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2016 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
