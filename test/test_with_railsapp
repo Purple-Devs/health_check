@@ -142,7 +142,10 @@ stop_server()
             echo ========================================================
             echo "Killing rails server [pid: $server_pid]"
             kill -1 $server_pid  || true
-            [ ! -x bin/spring ] || bin/spring stop || true
+            if [ -x bin/spring ] ; then
+                echo Stopping spring ...
+                bin/spring stop || true
+            fi
             sleep 2
             kill -9 $server_pid  || true
             ;;
@@ -158,7 +161,10 @@ stop_server()
     esac
     server_pid=''
     fake_smtp_pid=''
+    ps -f
+    echo Waiting for sub processes to complete ...
     wait
+    echo Finished waiting for sub processes, sleeping 2 seconds ...
     sleep 2
 }
 
@@ -188,7 +194,9 @@ finish()
     stop_server
     trap "" 0
     echo ========================================================
-    echo TEST ${1:-FAILED}
+    ps uxf || echo ps failed
+    echo ========================================================
+    echo TEST ${1:-FAILED}, exiting with status ${2:-2}
     echo ========================================================
     exit ${2:-2}
 }

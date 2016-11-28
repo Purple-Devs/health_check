@@ -16,7 +16,8 @@ module HealthCheck
       end
       public = (max_age > 1) && ! HealthCheck.basic_auth_username
       if stale?(:last_modified => last_modified, :public => public)
-        checks = params[:checks] || 'standard'
+        checks = params[:checks] ? params[:checks].split('_') : ['standard']
+        checks -= HealthCheck.middleware_checks if HealthCheck.installed_as_middleware
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e
@@ -24,22 +25,10 @@ module HealthCheck
         end
         response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
         if errors.blank?
-          obj = { :healthy => true, :message => HealthCheck.success }
-          respond_to do |format|
-            format.html { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-            format.json { render :json => obj }
-            format.xml { render :xml => obj }
-            format.any { render plain_key => HealthCheck.success, :content_type => 'text/plain' }
-          end
+          send_response nil, :ok, :ok
         else
           msg = "health_check failed: #{errors}"
-          obj = { :healthy => false, :message => msg }
-          respond_to do |format|
-            format.html { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
-            format.json { render :json => obj, :status => HealthCheck.http_status_for_error_object}
-            format.xml { render :xml => obj, :status => HealthCheck.http_status_for_error_object }
-            format.any { render plain_key => msg, :status => HealthCheck.http_status_for_error_text, :content_type => 'text/plain'  }
-          end
+          send_response msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
             logger.info msg
@@ -48,8 +37,19 @@ module HealthCheck
       end
     end
 
-
     protected
+
+    def send_response(msg, text_status, obj_status)
+      healthy = !msg
+      msg ||= HealthCheck.success
+      obj = { :healthy => healthy, :message => msg}
+      respond_to do |format|
+        format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.json { render :json => obj, :status => obj_status }
+        format.xml { render :xml => obj, :status => obj_status }
+        format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+      end
+    end
 
     def authenticate
       return unless HealthCheck.basic_auth_username && HealthCheck.basic_auth_password
@@ -59,17 +59,11 @@ module HealthCheck
     end
 
     def check_origin_ip
-      return if HealthCheck.origin_ip_whitelist.blank?
-      return if HealthCheck.origin_ip_whitelist.any? { |whitelisted_ip| whitelisted_ip == request.ip }
-
-      msg = 'Health check is not allowed for the requesting IP'
-      obj = { :healthy => false, :message => msg }
-
-      respond_to do |format|
-        format.html { render plain_key => msg, :status => HealthCheck.http_status_for_ip_whitelist_error_text, :content_type => 'text/plain'  }
-        format.json { render :json => obj, :status => HealthCheck.http_status_for_ip_whitelist_error_object}
-        format.xml { render :xml => obj, :status => HealthCheck.http_status_for_ip_whitelist_error_object }
-        format.any { render plain_key => msg, :status => HealthCheck.http_status_for_ip_whitelist_error_text, :content_type => 'text/plain'  }
+      unless HealthCheck.origin_ip_whitelist.blank? ||
+          HealthCheck.origin_ip_whitelist.include?(request.ip)
+        send_response 'Health check is not allowed for the requesting IP',
+                      HealthCheck.http_status_for_ip_whitelist_error_text,
+                      HealthCheck.http_status_for_ip_whitelist_error_object
       end
     end
 

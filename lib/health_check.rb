@@ -25,11 +25,11 @@ module HealthCheck
 
   # http status code used when the ip is not allowed for the request
   mattr_accessor :http_status_for_ip_whitelist_error_text
-  self.http_status_for_ip_whitelist_error_text = 503
+  self.http_status_for_ip_whitelist_error_text = 403
 
   # http status code used when the ip is not allowed for the request (json or xml)
   mattr_accessor :http_status_for_ip_whitelist_error_object
-  self.http_status_for_ip_whitelist_error_object = 503
+  self.http_status_for_ip_whitelist_error_object = 403
 
   # ips allowed to perform requests
   mattr_accessor :origin_ip_whitelist
@@ -44,7 +44,7 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
-  # health check uri path for middleware check
+  # health check uri path
   mattr_accessor :uri
   self.uri = 'health_check'
 
@@ -60,6 +60,12 @@ module HealthCheck
   self.custom_checks = [ ]
   self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
+
+  # Middleware based checks
+  mattr_accessor :middleware_checks
+  self.middleware_checks = [ 'middleware' ]
+
+  mattr_accessor :installed_as_middleware
 
   def self.add_custom_check(&block)
     custom_checks << block

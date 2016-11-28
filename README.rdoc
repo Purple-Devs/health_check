@@ -76,7 +76,7 @@ To change the configuration of health_check, create a file `config/initializers/
 
     HealthCheck.setup do |config|
 
-      # uri prefix
+      # uri prefix (no leading slash)
       config.uri = 'health_check'
 
       # Text output upon success
@@ -130,10 +130,10 @@ To change the configuration of health_check, create a file `config/initializers/
       config.origin_ip_whitelist = %w(123.123.123.123)
 
       # http status code used when the ip is not allowed for the request
-      config.http_status_for_ip_whitelist_error_text = 503
+      config.http_status_for_ip_whitelist_error_text = 403
 
       # http status code used when the ip is not allowed for the request (json or xml)
-      config.http_status_for_ip_whitelist_error_object = 503
+      config.http_status_for_ip_whitelist_error_object = 403
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
@@ -143,15 +143,20 @@ If you have a catchall route then add the following line above the catch all rou
 
 === Installing As Middleware
 
-Install health_check as middleware if you want to ignore exceptions from later parts of the Rails middleware stack,
-eg DB connection errors from QueryCache. Include "middleware" in the list of checks to have the checks processed by the middleware
-health check rather than the full stack check. The "middleware" check will fail if you have not installed health_check as middleware.
+Install health_check as middleware if you want to sometimes ignore exceptions from later parts of the Rails middleware stack,
+eg DB connection errors from QueryCache. The "middleware" check will fail if you have not installed health_check as middleware.
 
 To install health_check as middleware add the following line to the config/application.rb:
     config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck
 
 Note: health_check is installed as a full rails engine even if it has been installed as middleware. This is so the
-standard checks continue to test the complete rails stack.
+remaining checks continue to run through the complete rails stack.
+
+You can also adjust what checks are run from middleware, eg if you want to exclude the checking of the database etc, then set
+  config.middleware_checks = ['middleware', 'standard', 'custom']
+  config.standard_checks = ['middleware', 'custom']
+
+Middleware checks are run first, and then full stack checks.
 
 == Uptime Monitoring
 
