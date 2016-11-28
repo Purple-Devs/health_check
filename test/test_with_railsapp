@@ -491,9 +491,11 @@ export SECRET_KEY_BASE=cf2f49c38a3fe67416ddf680f4f3187c0fce7dd1b9b117b34d195df75
 export RAILS_SERVE_STATIC_FILES=on
 
 export IP_WHITELIST='123.123.123.123'
+unset AUTH_USER
+unset AUTH_PASSWORD
 
 case "$run_test" in
-''|?)
+''|[12])
     echo ========================================================
     echo TESTING whitelist WITHOUT CATCHALL in test env
     echo ========================================================
@@ -501,14 +503,12 @@ case "$run_test" in
 
     start_server
 
-    # get a static file
-
     echo
-    echo 'TESTING middleware prohibited ...'
+    echo '1: TESTING middleware prohibited ...'
     expected_status=403
     $testurl ${host}/${route_prefix}/middleware $expected_status
 
-    echo 'TESTING controller prohibited ...'
+    echo '2: TESTING controller prohibited ...'
     expected_status=403
     $testurl ${host}/${route_prefix}/site $expected_status
 
@@ -516,6 +516,59 @@ case "$run_test" in
 esac
 
 export IP_WHITELIST=''
+export AUTH_USER='someone'
+export AUTH_PASSWORD='secret'
+
+case "$run_test" in
+''|[3456789]|10)
+    echo ========================================================
+    echo TESTING basic auth WITHOUT CATCHALL in test env
+    echo ========================================================
+    export RAILS_ENV=test RACK_ENV=test
+
+    start_server
+
+    echo
+    echo '3: TESTING middleware without authentication insists on authentication ...'
+    expected_status=401
+    AUTH_USER= $testurl ${host}/${route_prefix}/middleware $expected_status
+
+    echo '4: TESTING controller without authentication insists on authentication ...'
+    expected_status=401
+    AUTH_USER= $testurl ${host}/${route_prefix}/site $expected_status
+
+    echo
+    echo '5: TESTING middleware with wrong password insists on authentication ...'
+    expected_status=401
+    AUTH_PASSWORD=wrong $testurl ${host}/${route_prefix}/middleware $expected_status
+
+    echo '6: TESTING controller with wrong password insists on authentication ...'
+    expected_status=401
+    AUTH_PASSWORD=wrong $testurl ${host}/${route_prefix}/site $expected_status
+
+    echo
+    echo '7: TESTING middleware with wrong user insists on authentication ...'
+    expected_status=401
+    AUTH_USER=wrong $testurl ${host}/${route_prefix}/middleware $expected_status
+
+    echo '8: TESTING controller with wrong user insists on authentication ...'
+    expected_status=401
+    AUTH_USER=wrong $testurl ${host}/${route_prefix}/site $expected_status
+
+    echo
+    echo '9: TESTING middleware with authentication works ...'
+    expected_status=200
+    $testurl ${host}/${route_prefix}/middleware $expected_status
+
+    echo '10: TESTING controller with authentication works ...'
+    expected_status=200
+    $testurl ${host}/${route_prefix}/site $expected_status
+
+    ;;
+esac
+
+unset AUTH_USER
+unset AUTH_PASSWORD
 
 case "$run_test" in
 ''|1??)
@@ -549,6 +602,8 @@ case "$run_test" in
 esac
 
 export IP_WHITELIST='127.0.0.1'
+export AUTH_USER='someone'
+export AUTH_PASSWORD='secret'
 
 case "$run_test" in
 ''|2??)
