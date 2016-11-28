@@ -173,7 +173,7 @@ class HealthCheckControllerTest < ActionController::TestCase
     end
   end
 
-  context 'GET from a not whitelisted IP' do
+  context 'GET standard check from a not whitelisted IP' do
     setup do
       HealthCheck.origin_ip_whitelist = ['123.123.123.123']
       get :index
@@ -187,4 +187,22 @@ class HealthCheckControllerTest < ActionController::TestCase
       assert_not_equal HealthCheck.success, @response.body
     end
   end
+
+  context 'GET middleware check from a not whitelisted IP' do
+    setup do
+      HealthCheck.origin_ip_whitelist = ['123.123.123.123']
+      get :index, :checks => 'middleware'
+    end
+
+    should respond_with 503
+    should_not set_the_flash
+    should respond_with_content_type 'text/plain'
+    should_not render_with_layout
+    should "not return 'success' text" do
+      assert_not_equal HealthCheck.success, @response.body
+    end
+  end
+
+
+
 end
