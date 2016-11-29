@@ -146,8 +146,11 @@ stop_server()
                 echo Stopping spring ...
                 bin/spring stop || true
             fi
-            sleep 2
+            sleep 1
             kill -9 $server_pid  || true
+            sleep 1
+            # needed for unicorn - it doesn't die when it is supposed to
+            killall "$server_arg"
             ;;
     esac
     case "$fake_smtp_pid" in
@@ -497,7 +500,7 @@ unset AUTH_PASSWORD
 case "$run_test" in
 ''|[12])
     echo ========================================================
-    echo TESTING whitelist WITHOUT CATCHALL in test env
+    echo TESTING whitelist ban WITHOUT CATCHALL in test env
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
 
@@ -513,7 +516,6 @@ case "$run_test" in
         expected_status=403
         $testurl ${host}/${route_prefix}/middleware $expected_status
     fi
-
     ;;
 esac
 
@@ -524,7 +526,7 @@ export AUTH_PASSWORD='secret'
 case "$run_test" in
 ''|[3456789]|10)
     echo ========================================================
-    echo TESTING basic auth WITHOUT CATCHALL in test env
+    echo TESTING basic auth, no whitelist WITHOUT CATCHALL in test env
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
 
@@ -582,7 +584,7 @@ unset AUTH_PASSWORD
 case "$run_test" in
 ''|1??)
     echo ========================================================
-    echo TESTING WITHOUT CATCHALL in test env
+    echo TESTING WITHOUT CATCHALL, no whitelist or user in test env
     echo ========================================================
     export RAILS_ENV=test RACK_ENV=test
 
@@ -606,7 +608,7 @@ case "$run_test" in
     expected_status=404,500,502
     $testurl ${host}/health_check/site $expected_status
 
-    common_tests 101
+    common_tests 100
     ;;
 esac
 
@@ -617,7 +619,7 @@ export AUTH_PASSWORD='secret'
 case "$run_test" in
 ''|2??)
     echo ========================================================
-    echo TESTING WITH CATCHALL in ${RAILS_ENV2:-production} env
+    echo TESTING WITH CATCHALL with whitelist and user in ${RAILS_ENV2:-production} env
     echo ========================================================
     export RAILS_ENV=${RAILS_ENV2:-production} RACK_ENV=${RAILS_ENV2:-production}
 
@@ -637,7 +639,7 @@ case "$run_test" in
     $testurl ${host}/another/url 200 text/html 'catch all route'
     echo
 
-    common_tests 201
+    common_tests 200
     ;;
 esac
 
