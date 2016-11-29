@@ -17,9 +17,10 @@ module HealthCheck
 
     cattr_accessor :default_smtp_settings
 
-    def self.process_checks(checks)
+    # process an array containing a list of checks
+    def self.process_checks(checks, called_from_middleware = false)
       errors = ''
-      checks.split('_').each do |check|
+      checks.each do |check|
         case check
           when 'and', 'site'
             # do nothing
@@ -63,15 +64,17 @@ module HealthCheck
           when 's3'
             errors << HealthCheck::S3HealthCheck.check
           when "standard"
-            errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks.join('_'))
+            errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks, called_from_middleware)
+          when "middleware"
+            errors << "Health check not called from middleware - probably not installed as middleware." unless called_from_middleware
           when "custom"
             HealthCheck.custom_checks.each do |custom_check|
               errors << custom_check.call(self)
             end
           when "all", "full"
-            errors << HealthCheck::Utils.process_checks(HealthCheck.full_checks.join('_'))
+            errors << HealthCheck::Utils.process_checks(HealthCheck.full_checks, called_from_middleware)
           else
-            return "invalid argument to health_test. "
+            return "invalid argument to health_test."
         end
       end
       return errors

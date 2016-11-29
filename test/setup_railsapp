@@ -168,6 +168,9 @@ HealthCheck.setup do |config|
   config.http_status_for_error_text = 550
   config.http_status_for_error_object = 555
   config.uri = '$route_prefix'
+  config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
+  config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
+  config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
 
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'
