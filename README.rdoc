@@ -154,6 +154,7 @@ You can also adjust what checks are run from middleware, eg if you want to exclu
   config.standard_checks = ['middleware', 'custom']
 
 Middleware checks are run first, and then full stack checks.
+When installed as middleware, exceptions thrown when running the full stack tests are formatted in the standard way.
 
 == Uptime Monitoring
 
