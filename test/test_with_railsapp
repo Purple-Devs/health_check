@@ -141,25 +141,25 @@ stop_server()
         [0-9]*)
             echo ========================================================
             echo "Killing rails server [pid: $server_pid]"
-            kill -1 $server_pid  || true
+            kill -QUIT $server_pid  || echo server has already exited ..
             if [ -x bin/spring ] ; then
                 echo Stopping spring ...
-                bin/spring stop || true
+                bin/spring stop || echo spring had already exited ..
             fi
             sleep 1
-            kill -9 $server_pid  || true
+            kill -9 $server_pid  || echo server had already exited ...
             sleep 1
             # needed for unicorn - it doesn't die when it is supposed to
-            killall "$server_arg"
+            killall "$server_arg" || echo server and child processes had already stopped ...
             ;;
     esac
     case "$fake_smtp_pid" in
         [0-9]*)
             echo ========================================================
             echo "Killing fake smtp server [pid: $fake_smtp_pid]"
-            kill -1 $fake_smtp_pid || true
+            kill -QUIT $fake_smtp_pid || echo fake_smtp had already exited ..
             sleep 2
-            kill -9 $fake_smtp_pid || true
+            kill -9 $fake_smtp_pid || echo fake_smtp had already exited ..
             ;;
     esac
     server_pid=''
