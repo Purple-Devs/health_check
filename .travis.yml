@@ -34,6 +34,15 @@ matrix:
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0 MIDDLEWARE=YES
 
+    # having trouble killing unicorn ...
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
+
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
+
   include:
     # -------------------------------------
     # Standard
@@ -72,10 +81,9 @@ matrix:
     #  gemfile: test/rails_4.0.gemfile
     #  env: RAILS_ENV2=development RAILS_VERSION=4.0
 
-    #= Dropped - server hangs around rather than exiting when signalled
-    #- rvm: 2.1.2
-    #  gemfile: test/rails_4.2.gemfile
-    #  env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
 
     # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
@@ -143,10 +151,9 @@ matrix:
     #  gemfile: test/rails_4.0.gemfile
     #  env: RAILS_ENV2=development RAILS_VERSION=4.0 MIDDLEWARE=YES
 
-    #= Dropped - server hangs around rather than exiting when signalled
-    #- rvm: 2.1.2
-    #  gemfile: test/rails_4.2.gemfile
-    #  env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
+    - rvm: 2.1.2
+      gemfile: test/rails_4.2.gemfile
+      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
 
     # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
