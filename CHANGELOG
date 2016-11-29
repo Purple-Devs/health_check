@@ -1,5 +1,12 @@
 = Change Log =
 
+* 2.5.0
+ * Added whitelist for IP# (Thanks Fernando Alvarez)
+ * reworked whitelist PR
+ * Expanded tests for whitelist and basic authentication
+ * reworked middleware, simplified error codes, added whitelist and basic authentication into middleware
+ * #51 from tokenshift: Fixing NameError on `basic_auth_username`.
+ * Removed unit tests as they where aonly applicable under rails 2.3 when installed in vendor/plugins
 * 2.4.0
  * Added tests for middleware
  * Changed contributed middleware code to conform to existing url scheme
