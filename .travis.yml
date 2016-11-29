@@ -34,15 +34,6 @@ matrix:
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0 MIDDLEWARE=YES
 
-    # having trouble killing unicorn ...
-    - rvm: 2.1.2
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
-
-    - rvm: 2.1.2
-      gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
-
   include:
     # -------------------------------------
     # Standard
