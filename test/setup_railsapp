@@ -78,8 +78,8 @@ if [ ! -f $rails ]; then
 fi
 
 if [ ! -f $rake ]; then
-    echo "Running bundle --binstub rake ..."
-    if ! bundle --binstub rake || [ ! -f $rake ]; then
+    echo "Running bundle --binstubs rake ..."
+    if ! bundle --binstubs rake || [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2
     fi
