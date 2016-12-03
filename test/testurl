@@ -3,7 +3,11 @@ require 'net/http'
 require 'uri'
 
 def open(url)
-  Net::HTTP.get_response(URI.parse(url))
+  parsed_uri = URI.parse(url)
+  http = Net::HTTP.new(parsed_uri.host, parsed_uri.port)
+  req = Net::HTTP::Get.new(parsed_uri.request_uri)
+  req.basic_auth(ENV['AUTH_USER'], ENV['AUTH_PASSWORD'].to_s) if ENV['AUTH_USER']
+  http.request(req)
 end
 
 response = open(ARGV[0]) rescue nil
@@ -11,6 +15,7 @@ unless response
   i=0
   print "waiting.."
   while i < 120 and not response
+    #puts 'RESPONSE:', response.inspect
     print "."
     STDOUT.flush
     i += 1

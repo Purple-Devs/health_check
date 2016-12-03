@@ -24,7 +24,9 @@ health_check provides various monitoring URIs, for example:
       <message>success</message>
     </hash>
 
-On failure a 500 http status is returned with a simple explanation of the failure
+You may also issue POST calls instead of GET to these urls.
+
+On failure (detected by health_check) a 500 http status is returned with a simple explanation of the failure
 
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
@@ -74,6 +76,9 @@ To change the configuration of health_check, create a file `config/initializers/
 
     HealthCheck.setup do |config|
 
+      # uri prefix (no leading slash)
+      config.uri = 'health_check'
+
       # Text output upon success
       config.success = 'success'
 
@@ -119,6 +124,13 @@ To change the configuration of health_check, create a file `config/initializers/
       # These default to nil and the endpoint is not protected
       config.basic_auth_username = 'my_username'
       config.basic_auth_password = 'my_password'
+
+      # Whitelist requesting IPs
+      # Defaults to blank and allows any IP
+      config.origin_ip_whitelist = %w(123.123.123.123)
+
+      # http status code used when the ip is not allowed for the request
+      config.http_status_for_ip_whitelist_error = 403
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
@@ -126,14 +138,23 @@ You may call add_custom_check multiple times with different tests. These tests w
 If you have a catchall route then add the following line above the catch all route (in `config/routes.rb`):
    health_check_routes
 
-To change the url prefix (eg to /ping), add the following line in `config/routes.rb`:
-   health_check_routes('ping')
-
 === Installing As Middleware
 
-To use health_check as middleware add the following line to the config/application.rb:
-  `config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck`
-In config/initializers/health_check.rb config.uri can be changed to other than default 'health_check'
+Install health_check as middleware if you want to sometimes ignore exceptions from later parts of the Rails middleware stack,
+eg DB connection errors from QueryCache. The "middleware" check will fail if you have not installed health_check as middleware.
+
+To install health_check as middleware add the following line to the config/application.rb:
+    config.middleware.insert_after "Rails::Rack::Logger", HealthCheck::MiddlewareHealthcheck
+
+Note: health_check is installed as a full rails engine even if it has been installed as middleware. This is so the
+remaining checks continue to run through the complete rails stack.
+
+You can also adjust what checks are run from middleware, eg if you want to exclude the checking of the database etc, then set
+  config.middleware_checks = ['middleware', 'standard', 'custom']
+  config.standard_checks = ['middleware', 'custom']
+
+Middleware checks are run first, and then full stack checks.
+When installed as middleware, exceptions thrown when running the full stack tests are formatted in the standard way.
 
 == Uptime Monitoring
 
@@ -192,7 +213,7 @@ It is recomended that you use silencer, lograge or one of the other log filterin
 
 For example, with lograge use the following to exclude health_check from being logged:
 
-    config.lograge.ignore_actions = ["health_check/health_check#index"]
+    config.lograge.ignore_actions = ["HealthCheck::HealthCheckController#index"]
 
 Likewise you will probably want to exclude health_check from monitoring systems like newrelic.
 
@@ -269,7 +290,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2014 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2016 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
