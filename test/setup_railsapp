@@ -70,16 +70,16 @@ rake="$base_dir/test/bin/rake"
 
 echo Checking $rails is present ...
 [ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-[ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
 fi
 
 if [ ! -f $rake ]; then
-    echo "Running bundle --binstub rake ..."
-    if ! bundle --binstub rake || [ ! -f $rake ]; then
+    echo "Running bundle binstubs rake ..."
+    if ! bundle binstubs rake || [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2
     fi
@@ -176,6 +176,9 @@ HealthCheck.setup do |config|
   config.http_status_for_error_object = 555
   config.uri = '$route_prefix'
   config.max_age = 3600 if File.exists?("$max_age_hour_file")
+  config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
+  config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
+  config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
 
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'
@@ -216,15 +219,15 @@ then
 
     echo Checking $rails is present ...
     [ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-    [ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
-    [ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
+    [ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
+    [ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
     if [ ! -f $rails ]; then
         echo "Test aborted (unable to create $rails)"
         exit 2
     fi
 
     echo Checking $rake is present ...
-    [ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
+    [ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
     if [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2

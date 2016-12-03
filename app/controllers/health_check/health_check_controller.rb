@@ -5,6 +5,7 @@ module HealthCheck
   class HealthCheckController < ActionController::Base
 
     layout false if self.respond_to? :layout
+    before_action :check_origin_ip
     before_action :authenticate
 
     def index
@@ -18,7 +19,8 @@ module HealthCheck
         # Rails 4.0 doesn't have :plain, but it is deprecated later on
         plain_key = Rails.version < '4.1' ? :text : :plain
         html_key = Rails.version < '4.1' ? :text : :html
-        checks = params[:checks] || 'standard'
+        checks = params[:checks] ? params[:checks].split('_') : ['standard']
+        checks -= HealthCheck.middleware_checks if HealthCheck.installed_as_middleware
         begin
           errors = HealthCheck::Utils.process_checks(checks)
         rescue Exception => e
@@ -30,10 +32,13 @@ module HealthCheck
         if @healthy
           @msg = HealthCheck.success
           text_status = object_status = 200
+        end     
+        response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
+        if @healthy
+          send_response nil, :ok, :ok
         else
-          @msg = "health_check failed: #{errors}"
-          text_status = HealthCheck.http_status_for_error_text
-          object_status = HealthCheck.http_status_for_error_object
+          msg = "health_check failed: #{errors}"
+          send_response msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
             logger.info @msg
@@ -49,13 +54,33 @@ module HealthCheck
       end
     end
 
-
     protected
+
+    def send_response(msg, text_status, obj_status)
+      healthy = !msg
+      msg ||= HealthCheck.success
+      obj = { :healthy => healthy, :message => msg}
+      respond_to do |format|
+        format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.json { render :json => obj, :status => obj_status }
+        format.xml { render :xml => obj, :status => obj_status }
+        format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+      end
+    end
 
     def authenticate
       return unless HealthCheck.basic_auth_username && HealthCheck.basic_auth_password
-      authenticate_or_request_with_http_basic do |username, password|
+      authenticate_or_request_with_http_basic('Health Check') do |username, password|
         username == HealthCheck.basic_auth_username && password == HealthCheck.basic_auth_password
+      end
+    end
+
+    def check_origin_ip
+      unless HealthCheck.origin_ip_whitelist.blank? ||
+          HealthCheck.origin_ip_whitelist.include?(request.ip)
+        render plain_key => 'Health check is not allowed for the requesting IP',
+               :status => HealthCheck.http_status_for_ip_whitelist_error,
+               :content_type => 'text/plain'
       end
     end
 
@@ -64,5 +89,9 @@ module HealthCheck
       false
     end
 
+    def plain_key
+      # Rails 4.0 doesn't have :plain, but it is deprecated later on
+      Rails.version < '4.1' ? :text : :plain
+    end
   end
 end

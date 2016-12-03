@@ -1,10 +1,21 @@
 = Change Log =
 
 
-* 2.5.0
+* Next
  * Added Colourful html format (If you have set up your own route, set the default format to 'txt')
  * Added tests for cache-control and clarified what rails sets
  * max_age=0 is now the default and required for cache-control: private
+* 2.5.0
+ * Added whitelist for IP# (Thanks Fernando Alvarez)
+ * reworked whitelist PR
+ * Expanded tests for whitelist and basic authentication
+ * reworked middleware, simplified error codes, added whitelist and basic authentication into middleware
+ * Removed unit tests as they where aonly applicable under rails 2.3 when installed in vendor/plugins
+ * #55 by mnoack - correct binstubs arg in test
+ * #54 by gkop - Lograge config snippet works with Rails 4.2.7.1, lograge 0.4.1 
+ * Used ideas from #52 - use middleware to catch Rails stack exceptions
+ * #51 by tokenshift - Fixing NameError on `basic_auth_username`.
+ * Changes to address #50 by fillphafftek - allow standard check to be run from middleware if configured to do so, removed requirement for "middleware" to be passed in url for middleware tests
 * 2.4.0
  * Added tests for middleware
  * Changed contributed middleware code to conform to existing url scheme
