@@ -213,7 +213,7 @@ It is recomended that you use silencer, lograge or one of the other log filterin
 
 For example, with lograge use the following to exclude health_check from being logged:
 
-    config.lograge.ignore_actions = ["health_check/health_check#index"]
+    config.lograge.ignore_actions = ["HealthCheck::HealthCheckController#index"]
 
 Likewise you will probably want to exclude health_check from monitoring systems like newrelic.
 
