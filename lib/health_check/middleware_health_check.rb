@@ -25,7 +25,16 @@ module HealthCheck
         end
         healthy = errors.blank?
         msg = healthy ? HealthCheck.success : "health_check failed: #{errors}"
-        if response_type == 'xml'
+        req = Rack::Request.new(env)
+        if req.params[:callback]
+          if HealthCheck::Utils.safe_callback_name?(req.params[:callback])
+            obj = { healthy: healthy, message: msg }
+            msg = HealthCheck::Utils.format_jsonp(req.params[:callback], obj)
+            return [ 200, { 'Content-Type' => 'application/javascript' }, [msg] ]
+          else
+            return [ 422, { 'Content-Type' => 'plain/text' }, ['invalid callback name'] ]
+          end
+        elsif response_type == 'xml'
           content_type = 'text/xml'
           msg = { healthy: healthy, message: msg }.to_xml
           error_code = HealthCheck.http_status_for_error_object
@@ -86,7 +95,7 @@ module HealthCheck
       end
 
       def credentials
-        @credentials ||= params.unpack("m*").first.split(/:/, 2)
+        @credentials ||= params.unpack('m*').first.split(/:/, 2)
       end
 
       def username

@@ -43,11 +43,19 @@ module HealthCheck
       healthy = !msg
       msg ||= HealthCheck.success
       obj = { :healthy => healthy, :message => msg}
-      respond_to do |format|
-        format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
-        format.json { render :json => obj, :status => obj_status }
-        format.xml { render :xml => obj, :status => obj_status }
-        format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+      if params[:callback]
+        if HealthCheck::Utils.safe_callback_name?(params[:callback])
+          render plain_key => HealthCheck::Utils.format_jsonp(params[:callback], obj)
+        else
+          render plain_key => 'invalid callback name', :status => 422, :content_type => 'text/plain'
+        end
+      else
+        respond_to do |format|
+          format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+          format.json { render :json => obj, :status => obj_status }
+          format.xml { render :xml => obj, :status => obj_status }
+          format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        end
       end
     end
 

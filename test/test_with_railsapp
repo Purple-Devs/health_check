@@ -502,9 +502,9 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING JSONP: ${route_prefix} (all) should fail when custom check fails ..."
-        $testurl "${host}/${route_prefix}?callback=my_function" 555 application/javascript '/**/ my_function({'
-        $testurl "${host}/${route_prefix}?callback=my_function" 555 application/javascript '"healthy":false'
-        $testurl "${host}/${route_prefix}?callback=my_function" 555 application/javascript "$custom_file is missing!"
+        $testurl "${host}/${route_prefix}?callback=my_function" 200 application/javascript '/**/ my_function({'
+        $testurl "${host}/${route_prefix}?callback=my_function" 200 application/javascript '"healthy":false'
+        $testurl "${host}/${route_prefix}?callback=my_function" 200 application/javascript "$custom_file is missing!"
         echo
     fi
 

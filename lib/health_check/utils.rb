@@ -167,5 +167,22 @@ module HealthCheck
       Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
     end
 
+    JAVASCRIPT_RESERVED_WORDS = %w{
+                                    abstract arguments boolean break byte case catch char class const continue debugger
+                                    default delete do double else enum eval export extends false final finally float
+                                    for function goto if implements import in instanceof int interface let long native
+                                    new null package private protected public return short static super switch
+                                    synchronized this throw throws transient true try typeof var void volatile
+                                    while with yield
+    }
+
+    def self.safe_callback_name?(name)
+      name && name =~ /^[$A-Z_][0-9A-Z_$]*$/i && ! JAVASCRIPT_RESERVED_WORDS.include(name)
+    end
+
+    def self.format_jsonp(name, obj)
+      '/**/ ' << name << '(' << obj.to_json << ');'
+    end
+
   end
 end
