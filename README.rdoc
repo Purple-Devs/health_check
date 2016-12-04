@@ -91,7 +91,7 @@ To change the configuration of health_check, create a file `config/initializers/
 
       config.http_status_for_error_text = 500
 
-      # http status code used when an error object is output (json or xml)
+      # http status code used when an error object is output (json, jsonp or xml)
       # Set to 200 if you want your want to distinguish between partial (healthy property == false) and
       # total failure of rails application (http status of 500 etc)
 
@@ -216,6 +216,22 @@ Will return a result with Content-Type: application/xml and body like:
   </hash>
 
 See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax example
+
+=== Requesting JSONP responses
+
+Health_check will respond with a JSONP response (content-type: application/javascript)
+where the url ends in `?callback=name_of_callback_function`.
+The response will be prepended with a comment and a test
+that the callback argument is a valid function to aid client side security.
+
+curl -v localhost:3000/health_check.json?callback=my_function
+
+will return:
+
+  /**/ my_function({"healthy":true,"message":"success"});
+
+Note: the callback value must be single javascript identfier that is not a reserved word and contains only ascii characters.
+
 
 == Silencing log output
 
