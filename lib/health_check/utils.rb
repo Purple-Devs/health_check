@@ -177,7 +177,7 @@ module HealthCheck
     }
 
     def self.safe_callback_name?(name)
-      name && name =~ /^[$A-Z_][0-9A-Z_$]*$/i && ! JAVASCRIPT_RESERVED_WORDS.include(name)
+      name && name =~ /^[$A-Z_][0-9A-Z_$]*$/i && ! JAVASCRIPT_RESERVED_WORDS.include?(name)
     end
 
     def self.format_jsonp(name, obj)
