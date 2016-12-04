@@ -404,6 +404,13 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/pass should pass ..."
+        $testurl ${host}/${route_prefix}/pass 200 text/plain $success
+        echo
+    fi
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/custom should pass ..."
         $testurl ${host}/${route_prefix}/custom 200 text/plain $success
         echo
@@ -437,6 +444,12 @@ common_tests()
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/custom should fail when custom returns string ..."
         $testurl ${host}/${route_prefix}/custom 550 text/plain failed
+        echo
+    fi
+
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/pass should pass even if other custom test returns string ..."
+        $testurl ${host}/${route_prefix}/pass 200 text/plain $success
         echo
     fi
 

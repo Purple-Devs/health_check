@@ -175,6 +175,11 @@ HealthCheck.setup do |config|
   config.add_custom_check do
     File.exists?("$custom_file") ? '' : '$custom_file is missing!'
   end
+
+  config.add_custom_check('pass') do
+    ''
+  end
+
 end
 !
 
