@@ -122,6 +122,13 @@ To change the configuration of health_check, create a file `config/initializers/
       #  CustomHealthCheck.perform_check # any code that returns blank on success and non blank string upon failure
       #end
 
+      # Add another custom check with a name, so you can call just specific custom checks. This can also be run using
+      # the standard 'custom' check.
+      # You can define multiple tests under the same name - they will be run one after the other.
+      config.add_custom_check('sometest') do
+        CustomHealthCheck.perform_another_check # any code that returns blank on success and non blank string upon failure
+      end
+
       # max-age of response in seconds
       # cache-control is public when max_age > 1 and basic_auth_username is not set
       # You can force private without authentication for longer max_age by

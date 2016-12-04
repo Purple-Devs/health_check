@@ -68,13 +68,21 @@ module HealthCheck
           when "middleware"
             errors << "Health check not called from middleware - probably not installed as middleware." unless called_from_middleware
           when "custom"
-            HealthCheck.custom_checks.each do |custom_check|
-              errors << custom_check.call(self)
+            HealthCheck.custom_checks.each do |name, list|
+              list.each do |custom_check|
+                errors << custom_check.call(self)
+              end
             end
           when "all", "full"
             errors << HealthCheck::Utils.process_checks(HealthCheck.full_checks, called_from_middleware)
           else
-            return "invalid argument to health_test."
+            if HealthCheck.custom_checks.include? check
+               HealthCheck.custom_checks[check].each do |custom_check|
+                 errors << custom_check.call(self)
+               end
+            else
+              return "invalid argument to health_test."
+            end
         end
       end
       return errors
