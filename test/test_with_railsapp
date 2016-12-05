@@ -445,19 +445,19 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING JSONP: ${route_prefix}/custom with invalid callback name should fail ..."
-        $testurl "${host}/${route_prefix}/custom?callback=if" 500 plain/text 'invalid callback name'
-        $testurl "${host}/${route_prefix}/custom?callback=" 500 plain/text 'invalid callback name'
-        $testurl "${host}/${route_prefix}/custom?callback=a.b" 500 plain/text 'invalid callback name'
+        $testurl "${host}/${route_prefix}/custom?callback=if" 422 text/plain 'invalid callback name'
+        $testurl "${host}/${route_prefix}/custom?callback=" 422 text/plain 'invalid callback name'
+        $testurl "${host}/${route_prefix}/custom?callback=a.b" 422 text/plain 'invalid callback name'
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING JSONP: ${route_prefix}/custom should pass ..."
-        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/json '/**/ my_function('
-        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/json ');'
-        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/json '"healthy":true'
-        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/json "\"message\":\"$success\""
+        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/javascript '/**/ my_function('
+        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/javascript ');'
+        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/javascript '"healthy":true'
+        $testurl "${host}/${route_prefix}/custom?callback=my_function" 200 application/javascript "\"message\":\"$success\""
         echo
     fi
 

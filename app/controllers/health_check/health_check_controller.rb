@@ -45,7 +45,7 @@ module HealthCheck
       obj = { :healthy => healthy, :message => msg}
       if params[:callback]
         if HealthCheck::Utils.safe_callback_name?(params[:callback])
-          render plain_key => HealthCheck::Utils.format_jsonp(params[:callback], obj)
+          render plain_key => HealthCheck::Utils.format_jsonp(params[:callback], obj), :content_type => 'application/javascript'
         else
           render plain_key => 'invalid callback name', :status => 422, :content_type => 'text/plain'
         end
