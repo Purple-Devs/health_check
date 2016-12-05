@@ -11,6 +11,7 @@ coverage
 doc/
 lib/bundler/man
 pkg
+log/*.log
 rdoc
 spec/reports
 test/tmp
