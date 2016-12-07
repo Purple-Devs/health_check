@@ -81,7 +81,7 @@ matrix:
     # https://github.com/bundler/bundler/issues/4975
     - rvm: jruby-19mode
       gemfile: test/rails_4.2.gemfile
-      env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=4.2
+      env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=4.2 MIDDLEWARE=no
 
     # rails 4.1  April 8, 2014 
     
