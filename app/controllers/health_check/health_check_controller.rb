@@ -53,10 +53,10 @@ module HealthCheck
         end
       else
         respond_to do |format|
-          format.html { render :layout => false, :formats => :txt, :status => text_status, :content_type => 'text/plain' }
+          format.html { render :layout => false, :formats => :text, :status => text_status, :content_type => 'text/plain' }
           format.json { render :json => obj, :status => obj_status }
           format.xml { render :xml => obj, :status => obj_status }
-          format.any { render :layout => false, :formats => :txt, :status => text_status, :content_type => 'text/plain' }
+          format.any { render :layout => false, :formats => :text, :status => text_status, :content_type => 'text/plain' }
         end
       end
     end
