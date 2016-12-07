@@ -30,6 +30,7 @@ module HealthCheck
           if HealthCheck::Utils.safe_callback_name?(req.params[:callback])
             obj = { healthy: healthy, message: msg }
             msg = HealthCheck::Utils.format_jsonp(req.params[:callback], obj)
+            # TODO - rails 4.0, 4.1, 4.2, 5.0 didnt set content-type
             return [ 200, { 'Content-Type' => 'application/javascript' }, [msg] ]
           else
             return [ 422, { 'Content-Type' => 'plain/text' }, ['invalid callback name'] ]
