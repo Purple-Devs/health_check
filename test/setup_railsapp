@@ -194,8 +194,8 @@ then
     echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
 
     case "$RAILS_SERVER" in
-    webrick|'')
-            echo "Using default webrick server"
+    '')
+            echo "Using default server"
             ;;
     *)
             echo "Adding $RAILS_SERVER gem to Gemfile (for use as server)"

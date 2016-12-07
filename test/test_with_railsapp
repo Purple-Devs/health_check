@@ -90,9 +90,9 @@ start_server()
     then
         bundle_prefix='bundle exec'
     fi
-    server_arg=${RAILS_SERVER:-webrick}
-    echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
-    case "$server_arg" in
+    #server_arg=${RAILS_SERVER:-webrick}
+    echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $RAILS_SERVER"
+    case "$RAILS_SERVER" in
     puma) 
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
         ;;
@@ -106,14 +106,8 @@ start_server()
         $bundle_prefix unicorn_rails -l 127.0.0.1:$port &
         ;;
     *)
-        if [ -x script/server ]
-        then
-            echo Starting server on port $port using $bundle_prefix ./script/server ...
-            $bundle_prefix ./script/server $server_arg -p $port &
-        else
-            echo Starting server on port $port using $rails s ...
-            $bundle_prefix $rails server $server_arg -p $port &
-        fi
+        echo Starting default server on port $port using $rails s ...
+        $bundle_prefix $rails server -p $port &
         ;;
     esac
     server_pid=$!
