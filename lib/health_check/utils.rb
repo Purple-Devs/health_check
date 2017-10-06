@@ -135,32 +135,20 @@ module HealthCheck
       status = ''
       begin
         if @skip_external_checks
-          status = '221'
+          status = '250'
         else
-          Timeout::timeout(timeout) do |timeout_length|
-            t = TCPSocket.new(settings[:address], settings[:port])
-            begin
-              status = t.gets
-              while status != nil && status !~ /^2/
-                status = t.gets
-              end
-              t.puts "HELO #{settings[:domain]}\r"
-              while status != nil && status !~ /^250/
-                status = t.gets
-              end
-              t.puts "QUIT\r"
-              status = t.gets
-            ensure
-              t.close
-            end
+          smtp = Net::SMTP.new(settings[:address], settings[:port])
+          smtp.enable_starttls if settings[:enable_starttls_auto]
+          smtp.open_timeout = timeout
+          smtp.read_timeout = timeout
+          smtp.start(settings[:domain], settings[:user_name], settings[:password], settings[:authentication]) do
+            status = smtp.helo(settings[:domain]).status
           end
         end
-      rescue Errno::EBADF => ex
-        status = "Unable to connect to service"
       rescue Exception => ex
         status = ex.to_s
       end
-      (status =~ /^221/) ? '' : "SMTP: #{status || 'unexpected EOF on socket'}. "
+      (status =~ /^250/) ? '' : "SMTP: #{status || 'unexpected error'}. "
     end
 
     def self.check_cache
