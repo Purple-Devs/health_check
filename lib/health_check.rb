@@ -63,6 +63,10 @@ module HealthCheck
 
   mattr_accessor :installed_as_middleware
 
+  # Allow non-standard redis url
+  mattr_accessor :redis_url
+  self.redis_url = 'redis://localhost:6379/0'
+
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
     custom_checks[name] << block
