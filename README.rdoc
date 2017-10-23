@@ -267,28 +267,41 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 === Manual testing
 
-The test will package up and install the gem under a temporary path, create a dummy rails app configured for sqlite,
-install the gem, and then run up tests against the server.
-This will require TCP port 3456 to be free.
+The instructions have been changed to using a vagrant virtual box for consistant results.
 
-Using rbenv or rvm, install and set the version of ruby you wish to test against.
-You will need to install the bundler gem if using rbenv.
-See the <tt>.travis.yml</tt> file for the list of ruby versions that we test against.
-
-* rbenv command: <tt>rbenv shell 1.8.7-p371</tt>
-* rvm command: <tt>rvm use 1.9.3</tt>
+Install vagrant 1.9.7 or later and virtual_box or other local virtual machine providor.
 
 Create a temp directory for throw away testing, and clone the health_check gem into it
 
     mkdir -p ~/tmp
     cd ~/tmp
-    git clone https://github.com/ianheggie/health_check.git
+    git clone https://github.com/ianheggie/health_check.git ~/tmp/health_check
+
+The Vagrantfile includes provisioning rules to install chruby (ruby version control),
+ruby-build will also be installed and run to build various rubies under /opt/rubies.
+
+Use <tt>vagrant ssh</tt> to connect to the virtual box and run tests.
+
+The test script will package up and install the gem under a temporary path, create a dummy rails app configured for sqlite,
+install the gem, and then run up tests against the server.
+This will require TCP port 3456 to be free.
 
 Cd to the checked out health_check directory and then run the test as follows:
 
     cd ~/tmp/health_check
 
+    vagrant up   # this will also run vagrant provision and take some time
+                 # chruby and various ruby versions will be installed
+
+    vagrant ssh
+
+    cd /vagrant  # the current directory on your host is mounted here on the virtual machine
+
+    chruby 2.2.2 # or some other ruby version 
+
     test/test_with_railsapp
+
+    exit        # from viretual machine when finished
 
 The script will first call `test/setup_railsapp` to setup a rails app with health_check installed and then
 run up the rails server and perform veraious tests.
@@ -300,7 +313,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2016 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2017 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
