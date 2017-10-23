@@ -12,7 +12,7 @@ id
 pwd
 export DEBIAN_FRONTEND=noninteractive
 find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
-apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs
+apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs subversion autoconf
 
 (
   echo Install chruby
@@ -33,8 +33,8 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  [ -x /opt/rubies/1.8.7-p375/bin/ruby ] || ( ruby-build 1.8.7-p375 /opt/rubies/1.8.7-p375 && /opt/rubies/1.8.7-p375/bin/gem install bundler -system 1.8.25 )
-  [ -x /opt/rubies/1.9.3-p551/bin/ruby ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
+  [ -x /opt/rubies/1.8.7-p375/bin/bundle ] || ( ruby-build 1.8.7-p375 /opt/rubies/1.8.7-p375 && /opt/rubies/1.8.7-p375/bin/gem update --system 1.8.25 && /opt/rubies/1.8.7-p375/bin/gem install bundler )
+  [ -x /opt/rubies/1.9.3-p551/bin/bundle ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
 )
 
 echo Setup system ruby
