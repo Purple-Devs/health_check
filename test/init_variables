@@ -20,6 +20,8 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
   echo "Detected user installed rvm"
 elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
   echo "Detected root installed rvm"
+elif [[ -s /usr/local/share/chruby/chruby.sh ]] ; then
+  echo "Detected root installed chruby"
 elif [[ -d "$HOME/.rbenv" ]] ; then
   echo "Detected rbenv: `rbenv version`"
   rehash='rbenv rehash'
