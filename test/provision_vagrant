@@ -33,13 +33,8 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  [ -x /opt/rubies/1.8.7-p375/bin/ruby ] || ( ruby-build 1.8.7-p375 /opt/rubies/1.8.7-p375 && /opt/rubies/1.8.7-p375/bin/gem install bundler )
+  [ -x /opt/rubies/1.8.7-p375/bin/ruby ] || ( ruby-build 1.8.7-p375 /opt/rubies/1.8.7-p375 && /opt/rubies/1.8.7-p375/bin/gem install bundler -system 1.8.25 )
   [ -x /opt/rubies/1.9.3-p551/bin/ruby ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
-
-  for v in 2.1.2 2.2.2 2.4.2
-  do
-    [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v && /opt/rubies/$v/bin/gem install bundler )
-  done
 )
 
 echo Setup system ruby
