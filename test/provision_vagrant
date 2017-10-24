@@ -17,7 +17,7 @@ apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite
 (
   echo Install chruby
   [ -s chruby-0.3.9.tar.gz ] || wget -q -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
-  [ chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
+  [ -d chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
   cd chruby-0.3.9/
   ./scripts/setup.sh
   cat > /etc/profile.d/chruby.sh <<'EOF'
