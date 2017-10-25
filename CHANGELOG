@@ -1,6 +1,10 @@
 = Change Log =
 
 * pre_rails4 branch
+*1.7.1
+ * Restricted sass version for ruby 1.9.7 compatibility
+ * Added Vgrantfile for easier testing
+ * removed badges that don't work with branches
 *1.7.0 
  * Split away from rails2.3 branch
  * removed rails 2.3 and 4.0 artifacts
