@@ -1,5 +1,9 @@
 = Change Log =
 
+* 2.7.0
+ * Add ability to check health of redis when url is non-standard redis url
+* 2.6.0
+ * Add named custom checks
 * 2.5.0
  * Added whitelist for IP# (Thanks Fernando Alvarez)
  * reworked whitelist PR
