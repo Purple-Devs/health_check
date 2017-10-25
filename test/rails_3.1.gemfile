@@ -22,6 +22,8 @@ gem 'i18n', '< 0.7' if RUBY_VERSION < '1.9.3' # REQUIRED
 # rack 2.0 requires ruby 2.2.2
 gem 'rack', "< 2.0"  if RUBY_VERSION < '2.2.2'       # REQUIRED
 
+gem 'sass', '< 3.5' if RUBY_VERSION < '1.9.3' # REQUIRED
+
 # Initial Gemfile has therubyracer commented out
 gem 'therubyrhino', :platform => :jruby # REQUIRED
 gem 'therubyracer', :platform => :ruby # REQUIRED
