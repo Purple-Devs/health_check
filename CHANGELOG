@@ -5,6 +5,11 @@
  * Added Colourful html format (If you have set up your own route, set the default format to 'txt')
  * Added tests for cache-control and clarified what rails sets
  * max_age=0 is now the default and required for cache-control: private
+
+* 2.7.0
+ * Add ability to check health of redis when url is non-standard redis url
+* 2.6.0
+ * Add named custom checks
 * 2.5.0
  * Added whitelist for IP# (Thanks Fernando Alvarez)
  * reworked whitelist PR

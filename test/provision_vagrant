@@ -1,0 +1,61 @@
+#!/bin/bash
+
+case `id` in
+*root*)
+        ;;
+*)
+        exec echo Must be run as root
+        ;;
+esac
+set -xe
+id
+pwd
+export DEBIAN_FRONTEND=noninteractive
+find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
+apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs
+
+(
+  echo Install chruby
+  [ -s chruby-0.3.9.tar.gz ] || wget -q -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
+  [ chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
+  cd chruby-0.3.9/
+  ./scripts/setup.sh
+  cat > /etc/profile.d/chruby.sh <<'EOF'
+if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
+  source /usr/local/share/chruby/chruby.sh
+fi
+EOF
+  chmod a+r /etc/profile.d/chruby.sh
+)
+
+(
+  [ -d ruby-build ] || git clone https://github.com/rbenv/ruby-build.git
+  which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
+
+  mkdir -p /opt/rubies
+  [ -x /opt/rubies/1.9.3-p551/bin/bundle ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
+
+  for v in 2.2.0
+  do
+    [ -x /opt/rubies/$v/bin/bundle ] || ( ruby-build $v /opt/rubies/$v && /opt/rubies/$v/bin/gem install bundler )
+  done
+)
+
+echo Setup system ruby
+which bundle || gem install bundler 
+bundle --version
+set +x
+cat <<EOF
+
+Now test by running the following commands:
+
+  chruby RUBY_VERSION
+  or
+  chruby system # for system version 2.3.1
+
+  vagrant ssh
+  cd /vagrant
+  ./test/test_with_railsapp
+
+EOF
+exit
