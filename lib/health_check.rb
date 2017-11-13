@@ -65,7 +65,7 @@ module HealthCheck
 
   # Allow non-standard redis url
   mattr_accessor :redis_url
-  self.redis_url = 'redis://localhost:6379/0'
+  self.redis_url = ENV['REDIS_URL'] || 'redis://localhost:6379/0'
 
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
