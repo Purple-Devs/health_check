@@ -44,10 +44,10 @@ module HealthCheck
       msg ||= HealthCheck.success
       obj = { :healthy => healthy, :message => msg}
       respond_to do |format|
-        format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.html { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
         format.json { render :json => obj, :status => obj_status }
         format.xml { render :xml => obj, :status => obj_status }
-        format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.any { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
       end
     end
 
@@ -61,7 +61,7 @@ module HealthCheck
     def check_origin_ip
       unless HealthCheck.origin_ip_whitelist.blank? ||
           HealthCheck.origin_ip_whitelist.include?(request.ip)
-        render plain_key => 'Health check is not allowed for the requesting IP',
+        render :plain => 'Health check is not allowed for the requesting IP',
                :status => HealthCheck.http_status_for_ip_whitelist_error,
                :content_type => 'text/plain'
       end
@@ -70,11 +70,6 @@ module HealthCheck
     # turn cookies for CSRF off
     def protect_against_forgery?
       false
-    end
-
-    def plain_key
-      # Rails 4.0 doesn't have :plain, but it is deprecated later on
-      Rails.version < '4.1' ? :text : :plain
     end
   end
 end
