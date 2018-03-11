@@ -31,11 +31,11 @@ matrix:
     
     # ruby 5.0  Jun. 2016
     
-    - rvm: 2.3.1
+    - rvm: 2.2.2
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0 MIDDLEWARE=no
 
-    - rvm: 2.2.2
+    - rvm: 2.3.6
       gemfile: test/rails_5.0.gemfile
       env: RAILS_VERSION=5.0 MIDDLEWARE=no
 
@@ -45,11 +45,34 @@ matrix:
       gemfile: test/rails_5.1.gemfile
       env: RAILS_VERSION=5.1 MIDDLEWARE=no
 
-    - rvm: 2.3.1
+    - rvm: 2.3.6
       gemfile: test/rails_5.1.gemfile
       env: RAILS_VERSION=5.1 MIDDLEWARE=no
 
     - rvm: 2.4.3
       gemfile: test/rails_5.1.gemfile
       env: RAILS_VERSION=5.1 MIDDLEWARE=no
+
+    # -------------------------------------
+    # Middleware
+    
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0 MIDDLEWARE=yes
+
+    - rvm: 2.3.6
+      gemfile: test/rails_5.0.gemfile
+      env: RAILS_VERSION=5.0 MIDDLEWARE=yes
+
+    # rails 5.1 sometime before May 2017
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.1.gemfile
+      env: RAILS_VERSION=5.1 MIDDLEWARE=yes
+
+    - rvm: 2.4.3
+      gemfile: test/rails_5.1.gemfile
+      env: RAILS_VERSION=5.1 MIDDLEWARE=yes
 

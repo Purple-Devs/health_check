@@ -241,7 +241,7 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING can get an example controller ..."
-        $testurl ${host}/example 200 text/html 'example page'
+        $testurl ${host}/example 200 text/plain 'example page'
         echo
     fi
 
