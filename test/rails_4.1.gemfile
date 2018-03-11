@@ -5,8 +5,8 @@ source 'https://rubygems.org'
 ruby RUBY_VERSION < '1.9.3' ? '1.9.3' : RUBY_VERSION
 
 gem 'rails', "~> 4.1.0"
-gem 'rake', '>= 0.8.3'
-gem "rack", '~> 1.5.2'
+gem 'rake', '>= 0.8.3' # REQUIRED
+gem "rack", '~> 1.5.2' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
@@ -18,8 +18,8 @@ group :development, :test do
   gem 'shoulda'
 
   # redis based checks
-  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
-  gem 'redis', :require => !ENV['REDIS_URL'].nil?
+  gem 'sidekiq', '< 5.0.4', :require => !ENV['SIDEKIQ'].nil?
+  gem 'redis', '< 4.0', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
   gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?

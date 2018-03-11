@@ -1,5 +1,8 @@
 = Change Log =
 
+* 3.0.0.pre
+ * Branch off to rails4.x only
+
 * 2.7.0
  * Add ability to check health of redis when url is non-standard redis url
 * 2.6.0
