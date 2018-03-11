@@ -52,7 +52,7 @@ class SmartBundler
           rest_of_line = $1
           if rest_of_line !~ /^, '#{gem_version}' .*/
             puts '','ADD THIS TO Gemfile PERMANENTLY!!',"gem '#{gem_name}', '#{gem_version}'  # SmartBundler: Save this fix into the Gemfile permanently!"
-            file.puts "gem '#{gem_name}', '#{gem_version}'  # SmartBundler: Save this fix into the Gemfile permanently!"
+            file.puts "gem '#{gem_name}', '#{gem_version}'  # REQUIRED # SmartBundler: Save this fix into the Gemfile permanently!"
             gem_name = nil
           else
             puts "ABORTED: The version hasn't changed - unable to determine next move!"
@@ -64,7 +64,7 @@ class SmartBundler
       end
       if gem_name
         puts '','ADD THIS TO Gemfile PERMANENTLY!!',"gem '#{gem_name}', '#{gem_version}'  # SmartBundler: Save this fix into the Gemfile permanently!"
-        file.puts "gem '#{gem_name}', '#{gem_version}'  # SmartBundler: Save this fix into the Gemfile permanently!"
+        file.puts "gem '#{gem_name}', '#{gem_version}'  # REQUIRED # SmartBundler: Save this fix into the Gemfile permanently!"
         gem_name = nil
       end
     end
@@ -94,5 +94,10 @@ class SmartBundler
   end
 end
 
-SmartBundler.new.run ARGV.first == 'update' ? 'update' : 'install'
+if ARGV.size == 0
+  bundle_args = 'install'
+else
+  bundle_args = ARGV.join(' ')
+end
+SmartBundler.new.run bundle_args
 
