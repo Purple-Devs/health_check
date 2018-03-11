@@ -123,24 +123,8 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
-case "$actual_rails_version" in
-    *' '[12].*)
-        $rails railsapp -d $db
-        ;;
-    *' '[345].*)
-        case "$BUNDLE_GEMFILE" in
-        *rails_edge.gemfile)
-            $rails new railsapp --skip-bundle -d $db --edge
-            ;;
-        *)
-            $rails new railsapp --skip-bundle -d $db
-            ;;
-        esac
-        ;;
-    *)
-        echo "Unknown rails version"
-        ;;
-esac
+
+$rails new railsapp --skip-bundle -d $db
 
 cd $railsapp
 
@@ -208,7 +192,15 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
+
+case "$BUNDLE_GEMFILE" in
+*/test/rails_4.0.gemfile)
+        sed -i.bak -e '/turbolinks/s/^/#Broken with ruby 1.9.3 # /' Gemfile
+        ;;
+esac
+
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
+
 echo
 echo ================= Gemfile ===================
 cat Gemfile
