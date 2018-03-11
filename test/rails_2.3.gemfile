@@ -11,7 +11,7 @@ gem 'rails', '~>2.3.18'
 
 gem 'rake', ">= 0.8.3", "< 11.0"        # REQUIRED
 
-gem 'rdoc'
+gem 'rdoc', '< 6.0'
 gem 'rdoc-data'
 
 # mime-types 2.0 requires Ruby version >= 1.9.2
