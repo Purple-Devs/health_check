@@ -309,6 +309,21 @@ common_tests()
         echo
     fi
 
+    export HIDE_ERROR_RESPONSE=true
+    stop_server
+    start_server
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/database should have response body 'failure' if include_error_in_response_body is false"
+        $testurl ${host}/${route_prefix}/database 550 text/plain failure
+        echo
+    fi
+
+    unset HIDE_ERROR_RESPONSE
+    stop_server
+    start_server
+
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING ${route_prefix}/site should pass ..."

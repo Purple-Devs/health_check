@@ -180,6 +180,7 @@ HealthCheck.setup do |config|
     ''
   end
 
+  config.include_error_in_response_body = false if ENV['HIDE_ERROR_RESPONSE'].present?
 end
 !
 
