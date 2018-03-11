@@ -1,11 +1,11 @@
 = health_check gem (rails2.3 branch)
 
-Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+Simple health check of Rails 2.3 apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3;
-* Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for later versions
+The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway).
 
-The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
+Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other Rails versions.
+We recommend {RAILS LTS}[https://railslts.com/] rather than the unsupported 2.3 version.
 
 health_check provides various monitoring URIs, for example:
 
@@ -50,7 +50,7 @@ Specify full or include email in the list of checks to verify the smtp settings
 
 Add the following line to Gemfile
 
-    gem "health_check"
+    gem "health_check", "~> 1.6.1"
 
 And then execute
 
@@ -58,13 +58,13 @@ And then execute
 
 Or install it yourself as:
 
-    gem install health_check
+    gem install --version '~> 1.6.1' health_check
 
 === As a Gem from rubygems (Rails 2.3)
 
 Install the gem using the following command
 
-    gem install health_check
+    gem install --version '~> 1.6.1' health_check
 
 Then add the following line to config/environment.rb within the config block
 
