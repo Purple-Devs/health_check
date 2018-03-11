@@ -4,11 +4,14 @@ Simple health check of Rails edge apps for use with Pingdom, NewRelic, EngineYar
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
-*This is a development branch and may be broken at times.** Use:
-* {rails5}[https://github.com/ianheggie/health_check/tree/rails5] branch or gem versions ~> 3.0 for Rails 5.x;
-* {rails4}[https://github.com/ianheggie/health_check/tree/rails4] branch or gem versions ~> 2.0 for Rails 4.x;
-* {rails3}[https://github.com/ianheggie/health_check/tree/rails3] branch or gem versions ~> 1.7 for Rails 3.x;
-* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3;
+Use gem versions for stable releases, or github branch / commits for development versions:
+* gem versions ~> 3.0 for Rails 5.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] development branch
+* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] development branch;
+* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] development branch;
+* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] development branch;
+* {master}[https://github.com/ianheggie/health_check/tree/master] branch for edge development;
+
+Note: it is best to pin to a specific commit if using a development branch as sometimes tests break.
 
 health_check provides various monitoring URIs, for example:
 
