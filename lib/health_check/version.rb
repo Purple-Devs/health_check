@@ -1,3 +1,3 @@
 module HealthCheck
-  VERSION = "2.6.0"
+  VERSION = "edge"
 end

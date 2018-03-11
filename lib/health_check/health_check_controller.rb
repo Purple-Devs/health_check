@@ -26,10 +26,10 @@ module HealthCheck
         end
         response.headers['Cache-control'] = (public ? 'public' : 'private') + ', no-cache, must-revalidate' + (max_age > 0 ? ", max-age=#{max_age}" : '')
         if errors.blank?
-          send_response nil, :ok, :ok
+          send_response true, nil, :ok, :ok
         else
-          msg = "health_check failed: #{errors}"
-          send_response msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
+          msg = HealthCheck.include_error_in_response_body ? "health_check failed: #{errors}" : nil
+          send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
             logger.info msg
@@ -40,15 +40,14 @@ module HealthCheck
 
     protected
 
-    def send_response(msg, text_status, obj_status)
-      healthy = !msg
-      msg ||= HealthCheck.success
+    def send_response(healthy, msg, text_status, obj_status)
+      msg ||= healthy ? HealthCheck.success : HealthCheck.failure
       obj = { :healthy => healthy, :message => msg}
       respond_to do |format|
-        format.html { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.html { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
         format.json { render :json => obj, :status => obj_status }
         format.xml { render :xml => obj, :status => obj_status }
-        format.any { render plain_key => msg, :status => text_status, :content_type => 'text/plain' }
+        format.any { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
       end
     end
 
@@ -66,7 +65,7 @@ module HealthCheck
           }.any?{
             |addr| addr===IPAddr.new(request.ip)
           }
-        render plain_key => 'Health check is not allowed for the requesting IP',
+        render :plain => 'Health check is not allowed for the requesting IP',
                :status => HealthCheck.http_status_for_ip_whitelist_error,
                :content_type => 'text/plain'
       end
@@ -77,9 +76,5 @@ module HealthCheck
       false
     end
 
-    def plain_key
-      # Rails 4.0 doesn't have :plain, but it is deprecated later on
-      Rails.version < '4.1' ? :text : :plain
-    end
   end
 end
