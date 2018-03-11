@@ -1,13 +1,11 @@
-= health_check gem (pre_rails4 branch)
+= health_check gem (rails3 branch)
 
-Simple health check of Rails app for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+Simple health check of Rails 3.x apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
-Use 
-* {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions ~> 1.7 for Rails 3.*
-* {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions >= 2.0 for Rails 4.0+
-* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3.*
+The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway).
 
-The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
+Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other rails versions.
+Consider using {RAILS LTS 3.2}[https://railslts.com/] rather than the unsupported 3.x versions.
 
 health_check provides various monitoring URIs, for example:
 
@@ -50,7 +48,7 @@ Specify full or include email in the list of checks to verify the smtp settings
 
 Add the following line to Gemfile
 
-    gem "health_check"
+    gem "health_check", "~> 1.7"
 
 And then execute
 
@@ -58,7 +56,7 @@ And then execute
 
 Or install it yourself as:
 
-    gem install health_check
+    gem install --version '~> 1.7' health_check
 
 == Configuration
 
@@ -180,7 +178,7 @@ See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax exam
 
 === Automated testing
 
-* {<img src="https://travis-ci.org/ianheggie/health_check.svg?branch=pre_rails4">}[https://travis-ci.org/ianheggie/health_check.svg?branch=pre_rails4]  - Travis CI 
+* {<img src="https://travis-ci.org/ianheggie/health_check.svg?branch=rails3">}[https://travis-ci.org/ianheggie/health_check.svg?branch=rails3]  - Travis CI 
 
 === Manual testing
 

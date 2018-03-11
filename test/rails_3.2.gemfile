@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', "~> 3.2.0"
-gem 'rake', '>= 0.8.3'
+gem 'rake', '>= 0.8.3', '< 11.0' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
@@ -25,3 +25,6 @@ gem 'rack', "< 2.0"  if RUBY_VERSION < '2.2.2'       # REQUIRED
 # Initial Gemfile has therubyracer commented out
 gem 'therubyrhino', :platform => :jruby # REQUIRED
 gem 'therubyracer', :platform => :ruby # REQUIRED
+
+# Pin gems to avoid incompatible versions
+gem 'sass', '< 3.5.0'  # REQUIRED
