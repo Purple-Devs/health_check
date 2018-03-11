@@ -142,6 +142,10 @@ To change the configuration of health_check, create a file `config/initializers/
 
       # When redis url is non-standard
       config.redis_url = 'redis_url'
+
+      # Disable the error message to prevent /health_check from leaking
+      # sensitive information
+      config.include_error_in_response_body = false
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").

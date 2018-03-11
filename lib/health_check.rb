@@ -11,6 +11,10 @@ module HealthCheck
   mattr_accessor :success
   self.success = "success"
 
+  # Text output upon failure
+  mattr_accessor :failure
+  self.failure = "failure"
+
   # Timeout in seconds used when checking smtp server
   mattr_accessor :smtp_timeout
   self.smtp_timeout = 30.0
@@ -66,6 +70,11 @@ module HealthCheck
   # Allow non-standard redis url
   mattr_accessor :redis_url
   self.redis_url = nil
+
+  # Include the error in the response body. You may want to set this to false
+  # if your /health_check endpoint is open to the public internet
+  mattr_accessor :include_error_in_response_body
+  self.include_error_in_response_body = true
 
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
