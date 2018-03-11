@@ -59,7 +59,7 @@ else
 fi
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
-if ! bundle install ; then
+if ! $base_dir/test/smart_bundle_install ; then
     echo "Test aborted (missing required gems)"
     exit 2
 fi
@@ -130,10 +130,10 @@ case "$actual_rails_version" in
     *' '[345].*)
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
-            $rails new railsapp -d $db --edge
+            $rails new railsapp --skip-bundle -d $db --edge
             ;;
         *)
-            $rails new railsapp -d $db
+            $rails new railsapp --skip-bundle -d $db
             ;;
         esac
         ;;
@@ -189,70 +189,57 @@ INITIAL_BUNDLE_GEMFILE="$BUNDLE_GEMFILE"
 echo Unsetting BUNDLE_GEMFILE '(so Gemfile for rails application will be used)'
 unset BUNDLE_GEMFILE
 
-if [ -s Gemfile ]
+if [ ! -s Gemfile ]
 then
-    echo Adding health_check as gem to Gemfile...
-    echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
-
-    case "$RAILS_SERVER" in
-    webrick|'')
-            echo "Using default webrick server"
-            ;;
-    *)
-            echo "Adding $RAILS_SERVER gem to Gemfile (for use as server)"
-            echo "gem '$RAILS_SERVER'" >> Gemfile
-            ;;
-    esac
-    egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
-    echo
-    echo ================= Gemfile ===================
-    cat Gemfile
-    echo
-    echo running bundle install
-    bundle install
-    $rehash
-    echo "Using binstubs in $railsapp/bin for rails and rake commands"
-    rails="$railsapp/bin/rails"
-    rake="$railsapp/bin/rake"
-
-    echo Checking $rails is present ...
-    [ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-    [ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
-    [ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
-    if [ ! -f $rails ]; then
-        echo "Test aborted (unable to create $rails)"
-        exit 2
-    fi
-
-    echo Checking $rake is present ...
-    [ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
-    if [ ! -f $rake ]; then
-        echo "Test aborted (unable to create $rake)"
-        exit 2
-    fi
-
-    $rehash
-    # Fix for rvm, otherwise bundle run from rails create fails
-    export PATH="`pwd`/bin:$PATH"
-    echo ================= Gemfile.lock ===================
-    cat Gemfile.lock
-    echo
-else
-    dest=$railsapp/vendor/plugins/health_check
-    echo Installing health_check as plugin in $dest ...
-    mkdir -p $dest
-    (
-	cd $base_dir
-
-        git ls-files | cpio -pdl $dest
-        
-	cd $dest
-
-        echo Files installed as plugin:
-        find . -type f
-        echo
-    )
+    echo Missing Gemfile!
+    exit 2
 fi
+echo Adding health_check as gem to Gemfile...
+echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+
+case "$RAILS_SERVER" in
+webrick|'')
+        echo "Using default webrick server"
+        ;;
+*)
+        echo "Adding $RAILS_SERVER gem to Gemfile (for use as server)"
+        echo "gem '$RAILS_SERVER'" >> Gemfile
+        ;;
+esac
+egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
+echo
+echo ================= Gemfile ===================
+cat Gemfile
+echo
+echo running bundle install
+$base_dir/test/smart_bundle_install ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+$rehash
+echo "Using binstubs in $railsapp/bin for rails and rake commands"
+rails="$railsapp/bin/rails"
+rake="$railsapp/bin/rake"
+
+echo Checking $rails is present ...
+[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
+[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
+if [ ! -f $rails ]; then
+    echo "Test aborted (unable to create $rails)"
+    exit 2
+fi
+
+echo Checking $rake is present ...
+[ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
+if [ ! -f $rake ]; then
+    echo "Test aborted (unable to create $rake)"
+    exit 2
+fi
+
+$rehash
+# Fix for rvm, otherwise bundle run from rails create fails
+export PATH="`pwd`/bin:$PATH"
+echo ================= Gemfile.lock ===================
+cat Gemfile.lock
+echo
 
 for e in test ${RAILS_ENV2:-production}
 do
@@ -360,11 +347,11 @@ cat > app/controllers/example_controller.rb <<'EOF'
 class ExampleController < ApplicationController
 
   def index
-    render :text => 'example page'
+    render :plain => 'example page'
   end
   
   def catchall
-    render :text => 'catch all route'
+    render :plain => 'catch all route'
   end
   
 end
@@ -386,7 +373,7 @@ case "$MIDDLEWARE" in
 
       echo "    # -----------------------------------------"
       echo "    # START OF SECTION FOR TESTING HEALTH_CHECK"
-      echo "    config.middleware.insert_after 'Rails::Rack::Logger', HealthCheck::MiddlewareHealthcheck"
+      echo "    config.middleware.insert_after Rails::Rack::Logger, HealthCheck::MiddlewareHealthcheck"
       echo "    # END OF SECTION FOR TESTING HEALTH_CHECK"
       echo "    # ---------------------------------------"
       ruby -n -e 'print if /^  *end/..9999' config/application.rb-old | tee /tmp/t$$
