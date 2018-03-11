@@ -84,7 +84,7 @@ echo Set GEM_PATH=$GEM_PATH
 case "$BUNDLE_GEMFILE" in
 *_lts*)
     echo "Re-running bundle with changed GEM_PATH (required by git install of rails lts) ..."
-    if ! bundle install ; then
+    if ! env GEM_HOME=$tmp_dir/gems bundle install ; then
         echo "Test aborted (missing required gems)"
         exit 2
     else
