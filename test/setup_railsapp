@@ -193,7 +193,7 @@ webrick|'')
         ;;
 esac
 
-case "$BUNDLE_GEMFILE" in
+case "$INITIAL_BUNDLE_GEMFILE" in
 */test/rails_4.0.gemfile)
         sed -i.bak -e '/turbolinks/s/^/#Broken with ruby 1.9.3 # /' Gemfile
         ;;
