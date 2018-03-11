@@ -1,13 +1,14 @@
 = health_check gem
 
-Simple health check of Rails 4.x+ apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
-
-Use 
-* {master}[https://github.com/ianheggie/health_check/tree/master] branch or gem versions ~> 2.0 for Rails 4.x and 5.x;
-* {pre_rails4}[https://github.com/ianheggie/health_check/tree/pre_rails4] branch or gem versions ~> 1.7 for Rails 3.x;
-* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3;
+Simple health check of Rails edge apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
+
+*This is a development branch for edge rails and may be broken at times. Use*
+* {rails5}[https://github.com/ianheggie/health_check/tree/rails5] branch or gem versions ~> 3.0 for Rails 5.x;
+* {rails4}[https://github.com/ianheggie/health_check/tree/rails4] branch or gem versions ~> 2.0 for Rails 4.x;
+* {rails3}[https://github.com/ianheggie/health_check/tree/rails3] branch or gem versions ~> 1.7 for Rails 3.x;
+* {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] branch or gem versions ~> 1.6.1 for Rails 2.3;
 
 health_check provides various monitoring URIs, for example:
 
@@ -31,7 +32,7 @@ On failure (detected by health_check) a 500 http status is returned with a simpl
     curl localhost:3000/health_check/fail
     health_check failed: invalid argument to health_test.
 
-The health_check controller disables sessions for versions that eagerly load sessions. Only failures are logged for rails < '4.1'.
+The health_check controller disables sessions for versions that eagerly load sessions.
 
 == Checks
 
