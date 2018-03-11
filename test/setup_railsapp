@@ -45,7 +45,7 @@ else
 fi
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
-if ! bundle install ; then
+if ! test/smart_bundle_install ; then
     echo "Test aborted (missing required gems)"
     exit 2
 else
