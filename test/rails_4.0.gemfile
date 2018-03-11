@@ -33,4 +33,4 @@ gem 'therubyracer', :platform => :ruby # REQUIRED
 gem 'mime-types', defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0' # REQUIRED
 
 
-gem 'turbolinks-classic'  # REQUIRED instead of turbolinks
+gem 'turbolinks', :github => 'turbolinks/turbolinks-classic'  # REQUIRED instead of turbolinks
