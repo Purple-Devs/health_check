@@ -20,7 +20,7 @@ end
 
 gem 'rake', ">= 0.8.3", "< 11.0"        # REQUIRED
 
-gem 'rdoc', '< 6.0'
+gem 'rdoc', '~> 4.2.2'
 gem 'rdoc-data'
 
 # mime-types 2.0 requires Ruby version >= 1.9.2
