@@ -2,11 +2,18 @@
 
 source 'https://rubygems.org'
 
-ruby RUBY_VERSION < '1.9.3' ? '1.9.3' : RUBY_VERSION
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
-gem 'rails', "~> 4.1.0"
-gem 'rake', '>= 0.8.3'
-gem "rack", '~> 1.5.2'
+gem 'rails', '~> 5.1.0'
+gem 'rake', '>= 0.8.7'
+
+#  spring-watcher-listen was resolved to 2.0.1, which depends on
+#    listen was resolved to 3.1.5, which depends on
+#      ruby_dep
+#      and ruby_dep 1.5 requires 2.2.3 or later
+gem 'ruby_dep', '~> 1.3.0'  # REQUIRED
+
+gem 'listen', '<3.1.2' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
@@ -16,18 +23,13 @@ group :development, :test do
     gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
-
+  
   # redis based checks
   gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
   gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+
 end
 
-# Initial Gemfile has therubyracer commented out
-gem 'therubyrhino', :platform => :jruby # REQUIRED
-gem 'therubyracer', :platform => :ruby # REQUIRED
-# mime-types 2.0 requires Ruby version >= 1.9.2
-# mime-types 3.0 requires Ruby version >= 2.0
-gem 'mime-types', defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0' # REQUIRED
