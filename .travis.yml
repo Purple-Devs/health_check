@@ -43,3 +43,7 @@ matrix:
       gemfile: test/rails_5.1.gemfile
       env: RAILS_VERSION=5.1 MIDDLEWARE=YES
 
+    - rvm: 2.3.1
+      gemfile: test/rails_5.1.gemfile
+      env: RAILS_VERSION=5.1 MIDDLEWARE=YES
+
