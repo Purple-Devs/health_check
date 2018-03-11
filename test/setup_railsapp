@@ -205,7 +205,11 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
+
+sed -i.bak -e '/listen/s/^/#Earlier version required # /' Gemfile
+
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
+
 echo
 echo ================= Gemfile ===================
 cat Gemfile
