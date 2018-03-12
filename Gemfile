@@ -18,3 +18,4 @@ group :development, :test do
   gem 'mime-types', defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0'
 
 end
+gem 'rake', '< 12.3.0'  # REQUIRED # SmartBundler: Save this fix into the Gemfile permanently!
