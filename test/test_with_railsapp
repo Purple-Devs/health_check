@@ -39,6 +39,15 @@ redo)
     ;;
 esac
 
+case "$actual_rails_version" in
+4.0)
+        example_mime_type=text/html
+        ;;
+*)
+        example_mime_type=text/plain
+        ;;
+esac
+
 run_test=$2
 
 cd $railsapp
@@ -241,14 +250,14 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING can get an example controller ..."
-        $testurl ${host}/example 200 text/plain 'example page'
+        $testurl ${host}/example 200 $example_mime_type 'example page'
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING direct call to catchall method on example controller ..."
-        $testurl ${host}/example/catchall 200 text/plain 'catch all route'
+        $testurl ${host}/example/catchall 200 $example_mime_type 'catch all route'
         echo
     fi
 
@@ -649,7 +658,7 @@ case "$run_test" in
 
     echo
     echo 'TESTING catchall route active ...'
-    $testurl ${host}/another/url 200 text/plain 'catch all route'
+    $testurl ${host}/another/url 200 $example_mime_type 'catch all route'
     echo
 
     common_tests 200
