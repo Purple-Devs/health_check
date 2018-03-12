@@ -8,6 +8,7 @@ before_install:
   - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - gem install bundler ${BUNDLER_VERSION:+-v} ${BUNDLER_VERSION}
+  - gem install smarter_bundler
   - bundle --version
   - bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} --version
   - mkdir -p tmp/bundle
