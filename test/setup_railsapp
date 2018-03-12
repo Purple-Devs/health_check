@@ -59,7 +59,7 @@ else
 fi
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
-if ! $base_dir/test/smart_bundle_install ; then
+if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
 fi
@@ -215,7 +215,7 @@ echo ================= Gemfile ===================
 cat Gemfile
 echo
 echo running bundle install
-$base_dir/test/smart_bundle_install ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"

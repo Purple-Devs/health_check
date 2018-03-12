@@ -12,9 +12,10 @@ notifications:
     on_failure: always
 
 before_install:
-  - gem update --system
+  - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - gem install bundler ${BUNDLER_VERSION:+-v} ${BUNDLER_VERSION}
+  - gem install smarter_bundler
   - bundle --version
   - mkdir -p tmp/bundle
 
