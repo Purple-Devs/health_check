@@ -25,12 +25,9 @@ group :development, :test do
   end
   # run travis-lint to check .travis.yml
   gem 'travis-lint'
-  platforms :ruby_18 do
-    # mime-types 2.0 requires Ruby version >= 1.9.2
-    gem "mime-types", "< 2.0"
-  end
   #gem 'rake', ">= 0.8.3", "< 11.0"
   #gem 'rack', "< 2.0"
 
 end
 
+gem 'json', [">=0", "< 2.0.0"] if RUBY_VERSION < '1.9.3' # REQUIRED - Added by SmarterBundler
