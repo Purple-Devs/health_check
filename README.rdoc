@@ -305,11 +305,11 @@ Cd to the checked out health_check directory and then run the test as follows:
 
     cd /vagrant  # the current directory on your host is mounted here on the virtual machine
 
-    chruby 2.2.2 # or some other ruby version 
+    chruby 2.2.2 # or some other ruby version (run chruby with no arguments to see the current list)
 
     test/test_with_railsapp
 
-    exit        # from viretual machine when finished
+    exit        # from virtual machine when finished
 
 The script will first call `test/setup_railsapp` to setup a rails app with health_check installed and then
 run up the rails server and perform veraious tests.
