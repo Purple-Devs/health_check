@@ -3,12 +3,6 @@
 
 module HealthCheck
 
-  if Rails.version >= '3.0'
-    class Engine < Rails::Engine
-      cattr_accessor :routes_manually_defined
-    end
-  end
-
   # Text output upon success
   mattr_accessor :success
   self.success = "success"

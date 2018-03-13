@@ -1,6 +1,7 @@
 = Change Log =
 
 * rails2.3 branch
+*1.6.4 - Removed rails3+ code from rails 2.3 only version
 *1.6.3 - Specify ruby version >= 1.8.7, cleaned up testing code to assist with pull requests
 *1.6.2 - Added Vagrantfile with provisioning script for easier testing, removed badges that don't work with branches
 *1.6.1 - rails 2.3 only version

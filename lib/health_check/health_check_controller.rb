@@ -57,28 +57,19 @@ module HealthCheck
 
     # Silence logger as much as we can
 
-    if Rails.version < '4.1'
 
-      def process_with_silent_log(method_name, *args)
-        if logger
-          @old_logger_level = logger.level
-          if Rails.version >= '3.2'
-            silence do
-              process_without_silent_log(method_name, *args)
-            end
-          else
-            logger.silence do
-              process_without_silent_log(method_name, *args)
-            end
-          end
-        else
+    def process_with_silent_log(method_name, *args)
+      if logger
+        @old_logger_level = logger.level
+        silence do
           process_without_silent_log(method_name, *args)
         end
+      else
+        process_without_silent_log(method_name, *args)
       end
-
-      alias_method_chain :process, :silent_log
-
     end
+
+    alias_method_chain :process, :silent_log
 
   end
 end
