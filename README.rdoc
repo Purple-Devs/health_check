@@ -234,16 +234,6 @@ Cache-control is set with
 
 Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
 
-== Note on Patches/Pull Requests
-
-<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
-
-1. Fork it
-2. Create your feature branch (<tt>git checkout -b my-new-feature</tt>)
-3. Commit your changes (<tt>git commit -am 'Add some feature'</tt>)
-4. Push to the branch (<tt>git push origin my-new-feature</tt>)
-5. Create new Pull Request.
-
 == Known Issues
 
 * No inline documentation for methods
@@ -321,3 +311,5 @@ Thanks go to the various people who have given feedback and suggestions via the 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request (Code with BDD tests are favoured)
+
+<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
