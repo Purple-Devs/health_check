@@ -1,6 +1,11 @@
 = Change Log =
 
-* pre_rails4 branch
+* rails3 branch
+
+*1.7.2
+ * Change to using smarter_bundler to improve test robustness and pin gems that have newer versions with imcompatibilities
+ * Depends on railties rather than rails so it can be used with trimmed down stacks
+ * Cleanup test code
 *1.7.1
  * Restricted sass version for ruby 1.9.7 compatibility
  * Added Vgrantfile for easier testing
