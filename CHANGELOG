@@ -1,7 +1,11 @@
 = Change Log =
 
-* 3.0.0.pre
- * Branch off to rails4.x only
+* 2.8.0
+ * First release on renamed rails4 branch
+ * redis_url now defaults to nil (url determined by redis gem)
+ * Depends on railties rather than rails so it can be used with trimmed down stacks
+ * Cleaned up README, made install instructions version specific
+ * Cleaned up test code, uses smarter_bundler to handle gem ruby version isssues
 
 * 2.7.0
  * Add ability to check health of redis when url is non-standard redis url
