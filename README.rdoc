@@ -50,7 +50,7 @@ Specify full or include email in the list of checks to verify the smtp settings
 
 Add the following line to Gemfile
 
-    gem "health_check", "~> 1.6.1"
+    gem "health_check", "~> 1.6.3"
 
 And then execute
 
@@ -58,13 +58,13 @@ And then execute
 
 Or install it yourself as:
 
-    gem install --version '~> 1.6.1' health_check
+    gem install --version '~> 1.6.3' health_check
 
 === As a Gem from rubygems (Rails 2.3)
 
 Install the gem using the following command
 
-    gem install --version '~> 1.6.1' health_check
+    gem install --version '~> 1.6.3' health_check
 
 Then add the following line to config/environment.rb within the config block
 
@@ -174,16 +174,6 @@ Will return a result with Content-Type: application/xml and body like:
 
 See https://github.com/ianheggie/health_check/wiki/Ajax-Example for an Ajax example
 
-== Note on Patches/Pull Requests
-
-<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
-
-1. Fork it
-2. Create your feature branch (<tt>git checkout -b my-new-feature</tt>)
-3. Commit your changes (<tt>git commit -am 'Add some feature'</tt>)
-4. Push to the branch (<tt>git push origin my-new-feature</tt>)
-5. Create new Pull Request.
-
 == Known Issues
 
 * No inline documentation for methods
@@ -249,7 +239,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2017 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2018 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
@@ -263,4 +253,6 @@ Thanks go to the various people who have given feedback and suggestions via the 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request (Code with BDD tests are favoured)
+
+<em>Feedback welcome! Especially with suggested replacement code and corresponding tests!</em>
 
