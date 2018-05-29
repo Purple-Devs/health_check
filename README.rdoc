@@ -275,9 +275,11 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 === Manual testing
 
-The instructions have been changed to using a vagrant virtual box for consistant results.
+The instructions have been changed to using a vagrant virtual box for consistent results.
 
-Install vagrant 1.9.7 or later and virtual_box or other local virtual machine providor.
+Install vagrant 1.9.7 or later and virtual_box or other local virtual machine provider.  Add the vagrant plugin called vbguest.
+
+    vagrant plugin install vagrant-vbguest
 
 Create a temp directory for throw away testing, and clone the health_check gem into it
 

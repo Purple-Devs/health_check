@@ -24,6 +24,8 @@ test/bin/
 railsapps/
 test/*.gemfile.lock
 ,*
+.vagrant
+ubuntu*console.log
 
 # See: https://gist.github.com/ianheggie/9327010
 # for Global git ignore for OS/IDE/temp/backup files

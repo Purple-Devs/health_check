@@ -12,12 +12,12 @@ id
 pwd
 export DEBIAN_FRONTEND=noninteractive
 find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
-apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs
+apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs zlib1g-dev libffi-dev libssl-dev libreadline-dev
 
 (
   echo Install chruby
   [ -s chruby-0.3.9.tar.gz ] || wget -q -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
-  [ chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
+  [ -d chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
   cd chruby-0.3.9/
   ./scripts/setup.sh
   cat > /etc/profile.d/chruby.sh <<'EOF'
@@ -33,16 +33,16 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  [ -x /opt/rubies/1.9.3-p551/bin/bundle ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
+  [ -x /opt/rubies/1.9.3-p551/bin/bundle ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler smarter_bundler )
 
-  for v in 2.2.0
+  for v in 2.4.4
   do
-    [ -x /opt/rubies/$v/bin/bundle ] || ( ruby-build $v /opt/rubies/$v && /opt/rubies/$v/bin/gem install bundler )
+    [ -x /opt/rubies/$v/bin/bundle ] || ( ruby-build $v /opt/rubies/$v && /opt/rubies/$v/bin/gem install bundler smarter_bundler )
   done
 )
 
 echo Setup system ruby
-which bundle || gem install bundler 
+which bundle || gem install bundler smarter_bundler
 bundle --version
 set +x
 cat <<EOF
