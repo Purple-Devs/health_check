@@ -268,10 +268,9 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 === Automated testing and other checks
 
-* {<img src="https://badge.fury.io/rb/health_check.png" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
-* {<img src="https://travis-ci.org/ianheggie/health_check.png">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI
-* {<img src="https://codeclimate.com/github/ianheggie/health_check.png" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
-* {<img src="https://gemnasium.com/ianheggie/health_check.png">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies
+* {<img src="https://badge.fury.io/rb/health_check.svg" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
+* {<img src="https://travis-ci.org/ianheggie/health_check.svg">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI
+* {<img src="https://codeclimate.com/github/ianheggie/health_check.svg" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
 
 === Manual testing
 
