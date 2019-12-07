@@ -81,6 +81,13 @@ module HealthCheck
     custom_checks[name] << block
   end
 
+  def self.origin_ip_allowlist_cidr
+    @@allow_ip_allowlist_cidr ||= origin_ip_whitelist.map do |ip|
+      # raises ArgumentError if string not in CIDR format
+      NetAddr::CIDR.create(ip)
+    end
+  end
+
   def self.setup
     yield self
   end

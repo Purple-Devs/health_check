@@ -58,8 +58,8 @@ module HealthCheck
 
     def ip_blocked(env)
       return false if HealthCheck.origin_ip_whitelist.blank?
-      req = Rack::Request.new(env)
-      unless HealthCheck.origin_ip_whitelist.include?(req.ip)
+      req_ip = Rack::Request.new(env).ip
+      unless HealthCheck.origin_ip_allowlist_cidr.any? { |cidr| cidr.matches?(req_ip) }
         [ HealthCheck.http_status_for_ip_whitelist_error,
           { 'Content-Type' => 'text/plain' },
           [ 'Health check is not allowed for the requesting IP' ]

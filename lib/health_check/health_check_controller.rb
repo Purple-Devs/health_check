@@ -58,8 +58,8 @@ module HealthCheck
     end
 
     def check_origin_ip
-      unless HealthCheck.origin_ip_whitelist.blank? ||
-          HealthCheck.origin_ip_whitelist.include?(request.ip)
+      unless HealthCheck.origin_ip_allowlist_cidr.blank? ||
+          HealthCheck.origin_ip_allowlist_cidr.any? { |cidr| cidr.matches?(req_ip) }
         render :plain => 'Health check is not allowed for the requesting IP',
                :status => HealthCheck.http_status_for_ip_whitelist_error,
                :content_type => 'text/plain'
