@@ -7,6 +7,10 @@ module HealthCheck
     cattr_accessor :routes_explicitly_defined 
   end
 
+  # Log level
+  mattr_accessor :log_level
+  self.log_level = 'info'
+
   # Text output upon success
   mattr_accessor :success
   self.success = "success"
