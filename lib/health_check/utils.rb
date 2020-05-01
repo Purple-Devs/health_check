@@ -63,6 +63,8 @@ module HealthCheck
             errors << HealthCheck::RedisHealthCheck.check
           when 's3'
             errors << HealthCheck::S3HealthCheck.check
+          when 'mongoid'
+            errors << HealthCheck::MongoidHealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks, called_from_middleware)
           when "middleware"
