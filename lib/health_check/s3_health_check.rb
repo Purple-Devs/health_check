@@ -36,6 +36,7 @@ module HealthCheck
             Rails.application.secrets.aws_access_key_id,
             Rails.application.secrets.aws_secret_access_key
           ),
+          endpoint: HealthCheck.aws_endpoint,
           force_path_style: true
         }
 

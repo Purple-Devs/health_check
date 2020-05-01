@@ -98,6 +98,9 @@ To change the configuration of health_check, create a file `config/initializers/
       # bucket names to test connectivity - required only if s3 check used, access permissions can be mixed
       config.buckets = {'bucket_name' => [:R, :W, :D]}
 
+      # aws endpoint to test connectivity - required only if s3 check used
+      config.aws_endpoint = 'http://localhost:9000'
+
       # You can customize which checks happen on a standard health check, eg to set an explicit list use:
       config.standard_checks = [ 'database', 'migrations', 'custom' ]
 

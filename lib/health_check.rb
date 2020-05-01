@@ -40,6 +40,10 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
+  # aws endpoint
+  mattr_accessor :aws_endpoint
+  self.aws_endpoint = 'http://localhost:9000'
+
   # health check uri path
   mattr_accessor :uri
   self.uri = 'health_check'
@@ -70,7 +74,7 @@ module HealthCheck
   # Timeout in seconds used when checking mongoid
   mattr_accessor :mongoid_server_selection_timeout
   self.mongoid_server_selection_timeout = 3
-
+  
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
     custom_checks[name] << block
