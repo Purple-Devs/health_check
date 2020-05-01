@@ -67,6 +67,10 @@ module HealthCheck
   mattr_accessor :redis_url
   self.redis_url = nil
 
+  # Timeout in seconds used when checking mongoid
+  mattr_accessor :mongoid_server_selection_timeout
+  self.mongoid_server_selection_timeout = 3
+
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
     custom_checks[name] << block
