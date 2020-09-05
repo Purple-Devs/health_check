@@ -68,7 +68,3 @@ matrix:
       gemfile: test/rails_3.1.gemfile
       env: RAILS_VERSION=3.1
 
-    - rvm: 1.8.7
-      gemfile: test/rails_3.0.gemfile
-      env: RAILS_VERSION=3.0
-
