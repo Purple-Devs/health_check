@@ -12,11 +12,11 @@ module HealthCheck
       rescue Exception => err
         create_error 'redis', err.message
       ensure
-        client.disconnect
+        client.close if client.connected?
       end
 
       def client
-        Redis.new(
+        @client ||= Redis.new(
           url: HealthCheck.redis_url,
           password: HealthCheck.redis_password
         )
