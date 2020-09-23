@@ -145,6 +145,7 @@ To change the configuration of health_check, create a file `config/initializers/
 
       # When redis url is non-standard
       config.redis_url = 'redis_url'
+      config.redis_password = 'redis_password'
 
       # Disable the error message to prevent /health_check from leaking
       # sensitive information

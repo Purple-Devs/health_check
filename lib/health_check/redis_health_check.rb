@@ -1,15 +1,26 @@
+# frozen_string_literal: true
+
 module HealthCheck
   class RedisHealthCheck
     extend BaseHealthCheck
 
-    def self.check
-      unless defined?(::Redis)
-        raise "Wrong configuration. Missing 'redis' gem"
+    class << self
+      def check
+        raise "Wrong configuration. Missing 'redis' gem" unless defined?(::Redis)
+
+        client.ping == 'PONG' ? '' : "Redis.ping returned #{res.inspect} instead of PONG"
+      rescue Exception => err
+        create_error 'redis', err.message
+      ensure
+        client.disconnect
       end
-      res = ::Redis.new(url: HealthCheck.redis_url).ping
-      res == 'PONG' ? '' : "Redis.ping returned #{res.inspect} instead of PONG"
-    rescue Exception => e
-      create_error 'redis', e.message
+
+      def client
+        Redis.new(
+          url: HealthCheck.redis_url,
+          password: HealthCheck.redis_password
+        )
+      end
     end
   end
 end
