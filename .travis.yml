@@ -1,4 +1,6 @@
 dist: trusty
+# Released April 2014, Support ended: April 2019
+# ruby 2.2.7, 2.3.4, 2.4.1 pre-installed on travis
 language: ruby
 notifications:
   email:
@@ -40,7 +42,7 @@ matrix:
       - RAILS_VERSION=2.3
       - BUNDLER_VERSION=1.17.3
 
-    - rvm: 2.7
+    - rvm: 2.7.1
       gemfile: test/rails_2.3_lts.gemfile
       env:
       #- RUBYGEMS_VERSION=1.8.25
