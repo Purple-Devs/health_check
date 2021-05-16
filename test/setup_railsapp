@@ -40,9 +40,16 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler || echo ignoring failure
+  if $rbenv_which bundle ; then
+    echo Bundler is installed
+  else
+    gem install bundler -v '< 2.0'
+  fi
   $rehash
 fi
+
+which smarter_bundle || gem install smarter_bundler
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
@@ -58,8 +65,8 @@ $rehash
 rails="$base_dir/test/bin/rails"
 
 echo Checking $rails is present ...
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_}  binstub rails || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstub railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle binstub rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -68,7 +75,7 @@ fi
 rake="$base_dir/test/bin/rake"
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle binstub rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
@@ -84,7 +91,7 @@ echo Set GEM_PATH=$GEM_PATH
 case "$BUNDLE_GEMFILE" in
 *_lts*)
     echo "Re-running bundle with changed GEM_PATH (required by git install of rails lts) ..."
-    if ! smarter_bundle ; then
+    if ! env GEM_HOME=$tmp_dir/gems smarter_bundle  ; then
         echo "Test aborted (missing required gems)"
         exit 2
     else

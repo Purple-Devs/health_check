@@ -16,14 +16,14 @@ id
 pwd
 export DEBIAN_FRONTEND=noninteractive
 find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
-apt install --yes --force-yes -q ruby ruby-dev sqlite3 libsqlite3-dev nodejs subversion git git-core
+apt install --yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs subversion git git-core
 # https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 # using default gcc-5 since xenial doesn't have gcc-6
-apt install --yes --force-yes -q gcc-5 autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+apt install --yes -q gcc autoconf bison libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
 
 # The following is not required for testing, install if you are doing manual tests with extra gems
-# apt install --yes --force-yes -q mysql-client mysql-server libmysqlclient-dev
-# apt install --yes --force-yes -q libcurl4-openssl-dev libncurses5-dev libxml2-dev libxslt1-dev
+# apt install --yes -q mysql-client mysql-server libmysqlclient-dev
+# apt install --yes -q libcurl4-openssl-dev libncurses5-dev libxml2-dev libxslt1-dev
 (
   echo Install chruby
   [ -s ${chruby}.tar.gz ] || wget -q -O ${chruby}.tar.gz https://github.com/postmodern/chruby/archive/v${chruby_version}.tar.gz
@@ -44,20 +44,22 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  v=1.8.7-p375
-  [ -x /opt/rubies/${v}/bin/bundle ] || ( ruby-build ${v} /opt/rubies/${v} && /opt/rubies/${v}/bin/gem update --system 1.8.25 && /opt/rubies/${v}/bin/gem install bundler )
-    
-  v=1.9.3-p551
-  [ -x /opt/rubies/${v}/bin/bundle ] || ( ruby-build ${v} /opt/rubies/${v} && /opt/rubies/${v}/bin/gem install bundler )
-
+  for v in 1.8.7-p375 1.9.3-p551
+  do
+    [ -x /opt/rubies/${v}/bin/ruby ] || ( ruby-build ${v} /opt/rubies/${v} && /opt/rubies/${v}/bin/gem update --system 1.8.25 )
+    [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )
+  done
+  
   for v in 2.2.0
   do
-    [ -x /opt/rubies/${v}/bin/bundle ] || ( ruby-build ${v} /opt/rubies/${v} && /opt/rubies/${v}/bin/gem install bundler )
+    [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )
+    [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )
   done
 )
 
 echo Setup system ruby
-which bundle || gem install bundler 
+which bundle || gem install bundler || gem install bundler -v '<2.0'
+which bundle || gem install bundler -v '< 2.0'
 bundle --version
 set +x
 cat <<EOF
