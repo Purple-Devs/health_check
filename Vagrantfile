@@ -17,4 +17,11 @@ Vagrant.configure("2") do |config|
   # provision with a shell script.
   config.vm.provision "shell", path: "./test/provision_vagrant"
 
+  config.vm.provider "virtualbox" do |v|
+    # travis allocates 7.5 GB, but this is sufficient
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+
 end
