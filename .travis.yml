@@ -1,3 +1,6 @@
+dist: xenial
+# Released April 2016, Support ended: April 2021
+# ruby 2.3.8, 2.4.5 and 2.5.3 (default 2.5.3p105) pre-installed on travis
 sudo: false
 addons:
   apt:
@@ -32,31 +35,46 @@ matrix:
     
     # rails 4.2  Dec, 2014 
     
-    - rvm: 2.2.0
+    - rvm: 2.2.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2 MIDDLEWARE=no
+      env: 
+      - RAILS_VERSION=4.2 
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=4.2 MIDDLEWARE=no
+      env:
+      - RAILS_SERVER=puma
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     # Can't find i18n?? because it can't compile?
     #- rvm: 2.1.2
     #  gemfile: test/rails_4.2.gemfile
     #  env: RAILS_SERVER=passenger RAILS_VERSION=4.2
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=thin RAILS_VERSION=4.2 MIDDLEWARE=no
+      env:
+      - RAILS_SERVER=thin
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     # No longer supported by travis
     #- rvm: rbx-2.2.6
     #  gemfile: test/rails_4.0.gemfile
     #  env: RAILS_ENV2=development RAILS_VERSION=4.0
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=no
+      env:
+      - RAILS_SERVER=unicorn
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
@@ -67,46 +85,69 @@ matrix:
 
     # rails 4.1  April 8, 2014 
     
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.1.gemfile
-      env: RAILS_VERSION=4.1 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=4.1
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     # rails 4.0
     
+    # Required version for latest patch
+    # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
     - rvm: 1.9.3
       gemfile: test/rails_4.0.gemfile
-      env: RAILS_VERSION=4.0 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=4.0
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     # -------------------------------------
     # INSTALLED AS MIDDLEWARE
     
     # rails 4.2  Dec, 2014 
     
-    - rvm: 2.2.0
+    - rvm: 2.2.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_VERSION=4.2 MIDDLEWARE=YES
+      env:
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=4.2 MIDDLEWARE=YES
+      env:
+      - RAILS_SERVER=puma
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
     # Can't find i18n?? because it can't compile?
     #- rvm: 2.1.2
     #  gemfile: test/rails_4.2.gemfile
     #  env: RAILS_SERVER=passenger RAILS_VERSION=4.2
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=thin RAILS_VERSION=4.2 MIDDLEWARE=YES
+      env:
+      - RAILS_SERVER=thin
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
     # No longer supported by travis
     #- rvm: rbx-2.2.6
     #  gemfile: test/rails_4.0.gemfile
     #  env: RAILS_ENV2=development RAILS_VERSION=4.0 MIDDLEWARE=YES
 
-    - rvm: 2.1.2
+    - rvm: 2.1.10
       gemfile: test/rails_4.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=4.2 MIDDLEWARE=YES
+      env:
+      - RAILS_SERVER=unicorn
+      - RAILS_VERSION=4.2
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
     # Disabled because it takes way too long (40+ mins)
     # Temporary version lock until Bundler >= 1.13.2
@@ -117,13 +158,21 @@ matrix:
 
     # rails 4.1  April 8, 2014 
     
-    - rvm: 2.1.2
+    # Recommended version for latest patch
+    # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
+    - rvm: 2.1.10
       gemfile: test/rails_4.1.gemfile
-      env: RAILS_VERSION=4.1 MIDDLEWARE=YES
+      env: 
+      - RAILS_VERSION=4.1 
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
     # rails 4.0
     
     - rvm: 1.9.3
       gemfile: test/rails_4.0.gemfile
-      env: RAILS_VERSION=4.0 MIDDLEWARE=YES
+      env: 
+      - RAILS_VERSION=4.0 
+      - MIDDLEWARE=YES
+      - BUNDLER_VERSION=1.17.3
 
