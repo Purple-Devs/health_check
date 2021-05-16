@@ -20,8 +20,11 @@ apt install --yes -q ruby ruby-dev sqlite3 libsqlite3-dev nodejs subversion git 
 # https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 # using default gcc-5 since xenial doesn't have gcc-6
 # using default gcc-4.8 since trusty doesn't have gcc-5
-apt install --yes  -q gcc autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
-
+apt install --yes -q gcc autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+# useful when debugging
+apt install --yes -q silversearcher-ag vim exuberant-ctags
+apt install --yes -q unattended-upgrades
+unattended-upgrade
 # The following is not required for testing, install if you are doing manual tests with extra gems
 # apt install --yes  -q mysql-client mysql-server libmysqlclient-dev
 # apt install --yes  -q libcurl4-openssl-dev libncurses5-dev libxml2-dev libxslt1-dev
