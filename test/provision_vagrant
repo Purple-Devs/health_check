@@ -19,7 +19,7 @@ find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-upd
 apt install --yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs git git-core
 apt install --yes -q gcc autoconf bison libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
 dpkg -l | egrep libgdbm
-apt install --yes -q libgdbm5
+apt install --yes -q libgdbm3
 
 
 # The following is not required for testing, install if you are doing manual tests with extra gems
@@ -45,12 +45,6 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  for v in 1.9.3-p551
-  do
-    [ -x /opt/rubies/${v}/bin/ruby ] || ( ruby-build ${v} /opt/rubies/${v} && /opt/rubies/${v}/bin/gem update --system 1.8.25 )
-    [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )
-  done
-  
   for v in 2.2.2
   do
     [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )

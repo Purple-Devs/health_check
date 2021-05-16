@@ -1,4 +1,4 @@
-dest: bionic
+dest: xenial
 # Released April 2018, Support ended: April 2023
 # ruby 2.4.9, 2.5.3, 2.5.7, 2.6.5 (default) and 2.7.0 pre-installed on travis
 sudo: false
