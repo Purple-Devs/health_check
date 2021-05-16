@@ -1,6 +1,6 @@
 = health_check gem (rails4)
 
-Simple health check of Rails 4.x apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+Simple health check of Rails 4.x apps for use with Pingdom, NewRelic, EngineYard etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
@@ -174,7 +174,6 @@ See
 
 * Pingdom Website Monitoring - https://www.pingdom.com
 * NewRelic Availability Monitoring - http://newrelic.com/docs/features/availability-monitoring-faq
-* Uptime by OpenACS - http://uptime.openacs.org/uptime/
 * Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Nagios check_http (with -s success) - https://www.nagios-plugins.org/doc/man/check_http.html
 * Any other montoring service that can be set to check for the word success in the text returned from a url
