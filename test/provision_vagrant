@@ -7,22 +7,33 @@ case `id` in
         exec echo Must be run as root
         ;;
 esac
+
+chruby_version=0.3.9
+chruby=chruby-${chruby_version}
+
 set -xe
 id
 pwd
 export DEBIAN_FRONTEND=noninteractive
 find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
-apt install --yes --force-yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs
+apt install --yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs git git-core
+apt install --yes -q gcc autoconf bison libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
+apt install --yes -q libgdbm6
 
+
+# The following is not required for testing, install if you are doing manual tests with extra gems
+# apt install --yes -q mysql-client mysql-server libmysqlclient-dev
+# apt install --yes -q libcurl4-openssl-dev libncurses5-dev libxml2-dev libxslt1-dev
 (
   echo Install chruby
-  [ -s chruby-0.3.9.tar.gz ] || wget -q -O chruby-0.3.9.tar.gz https://github.com/postmodern/chruby/archive/v0.3.9.tar.gz
-  [ chruby-0.3.9 ] || tar -xzf chruby-0.3.9.tar.gz
-  cd chruby-0.3.9/
+  [ -s ${chruby}.tar.gz ] || wget -q -O ${chruby}.tar.gz https://github.com/postmodern/chruby/archive/v${chruby_version}.tar.gz
+  [ -d ${chruby} ] || tar -xzf ${chruby}.tar.gz
+  cd ${chruby}/
   ./scripts/setup.sh
   cat > /etc/profile.d/chruby.sh <<'EOF'
 if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
   source /usr/local/share/chruby/chruby.sh
+  #source /usr/local/share/chruby/auto
 fi
 EOF
   chmod a+r /etc/profile.d/chruby.sh
@@ -33,11 +44,10 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  [ -x /opt/rubies/1.9.3-p551/bin/bundle ] || ( ruby-build 1.9.3-p551 /opt/rubies/1.9.3-p551 && /opt/rubies/1.9.3-p551/bin/gem install bundler )
-
-  for v in 2.2.0
+  for v in 2.5.0 2.6.6 2.6.7 2.7.1 2.7.3 3.0.1
   do
-    [ -x /opt/rubies/$v/bin/bundle ] || ( ruby-build $v /opt/rubies/$v && /opt/rubies/$v/bin/gem install bundler )
+    [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )
+    [ -x /opt/rubies/$v/bin/bundle ] || ( /opt/rubies/$v/bin/gem install bundler )
   done
 )
 
@@ -49,13 +59,16 @@ cat <<EOF
 
 Now test by running the following commands:
 
+  vagrant ssh
+  cd /vagrant
+
   chruby RUBY_VERSION
   or
   chruby system # for system version 2.3.1
 
-  vagrant ssh
-  cd /vagrant
   ./test/test_with_railsapp
+
+  exit
 
 EOF
 exit
