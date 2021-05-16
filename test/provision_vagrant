@@ -50,7 +50,7 @@ EOF
     [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )
   done
   
-  for v in 2.2.0
+  for v in 2.2.10
   do
     [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )
     [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )

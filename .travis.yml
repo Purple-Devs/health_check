@@ -71,7 +71,7 @@ matrix:
 
     # Recommended version
     # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
-    - rvm: 2.2.0
+    - rvm: 2.2.10
       gemfile: test/rails_3.2.gemfile
       env: RAILS_VERSION=3.2
 
