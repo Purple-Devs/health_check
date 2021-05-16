@@ -1,3 +1,6 @@
+dest: bionic
+# Released April 2018, Support ended: April 2023
+# ruby 2.4.9, 2.5.3, 2.5.7, 2.6.5 (default) and 2.7.0 pre-installed on travis
 sudo: false
 addons:
   apt:
@@ -34,25 +37,38 @@ matrix:
     
     - rvm: 2.2.2
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0 MIDDLEWARE=no
+      env: 
+      - RAILS_VERSION=5.0 
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=no
 
     # rails 5.1 sometime before May 2017
     
     - rvm: 2.2.2
       gemfile: test/rails_5.1.gemfile
-      env: RAILS_VERSION=5.1 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
       gemfile: test/rails_5.1.gemfile
-      env: RAILS_VERSION=5.1 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.4.3
       gemfile: test/rails_5.1.gemfile
-      env: RAILS_VERSION=5.1 MIDDLEWARE=no
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
 
     # -------------------------------------
     # Middleware
@@ -61,19 +77,29 @@ matrix:
     
     - rvm: 2.2.2
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0 MIDDLEWARE=yes
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=yes
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
       gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0 MIDDLEWARE=yes
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=yes
 
     # rails 5.1 sometime before May 2017
     
     - rvm: 2.2.2
       gemfile: test/rails_5.1.gemfile
-      env: RAILS_VERSION=5.1 MIDDLEWARE=yes
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=yes
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.4.3
       gemfile: test/rails_5.1.gemfile
-      env: RAILS_VERSION=5.1 MIDDLEWARE=yes
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=yes
 
