@@ -40,9 +40,16 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler || echo ignoring failure
+  if $rbenv_which bundle ; then
+    echo Bundler is installed
+  else
+    gem install bundler -v '< 2.0'
+  fi
   $rehash
 fi
+
+which smarter_bundle || gem install smarter_bundler
 
 echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
