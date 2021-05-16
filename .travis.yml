@@ -1,3 +1,6 @@
+dist: trusty
+# Released April 2014, Support ended: April 2019
+# ruby 2.2.7, 2.3.4, 2.4.1 pre-installed on travis
 language: ruby
 notifications:
   email:
