@@ -68,7 +68,7 @@ start_server()
     bundle_prefix=''
     if [ -f Gemfile ]
     then
-        bundle_prefix='bundle exec'
+        bundle_prefix="bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec"
     fi
     server_arg=${RAILS_SERVER:-webrick}
     case "$server_arg" in

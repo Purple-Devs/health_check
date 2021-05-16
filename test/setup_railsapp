@@ -253,6 +253,13 @@ else
     )
 fi
 
+$rehash
+# Fix for rvm, otherwise bundle run from rails create fails
+export PATH="`pwd`/bin:$PATH"
+echo ================= Gemfile.lock ===================
+cat Gemfile.lock
+echo
+
 for e in test ${RAILS_ENV2:-production}
 do
     if [ -f config/environments/$e.rb ]; then
