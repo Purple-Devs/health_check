@@ -23,5 +23,4 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
 
-
 end
