@@ -24,28 +24,26 @@ matrix:
     - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
       env: 
-      - RUBYGEMS_VERSION=1.8.25 
       - RAILS_VERSION=2.3
+      - RUBYGEMS_VERSION=1.8.25 
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_2.3.gemfile
       env: 
-      - RUBYGEMS_VERSION=1.8.25 
       - RAILS_VERSION=2.3
+      - RUBYGEMS_VERSION=1.8.25 
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_2.3_lts.gemfile
       env:
-      - RUBYGEMS_VERSION=1.8.25
       - RAILS_VERSION=2.3
+      - RUBYGEMS_VERSION=1.8.25
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.7.1
       gemfile: test/rails_2.3_lts.gemfile
       env:
-      #- RUBYGEMS_VERSION=1.8.25
       - RAILS_VERSION=2.3
-      #- BUNDLER_VERSION=1.17.3
 
