@@ -2,13 +2,6 @@
 
 route_prefix=medical_check
 
-err_report() {
-    echo "$0: Error on line $1 - aborted"
-    exit 1
-}
-
-trap 'err_report $LINENO' ERR
-
 # Any failure causes exit
 set -eE -o functrace
 
@@ -29,7 +22,6 @@ report_failure() {
 }
 
 trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
-
 
 
 case "$1" in
@@ -74,7 +66,7 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler ${BUNDLER_VERSION:+-v ${BUNDLER_VERSION}}
   $rehash
 fi
 
@@ -82,6 +74,13 @@ echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
+else
+    echo bundle passed - lock file contains:
+    cat $BUNDLE_GEMFILE.lock
+    echo
 fi
 $rehash
 
@@ -231,24 +230,24 @@ echo
 echo ================= Gemfile ===================
 cat Gemfile
 echo
-echo running bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+echo running smarter_bundle install
+smarter_bundle install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
 rake="$railsapp/bin/rake"
 
 echo Checking $rails is present ...
-[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
+[ -f $rails -a -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
 fi
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
