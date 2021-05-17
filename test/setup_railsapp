@@ -70,10 +70,13 @@ fi
 
 which smarter_bundle || gem install smarter_bundler
 
-echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+echo "Running smarter_bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
 else
     echo bundle passed - lock file contains:
     cat $BUNDLE_GEMFILE.lock
@@ -113,6 +116,9 @@ case "$BUNDLE_GEMFILE" in
     if ! env GEM_HOME=$tmp_dir/gems smarter_bundle  ; then
         echo "Test aborted (missing required gems)"
         exit 2
+    elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+        echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+        exit 3
     else
         echo bundle passed - lock file contains:
         cat $BUNDLE_GEMFILE.lock
@@ -252,8 +258,8 @@ then
     $rehash
     # Fix for rvm, otherwise bundle run from rails create fails
     export PATH="`pwd`/bin:$PATH"
-    echo ================= Gemfile.lock ===================
-    cat Gemfile.lock
+    echo ================= Gemfile and Gemfile.lock ===================
+    cat Gemfile Gemfile.lock
     echo
 else
     dest=$railsapp/vendor/plugins/health_check
@@ -262,7 +268,14 @@ else
     (
 	cd $base_dir
 
-        git ls-files | cpio -pdl $dest
+        test_file=,test-if-on-same-filesystem
+        date > $test_file
+        if ln $test_file $dest/$test_file ; then
+          git ls-files | cpio -pdl $dest
+        else
+          git ls-files | cpio -pd $dest
+        fi
+        rm -f $test_file
         
 	cd $dest
 
@@ -275,9 +288,14 @@ fi
 $rehash
 # Fix for rvm, otherwise bundle run from rails create fails
 export PATH="`pwd`/bin:$PATH"
-echo ================= Gemfile.lock ===================
-cat Gemfile.lock
-echo
+if [ -s Gemfile ]
+then
+  echo ================= Gemfile.lock ===================
+  cat Gemfile.lock
+  echo
+else
+  echo 'Reminder: There is no Gemfile and thus no Gemfile.lock'
+fi
 
 for e in test ${RAILS_ENV2:-production}
 do
