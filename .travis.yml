@@ -40,6 +40,7 @@ matrix:
       env: 
       - RAILS_VERSION=5.0 
       - MIDDLEWARE=no
+      - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
@@ -55,6 +56,7 @@ matrix:
       env:
       - RAILS_VERSION=5.1
       - MIDDLEWARE=no
+      - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
@@ -80,6 +82,7 @@ matrix:
       env:
       - RAILS_VERSION=5.0
       - MIDDLEWARE=yes
+      - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.3.6
@@ -95,6 +98,7 @@ matrix:
       env:
       - RAILS_VERSION=5.1
       - MIDDLEWARE=yes
+      - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
 
     - rvm: 2.4.3
