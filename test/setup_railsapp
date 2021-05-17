@@ -22,7 +22,6 @@ report_failure() {
 trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
 
-
 case "$1" in
 [0-9]*)
     export BUNDLE_GEMFILE=$PWD/test/rails_$1.gemfile
@@ -60,7 +59,7 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler || echo ignoring failure
+  gem install bundler ${BUNDLER_VERSION:+-v ${BUNDLER_VERSION}} || echo ignoring failure
   if $rbenv_which bundle ; then
     echo Bundler is installed
   else
@@ -71,10 +70,13 @@ fi
 
 which smarter_bundle || gem install smarter_bundler
 
-echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+echo "Running smarter_bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
 else
     echo bundle passed - lock file contains:
     cat $BUNDLE_GEMFILE.lock
@@ -224,7 +226,7 @@ echo ================= Gemfile ===================
 cat Gemfile
 echo
 echo running bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+smarter_bundle install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
