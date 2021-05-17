@@ -2,9 +2,9 @@
 
 source 'https://rubygems.org'
 
-ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
+ruby RUBY_VERSION < '2.5' ? '2.5.0' : RUBY_VERSION
 
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 6.2.0'
 gem 'rake', '>= 0.8.7'
 
 group :development, :test do
