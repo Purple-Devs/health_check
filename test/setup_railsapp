@@ -146,7 +146,7 @@ case "$actual_rails_version" in
     *' '[12].*)
         $rails railsapp -d $db
         ;;
-    *' '[345].*)
+    *' '[3456].*)
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
             $rails new railsapp --skip-bundle -d $db --edge
