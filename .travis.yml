@@ -85,27 +85,27 @@ matrix:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
 
-    - rvm: 2.5.0
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
-    - rvm: 2.6.6
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
-    - rvm: 2.7.3
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
-    - rvm: 3.0.1
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
+#    - rvm: 2.5.0
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 2.6.6
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 2.7.3
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 3.0.1
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
