@@ -264,6 +264,8 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING health_check/migration should pass after initial database migration ..."
+        echo -n "rake var = $rake, type rake: "
+        type rake
         $rake db:migrate
         $testurl ${host}/health_check/migration 200 text/plain $success
         echo

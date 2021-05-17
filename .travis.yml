@@ -20,6 +20,12 @@ bundler_args: "--binstubs"
 script: ./test/test_with_railsapp
 
 matrix:
+  allow_failures:
+    - rvm: 2.7.1
+      gemfile: test/rails_2.3_lts.gemfile
+      env:
+      - RAILS_VERSION=2.3
+
   include:
     - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
