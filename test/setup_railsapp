@@ -2,15 +2,27 @@
 
 route_prefix=medical_check
 
-err_report() {
-    echo "$0: Error on line $1 - aborted"
-    exit 1
+# Any failure causes exit
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
 }
 
-trap 'err_report $LINENO' ERR
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
-# Any failure causes exit
-set -e
 
 case "$1" in
 [0-9]*)
