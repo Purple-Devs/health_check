@@ -230,7 +230,7 @@ sed -i.bak -e '/listen/s/^/#Earlier version required # /' Gemfile
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
 
 echo
-echo ================= Gemfile ===================
+echo ================= $PWD/Gemfile ===================
 cat Gemfile
 echo
 echo running smarter_bundle install
@@ -259,7 +259,7 @@ fi
 $rehash
 # Fix for rvm, otherwise bundle run from rails create fails
 export PATH="`pwd`/bin:$PATH"
-echo ================= Gemfile.lock ===================
+echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
 echo
 
@@ -274,7 +274,14 @@ do
       echo
     fi
 done
-echo "============== config/environment.rb ============="
+
+echo "============== $PWD/config/boot.rb ============="
+sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
+cat config/boot.rb
+rm -rf tmp/cache/bootsnap*
+echo 
+
+echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
@@ -407,7 +414,7 @@ case "$MIDDLEWARE" in
 
     #echo =============== config/application.rb-old ========================
     #cat config/application.rb-old
-    echo =============== config/application.rb ========================
+    echo =============== $PWD/config/application.rb ========================
     cat config/application.rb
   else
     echo FAILED: NO config/application.rb file!!
