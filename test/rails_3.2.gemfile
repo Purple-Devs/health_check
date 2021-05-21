@@ -28,3 +28,6 @@ gem 'therubyracer', :platform => :ruby # REQUIRED
 
 # Pin gems to avoid incompatible versions
 gem 'sass', '< 3.5.0'  # REQUIRED
+
+# to avoid lib/execjs/external_runtime.rb:176: syntax error, unexpected tPOW, expecting ')'
+gem 'execjs', '<2.8' # REQUIRED

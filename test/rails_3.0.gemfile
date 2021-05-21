@@ -21,3 +21,6 @@ group :development, :test do
   end
   gem 'shoulda', "~> 2.11.0"
 end
+
+# to avoid lib/execjs/external_runtime.rb:176: syntax error, unexpected tPOW, expecting ')'
+gem 'execjs', '<2.8' # REQUIRED
