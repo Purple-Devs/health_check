@@ -106,7 +106,7 @@ matrix:
       env:
       - RAILS_VERSION=4.0
       - MIDDLEWARE=no
-      - RUBYGEMS_VERSION=1.8.25
+      - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
 
     # -------------------------------------
