@@ -31,4 +31,4 @@ end
 gem 'therubyrhino', :platform => :jruby # REQUIRED
 gem 'therubyracer', :platform => :ruby # REQUIRED
 
-gem 'webpacker' # REQUIRED
+gem 'webpacker', '~> 4.2.2' # REQUIRED
