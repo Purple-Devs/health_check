@@ -163,6 +163,7 @@ case "$BUNDLE_GEMFILE" in
     ;;
 esac
 
+echo ===================== CDing to $railsapp =========================
 cd $railsapp
 
 [ -z "$rehash" ] || rbenv local `rbenv version-name`
@@ -222,7 +223,7 @@ esac
 echo Adding required Gemfile lines ...
 egrep REQUIRED $INITIAL_BUNDLE_GEMFILE | tee -a Gemfile
 echo
-echo ================= Gemfile ===================
+echo ================= $PWD/Gemfile ===================
 cat Gemfile
 echo
 echo running smarter_bundle install
@@ -251,14 +252,14 @@ fi
 $rehash
 # Fix for rvm, otherwise bundle run from rails create fails
 export PATH="`pwd`/bin:$PATH"
-echo ================= Gemfile.lock ===================
+echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
 echo
 
 for e in test ${RAILS_ENV2:-production}
 do
     if [ -f config/environments/$e.rb ]; then
-      echo ======== config/environments/$e.rb ================
+      echo ======== $PWD/config/environments/$e.rb ================
       sed -i.bak -e 's/config.serve_static_assets = false/config.serve_static_assets = true   # NOTE: health_check test: changed to true/'  \
         -e 's/config.active_record.migration_error = :page_load/# & # NOTE: health_check test: commented out/'  \
         config/environments/$e.rb 
@@ -266,7 +267,7 @@ do
       echo
     fi
 done
-echo "============== config/environment.rb ============="
+echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
@@ -401,7 +402,7 @@ if [ -s config/routes.rb ]; then
 
   #echo =============== config/routes.rb-old ========================
   #cat config/routes.rb-old
-  echo =============== config/routes.rb ========================
+  echo =============== $PWD/config/routes.rb ========================
   cat config/routes.rb
 else
   echo NO config/routes.rb file!!
