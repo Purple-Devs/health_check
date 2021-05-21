@@ -221,6 +221,8 @@ esac
 
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
 
+sed -i.bak "s/gem .*sqlite.*/gem 'sqlite3', '~> 1.3.13'/" Gemfile
+
 echo
 echo ================= Gemfile ===================
 cat Gemfile
