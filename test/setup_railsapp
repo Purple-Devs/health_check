@@ -146,13 +146,25 @@ case "$actual_rails_version" in
     *' '[12].*)
         $rails railsapp -d $db
         ;;
-    *' '[3456].*)
+    *' '[345].*)
+        args="--skip-bundle -d $db"
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
-            $rails new railsapp --skip-bundle -d $db --edge
+            $rails new railsapp $args --edge
             ;;
         *)
-            $rails new railsapp --skip-bundle -d $db
+            $rails new railsapp $args
+            ;;
+        esac
+        ;;
+    *' '[6].*)
+        args="--skip-bundle -d $db --skip-git --skip-webpack-install --skip-bootsnap"
+        case "$BUNDLE_GEMFILE" in
+        *rails_edge.gemfile)
+            $rails new railsapp $args --edge
+            ;;
+        *)
+            $rails new railsapp $args
             ;;
         esac
         ;;
