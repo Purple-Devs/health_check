@@ -30,3 +30,5 @@ end
 # Initial Gemfile has therubyracer commented out
 gem 'therubyrhino', :platform => :jruby # REQUIRED
 gem 'therubyracer', :platform => :ruby # REQUIRED
+
+gem 'webpacker' # REQUIRED
