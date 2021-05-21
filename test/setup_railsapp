@@ -66,7 +66,7 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler ${BUNDLER_VERSION:+-v ${BUNDLER_VERSION}}
   $rehash
 fi
 
@@ -74,6 +74,13 @@ echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
+else
+    echo bundle passed - lock file contains:
+    cat $BUNDLE_GEMFILE.lock
+    echo
 fi
 $rehash
 
@@ -140,12 +147,24 @@ case "$actual_rails_version" in
         $rails railsapp -d $db
         ;;
     *' '[345].*)
+        args="--skip-bundle -d $db"
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
-            $rails new railsapp --skip-bundle -d $db --edge
+            $rails new railsapp $args --edge
             ;;
         *)
-            $rails new railsapp --skip-bundle -d $db
+            $rails new railsapp $args
+            ;;
+        esac
+        ;;
+    *' '[6].*)
+        args="--skip-bundle -d $db --skip-git --skip-webpack-install --skip-bootsnap"
+        case "$BUNDLE_GEMFILE" in
+        *rails_edge.gemfile)
+            $rails new railsapp $args --edge
+            ;;
+        *)
+            $rails new railsapp $args
             ;;
         esac
         ;;
@@ -220,27 +239,27 @@ webrick|'')
 esac
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
 echo
-echo ================= Gemfile ===================
+echo ================= $PWD/Gemfile ===================
 cat Gemfile
 echo
-echo running bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+echo running smarter_bundle install
+smarter_bundle install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
 rake="$railsapp/bin/rake"
 
 echo Checking $rails is present ...
-[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
+[ -f $rails -a -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
 fi
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
@@ -249,7 +268,7 @@ fi
 $rehash
 # Fix for rvm, otherwise bundle run from rails create fails
 export PATH="`pwd`/bin:$PATH"
-echo ================= Gemfile.lock ===================
+echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
 echo
 
@@ -264,7 +283,14 @@ do
       echo
     fi
 done
-echo "============== config/environment.rb ============="
+
+echo "============== $PWD/config/boot.rb ============="
+sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
+cat config/boot.rb
+rm -rf tmp/cache/bootsnap*
+echo 
+
+echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
@@ -397,7 +423,7 @@ case "$MIDDLEWARE" in
 
     #echo =============== config/application.rb-old ========================
     #cat config/application.rb-old
-    echo =============== config/application.rb ========================
+    echo =============== $PWD/config/application.rb ========================
     cat config/application.rb
   else
     echo FAILED: NO config/application.rb file!!
