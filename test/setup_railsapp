@@ -239,6 +239,7 @@ webrick|'')
         ;;
 esac
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
+sed -i.bak -e 's/\(gem.*webpacker.*4.0.*\)/# see below - /' Gemfile
 echo
 echo ================= $PWD/Gemfile ===================
 cat Gemfile
