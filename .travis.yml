@@ -28,6 +28,34 @@ gemfile:
 
 matrix:
   allow_failures:
+    - rvm: 1.9.3
+      gemfile: test/rails_3.1.gemfile
+      env: 
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+      env:
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.0.gemfile
+      env: 
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+      env:
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
 
   include:
     # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
@@ -99,3 +127,23 @@ matrix:
       - RUBYGEMS_VERSION=1.8.25
       - BUNDLER_VERSION=1.17.3
 
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+      env:
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.0.gemfile
+      env: 
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+      env:
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
