@@ -8,13 +8,13 @@ gem 'rails', "~> 4.1.0"
 gem 'rake', '>= 0.8.3' # REQUIRED
 gem "rack", '~> 1.5.2' # REQUIRED
 
+if defined?(JRUBY_VERSION)
+  gem 'jruby-openssl'
+  gem 'activerecord-jdbcsqlite3-adapter'
+else
+  gem 'sqlite3', "~> 1.3.7"
+end
 group :development, :test do
-  if defined?(JRUBY_VERSION)
-    gem 'jruby-openssl'
-    gem 'activerecord-jdbcsqlite3-adapter'
-  else
-    gem 'sqlite3', "~> 1.3.7"
-  end
   gem 'shoulda'
 
   # redis based checks

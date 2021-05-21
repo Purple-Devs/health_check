@@ -10,7 +10,27 @@ err_report() {
 trap 'err_report $LINENO' ERR
 
 # Any failure causes exit
-set -e
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
+
+
 export DISABLE_SPRING=1
 
 cleanup_db()
@@ -100,7 +120,7 @@ start_server()
         bundle_prefix='bundle exec'
     fi
     server_arg=${RAILS_SERVER:-webrick}
-    echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
+    env | egrep '^RAILS|^RACK|^PATH='
     case "$server_arg" in
     puma) 
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
@@ -117,10 +137,10 @@ start_server()
     *)
         if [ -x script/server ]
         then
-            echo Starting server on port $port using $bundle_prefix ./script/server ...
+            echo Starting server on port $port using $bundle_prefix ./script/server $server_arg -p $port ...
             $bundle_prefix ./script/server $server_arg -p $port &
         else
-            echo Starting server on port $port using $rails s ...
+            echo Starting server on port $port using $rails server $server_arg -p $port ...
             $bundle_prefix $rails server $server_arg -p $port &
         fi
         ;;

@@ -8,13 +8,13 @@ gem 'rails', "~> 4.0.0"
 gem 'rake', '>= 0.8.3' # REQUIRED
 gem "rack", '~> 1.5.2' # REQUIRED
 
+if defined?(JRUBY_VERSION)
+  gem 'jruby-openssl'
+  gem 'activerecord-jdbcsqlite3-adapter'
+else
+  gem 'sqlite3', "~> 1.3.7"
+end
 group :development, :test do
-  if defined?(JRUBY_VERSION)
-    gem 'jruby-openssl'
-    gem 'activerecord-jdbcsqlite3-adapter'
-  else
-    gem 'sqlite3', "~> 1.3.7"
-  end
   gem 'shoulda'
 
   # redis based checks
@@ -32,5 +32,6 @@ gem 'therubyracer', :platform => :ruby # REQUIRED
 # mime-types 3.0 requires Ruby version >= 2.0
 gem 'mime-types', defined?(JRUBY_VERSION) || RUBY_VERSION < '2.0' ? '< 3' : '>= 3.0' # REQUIRED
 
-
 gem 'turbolinks', :github => 'turbolinks/turbolinks-classic'  # REQUIRED instead of turbolinks
+
+gem 'execjs', '<2.8' # REQUIRED to avoid lib/execjs/external_runtime.rb:176: syntax error, unexpected tPOW, expecting ')'

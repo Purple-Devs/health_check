@@ -1,16 +1,27 @@
 #!/bin/bash
 
 route_prefix=medical_check
+# Any failure causes exit
+set -eE -o functrace
 
-err_report() {
-    echo "$0: Error on line $1 - aborted"
-    exit 1
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
 }
 
-trap 'err_report $LINENO' ERR
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
-# Any failure causes exit
-set -e
 
 case "$1" in
 [0-9]*)
@@ -54,14 +65,23 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler ${BUNDLER_VERSION:+-v ${BUNDLER_VERSION}}
   $rehash
 fi
 
-echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+which smarter_bundle || gem install smarter_bundler
+
+echo "Running smarter_bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
+else
+    echo bundle passed - lock file contains:
+    cat $BUNDLE_GEMFILE.lock
+    echo
 fi
 $rehash
 
@@ -69,9 +89,9 @@ rails="$base_dir/test/bin/rails"
 rake="$base_dir/test/bin/rake"
 
 echo Checking $rails is present ...
-[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
+[ -f $rails -a -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -79,7 +99,7 @@ fi
 
 if [ ! -f $rake ]; then
     echo "Running bundle binstubs rake ..."
-    if ! bundle binstubs rake || [ ! -f $rake ]; then
+    if ! bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2
     fi
@@ -123,9 +143,9 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
-
 $rails new railsapp --skip-bundle -d $db
 
+echo ===================== CDing to $railsapp =========================
 cd $railsapp
 
 [ -z "$rehash" ] || rbenv local `rbenv version-name`
@@ -201,12 +221,14 @@ esac
 
 egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
 
+sed -i.bak "s/gem .*sqlite.*/gem 'sqlite3', '~> 1.3.13'/" Gemfile
+
 echo
 echo ================= Gemfile ===================
 cat Gemfile
 echo
 echo running bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+smarter_bundle install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
@@ -222,7 +244,7 @@ if [ ! -f $rails ]; then
 fi
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle binstubs rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
