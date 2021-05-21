@@ -110,19 +110,6 @@ actual_rails_version=`$rails -v`
 export GEM_PATH="$tmp_dir/gems:`gem environment gempath`"
 echo Set GEM_PATH=$GEM_PATH
 
-case "$BUNDLE_GEMFILE" in
-*_lts*)
-    echo "Re-running bundle with changed GEM_PATH (required by git install of rails lts) ..."
-    if ! env GEM_HOME=$tmp_dir/gems smarter_bundle  ; then
-        echo "Test aborted (missing required gems)"
-        exit 2
-    else
-        echo bundle passed - lock file contains:
-        cat $BUNDLE_GEMFILE.lock
-        echo
-    fi
-    ;;
-esac
 echo Installing health_check as a gem into $tmp_dir/gems
 rm -f pkg/health_check-*.gem
 if env GEM_HOME=$tmp_dir/gems $rake install
@@ -154,14 +141,7 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
-case "$BUNDLE_GEMFILE" in
-*rails_edge.gemfile)
-    $rails new railsapp -d $db --edge
-    ;;
-*)
-    $rails new railsapp -d $db
-    ;;
-esac
+$rails new railsapp -d $db
 
 echo ===================== CDing to $railsapp =========================
 cd $railsapp
@@ -222,6 +202,9 @@ webrick|'')
 esac
 echo Adding required Gemfile lines ...
 egrep REQUIRED $INITIAL_BUNDLE_GEMFILE | tee -a Gemfile
+
+sed -i.bak "s/gem .*sqlite.*/gem 'sqlite3', '~> 1.3.13'/" Gemfile
+
 echo
 echo ================= $PWD/Gemfile ===================
 cat Gemfile
