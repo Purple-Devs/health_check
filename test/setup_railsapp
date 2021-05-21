@@ -1,7 +1,26 @@
 #!/bin/bash
 
 # Any failure causes exit
-set -e
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
+
 
 case "$1" in
 [0-9]*)
@@ -40,14 +59,24 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler || echo ignoring failure
+  if $rbenv_which bundle ; then
+    echo Bundler is installed
+  else
+    gem install bundler -v '< 2.0'
+  fi
   $rehash
 fi
 
-echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+which smarter_bundle || gem install smarter_bundler
+
+echo "Running smarter_bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
 else
     echo bundle passed - lock file contains:
     cat $BUNDLE_GEMFILE.lock
@@ -87,6 +116,9 @@ case "$BUNDLE_GEMFILE" in
     if ! env GEM_HOME=$tmp_dir/gems smarter_bundle  ; then
         echo "Test aborted (missing required gems)"
         exit 2
+    elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+        echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+        exit 3
     else
         echo bundle passed - lock file contains:
         cat $BUNDLE_GEMFILE.lock
@@ -226,8 +258,8 @@ then
     $rehash
     # Fix for rvm, otherwise bundle run from rails create fails
     export PATH="`pwd`/bin:$PATH"
-    echo ================= Gemfile.lock ===================
-    cat Gemfile.lock
+    echo ================= Gemfile and Gemfile.lock ===================
+    cat Gemfile Gemfile.lock
     echo
 else
     dest=$railsapp/vendor/plugins/health_check
@@ -236,7 +268,14 @@ else
     (
 	cd $base_dir
 
-        git ls-files | cpio -pdl $dest
+        test_file=,test-if-on-same-filesystem
+        date > $test_file
+        if ln $test_file $dest/$test_file ; then
+          git ls-files | cpio -pdl $dest
+        else
+          git ls-files | cpio -pd $dest
+        fi
+        rm -f $test_file
         
 	cd $dest
 
@@ -244,6 +283,18 @@ else
         find . -type f
         echo
     )
+fi
+
+$rehash
+# Fix for rvm, otherwise bundle run from rails create fails
+export PATH="`pwd`/bin:$PATH"
+if [ -s Gemfile ]
+then
+  echo ================= Gemfile.lock ===================
+  cat Gemfile.lock
+  echo
+else
+  echo 'Reminder: There is no Gemfile and thus no Gemfile.lock'
 fi
 
 for e in test ${RAILS_ENV2:-production}

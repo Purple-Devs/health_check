@@ -1,3 +1,6 @@
+dist: trusty
+# Released April 2014, Support ended: April 2019
+# ruby 2.2.7, 2.3.4, 2.4.1 pre-installed on travis
 language: ruby
 notifications:
   email:
@@ -18,10 +21,27 @@ script: ./test/test_with_railsapp
 
 matrix:
   include:
-    - rvm: 1.9.3
+    - rvm: 1.8.7
       gemfile: test/rails_2.3.gemfile
       env: 
-      - RUBYGEMS_VERSION=1.8.25 
       - RAILS_VERSION=2.3
+      - RUBYGEMS_VERSION=1.8.25 
       - BUNDLER_VERSION=1.17.3
 
+    # Gave up on tracking down 
+    # /home/travis/.rvm/rubies/ruby-1.9.3-p551/lib/ruby/1.9.1/test/unit.rb:167:in `block in non_options': file not found: db:migrate (ArgumentError)
+    # from "rake db:migrate" command
+    #
+    #- rvm: 1.9.3
+    #  gemfile: test/rails_2.3.gemfile
+    #  env: 
+    #  - RAILS_VERSION=2.3
+    #  - RUBYGEMS_VERSION=1.8.25 
+    #  - BUNDLER_VERSION=1.17.3
+    #
+    # - rvm: 1.9.3
+    #   gemfile: test/rails_2.3_lts.gemfile
+    #   env:
+    #   - RAILS_VERSION=2.3
+    #   - RUBYGEMS_VERSION=1.8.25
+    #   - BUNDLER_VERSION=1.17.3

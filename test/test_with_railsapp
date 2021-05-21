@@ -1,7 +1,26 @@
 #!/bin/bash
 
 # Any failure causes exit
-set -e
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
+
 
 cleanup_db()
 {
@@ -68,7 +87,7 @@ start_server()
     bundle_prefix=''
     if [ -f Gemfile ]
     then
-        bundle_prefix='bundle exec'
+        bundle_prefix="bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec"
     fi
     server_arg=${RAILS_SERVER:-webrick}
     case "$server_arg" in
@@ -245,6 +264,8 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}: TESTING health_check/migration should pass after initial database migration ..."
+        echo -n "rake var = $rake, type rake: "
+        type rake
         $rake db:migrate
         $testurl ${host}/health_check/migration 200 text/plain $success
         echo

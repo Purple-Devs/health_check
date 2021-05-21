@@ -9,9 +9,9 @@ Gem::Specification.new do |gem|
   gem.required_rubygems_version = Gem::Requirement.new(">= 0") if gem.respond_to? :required_rubygems_version=
   gem.authors       = ["Ian Heggie"]
   gem.email         = ["ian@heggie.biz"]
-  gem.summary = %q{Simple health check of Rails app for uptime monitoring with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.}
+  gem.summary = %q{Simple health check of Rails app for uptime monitoring with Pingdom, NewRelic, EngineYard etc.}
   gem.description = <<-EOF
-  	Simple health check of Rails app for uptime monitoring with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+  	Simple health check of Rails app for uptime monitoring with Pingdom, NewRelic, EngineYard etc.
   EOF
   gem.homepage      = "https://github.com/ianheggie/health_check"
   gem.license       = "MIT"

@@ -56,17 +56,11 @@ module HealthCheck
     end
 
     # Silence logger as much as we can
-
-
     def process_with_silent_log(method_name, *args)
-      if logger
-        @old_logger_level = logger.level
-        silence do
-          process_without_silent_log(method_name, *args)
-        end
-      else
-        process_without_silent_log(method_name, *args)
-      end
+      @old_logger_level, logger.level = logger.level, Logger::ERROR if logger
+      process_without_silent_log(method_name, *args)
+    ensure
+      logger.level = @old_logger_level if logger
     end
 
     alias_method_chain :process, :silent_log

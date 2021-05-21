@@ -1,6 +1,6 @@
 = health_check gem (rails2.3 branch)
 
-Simple health check of Rails 2.3 apps for use with Pingdom, NewRelic, EngineYard or uptime.openacs.org etc.
+Simple health check of Rails 2.3 apps for use with Pingdom, NewRelic, EngineYard etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway).
 
