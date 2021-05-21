@@ -120,7 +120,7 @@ start_server()
         bundle_prefix='bundle exec'
     fi
     server_arg=${RAILS_SERVER:-webrick}
-    echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
+    env | egrep '^RAILS|^RACK|^PATH='
     case "$server_arg" in
     puma) 
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
@@ -137,10 +137,10 @@ start_server()
     *)
         if [ -x script/server ]
         then
-            echo Starting server on port $port using $bundle_prefix ./script/server ...
+            echo Starting server on port $port using $bundle_prefix ./script/server $server_arg -p $port ...
             $bundle_prefix ./script/server $server_arg -p $port &
         else
-            echo Starting server on port $port using $rails s ...
+            echo Starting server on port $port using $rails server $server_arg -p $port ...
             $bundle_prefix $rails server $server_arg -p $port &
         fi
         ;;
