@@ -1,3 +1,6 @@
+dist: trusty
+# Released April 2014, Support ended: April 2019
+# ruby 2.2.7, 2.3.4, 2.4.1 pre-installed on travis
 language: ruby
 notifications:
   email:
@@ -25,46 +28,122 @@ gemfile:
 
 matrix:
   allow_failures:
+    - rvm: 1.9.3
+      gemfile: test/rails_3.1.gemfile
+      env: 
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+      env:
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.0.gemfile
+      env: 
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+      env:
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
 
   include:
     # rails 3.2 jan 20, 2012 - ruby 1.8.7 or 1.9.2
     
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=puma RAILS_VERSION=3.2
+      env: 
+      - RAILS_SERVER=puma 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=passenger RAILS_VERSION=3.2
+      env: 
+      - RAILS_SERVER=passenger 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=thin RAILS_VERSION=3.2
+      env: 
+      - RAILS_SERVER=thin 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_SERVER=unicorn RAILS_VERSION=3.2
+      env: 
+      - RAILS_SERVER=unicorn 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
     # Excluded since it takes way too long!
     #- rvm: jruby-19mode
     #  gemfile: test/rails_3.2.gemfile
     #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
 
-    - rvm: 2.2.0
+    # Recommended version
+    # https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
+    - rvm: 2.2.10
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
+      env: 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=2.7.11
+      - BUNDLER_VERSION=1.17.3
 
     - rvm: 1.9.3
       gemfile: test/rails_3.2.gemfile
-      env: RAILS_VERSION=3.2
+      env: 
+      - RAILS_VERSION=3.2
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
     # Excluded since it takes way too long!
     #- rvm: jruby-19mode
     #  gemfile: test/rails_3.2.gemfile
     #  env: BUNDLER_VERSION=1.12.5 RAILS_VERSION=3.2
 
+    # Recommended version
     # rails 3.1 aug 31, 2011 - ruby 1.8.7 or 1.9.2
     - rvm: 1.9.3
       gemfile: test/rails_3.1.gemfile
-      env: RAILS_VERSION=3.1
+      env: 
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
 
+    - rvm: 1.8.7
+      gemfile: test/rails_3.1.gemfile
+      env:
+      - RAILS_VERSION=3.1
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.9.3
+      gemfile: test/rails_3.0.gemfile
+      env: 
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 1.8.7
+      gemfile: test/rails_3.0.gemfile
+      env:
+      - RAILS_VERSION=3.0
+      - RUBYGEMS_VERSION=1.8.25
+      - BUNDLER_VERSION=1.17.3

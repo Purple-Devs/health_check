@@ -1,7 +1,25 @@
 #!/bin/bash
 
 # Any failure causes exit
-set -e
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
 echo Setting RAILS_ENV=test RACK_ENV=test
 export RAILS_ENV=test RACK_ENV=test

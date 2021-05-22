@@ -1,7 +1,26 @@
 #!/bin/bash
 
 # Any failure causes exit
-set -e
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
+
 
 case "$1" in
 [0-9]*)
@@ -40,14 +59,24 @@ mkdir -p tmp/gems
 if $rbenv_which bundle ; then
   echo Bundler is installed
 else
-  gem install bundler
+  gem install bundler ${BUNDLER_VERSION:+-v ${BUNDLER_VERSION}} || echo ignoring failure
+  if $rbenv_which bundle ; then
+    echo Bundler is installed
+  else
+    gem install bundler -v '< 2.0'
+  fi
   $rehash
 fi
 
-echo "Running bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
+which smarter_bundle || gem install smarter_bundler
+
+echo "Running smarter_bundle with BUNDLE_GEMFILE=$BUNDLE_GEMFILE ..."
 if ! smarter_bundle ; then
     echo "Test aborted (missing required gems)"
     exit 2
+elif [ ! -s $BUNDLE_GEMFILE.lock ] ; then
+    echo "Error: smarter_bundler return OK status BUT lock file ($BUNDLE_GEMFILE.lock) is missing!"
+    exit 3
 else
     echo bundle passed - lock file contains:
     cat $BUNDLE_GEMFILE.lock
@@ -58,8 +87,8 @@ $rehash
 rails="$base_dir/test/bin/rails"
 
 echo Checking $rails is present ...
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_}  binstub rails || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -81,19 +110,6 @@ actual_rails_version=`$rails -v`
 export GEM_PATH="$tmp_dir/gems:`gem environment gempath`"
 echo Set GEM_PATH=$GEM_PATH
 
-case "$BUNDLE_GEMFILE" in
-*_lts*)
-    echo "Re-running bundle with changed GEM_PATH (required by git install of rails lts) ..."
-    if ! smarter_bundle ; then
-        echo "Test aborted (missing required gems)"
-        exit 2
-    else
-        echo bundle passed - lock file contains:
-        cat $BUNDLE_GEMFILE.lock
-        echo
-    fi
-    ;;
-esac
 echo Installing health_check as a gem into $tmp_dir/gems
 rm -f pkg/health_check-*.gem
 if env GEM_HOME=$tmp_dir/gems $rake install
@@ -125,15 +141,9 @@ case `ruby -e 'puts JRUBY_VERSION' 2> /dev/null` in
 esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
-case "$BUNDLE_GEMFILE" in
-*rails_edge.gemfile)
-    $rails new railsapp -d $db --edge
-    ;;
-*)
-    $rails new railsapp -d $db
-    ;;
-esac
+$rails new railsapp -d $db
 
+echo ===================== CDing to $railsapp =========================
 cd $railsapp
 
 [ -z "$rehash" ] || rbenv local `rbenv version-name`
@@ -192,19 +202,22 @@ webrick|'')
 esac
 echo Adding required Gemfile lines ...
 egrep REQUIRED $INITIAL_BUNDLE_GEMFILE | tee -a Gemfile
+
+sed -i.bak "s/gem .*sqlite.*/gem 'sqlite3', '~> 1.3.13'/" Gemfile
+
 echo
-echo ================= Gemfile ===================
+echo ================= $PWD/Gemfile ===================
 cat Gemfile
 echo
-echo running bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+echo running smarter_bundle install
+smarter_bundle install
 $rehash
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
 
 echo Checking $rails is present ...
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rails || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -213,7 +226,7 @@ fi
 rake="$railsapp/bin/rake"
 
 echo Checking $rake is present ...
-[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstub rake || echo '(ignored bundle exit status)'
+[ -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || echo '(ignored bundle exit status)'
 if [ ! -f $rake ]; then
     echo "Test aborted (unable to create $rake)"
     exit 2
@@ -222,14 +235,14 @@ fi
 $rehash
 # Fix for rvm, otherwise bundle run from rails create fails
 export PATH="`pwd`/bin:$PATH"
-echo ================= Gemfile.lock ===================
+echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
 echo
 
 for e in test ${RAILS_ENV2:-production}
 do
     if [ -f config/environments/$e.rb ]; then
-      echo ======== config/environments/$e.rb ================
+      echo ======== $PWD/config/environments/$e.rb ================
       sed -i.bak -e 's/config.serve_static_assets = false/config.serve_static_assets = true   # NOTE: health_check test: changed to true/'  \
         -e 's/config.active_record.migration_error = :page_load/# & # NOTE: health_check test: commented out/'  \
         config/environments/$e.rb 
@@ -237,7 +250,7 @@ do
       echo
     fi
 done
-echo "============== config/environment.rb ============="
+echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
@@ -372,7 +385,7 @@ if [ -s config/routes.rb ]; then
 
   #echo =============== config/routes.rb-old ========================
   #cat config/routes.rb-old
-  echo =============== config/routes.rb ========================
+  echo =============== $PWD/config/routes.rb ========================
   cat config/routes.rb
 else
   echo NO config/routes.rb file!!
