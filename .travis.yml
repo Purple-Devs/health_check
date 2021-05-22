@@ -54,13 +54,10 @@ matrix:
       env:
       - RAILS_VERSION=6.0
       - MIDDLEWARE=YES
+    
+    # Not testing past recommended ruby version as listed on https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
 
-    - rvm: 2.7.1
-      gemfile: test/rails_6.0.gemfile
-      env:
-      - RAILS_VERSION=6.0
-      - MIDDLEWARE=YES
-
+    # --------------------------------------
     - rvm: 2.5.0
       gemfile: test/rails_6.1.gemfile
       env:
@@ -84,6 +81,8 @@ matrix:
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+    
+    # --------------------------------------
 
 #    - rvm: 2.5.0
 #      gemfile: test/rails_6.2.gemfile
