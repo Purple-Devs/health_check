@@ -143,16 +143,25 @@ esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
 case "$actual_rails_version" in
-    *' '[12].*)
-        $rails railsapp -d $db
-        ;;
     *' '[345].*)
+        args="--skip-bundle -d $db"
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
-            $rails new railsapp --skip-bundle -d $db --edge
+            $rails new railsapp $args --edge
             ;;
         *)
-            $rails new railsapp --skip-bundle -d $db
+            $rails new railsapp $args
+            ;;
+        esac
+        ;;
+    *' '[6].*)
+        args="--skip-bundle -d $db --skip-git --skip-bootsnap"
+        case "$BUNDLE_GEMFILE" in
+        *rails_edge.gemfile)
+            $rails new railsapp $args --edge
+            ;;
+        *)
+            $rails new railsapp $args
             ;;
         esac
         ;;
@@ -181,24 +190,27 @@ ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
 echo Adding an initializer for health_check gem ...
 mkdir -p config/initializers
 tee config/initializers/health_check.rb <<!
-HealthCheck.setup do |config|
-  config.success = "$success"
-  config.smtp_timeout = 60.0
-  config.http_status_for_error_text = 550
-  config.http_status_for_error_object = 555
-  config.uri = '$route_prefix'
-  config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
-  config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
-  config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
-
-  config.add_custom_check do
-    File.exists?("$custom_file") ? '' : '$custom_file is missing!'
+if defined? HealthCheck
+  HealthCheck.setup do |config|
+    config.success = "$success"
+    config.smtp_timeout = 60.0
+    config.http_status_for_error_text = 550
+    config.http_status_for_error_object = 555
+    config.uri = '$route_prefix'
+    config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
+    config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
+    config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
+  
+    config.add_custom_check do
+      File.exists?("$custom_file") ? '' : '$custom_file is missing!'
+    end
+  
+    config.add_custom_check('pass') do
+      ''
+    end
+  
+    config.include_error_in_response_body = false if ENV['HIDE_ERROR_RESPONSE'].present?
   end
-
-  config.add_custom_check('pass') do
-    ''
-  end
-
 end
 !
 
@@ -224,11 +236,8 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
-
-sed -i.bak -e '/listen/s/^/#Earlier version required # /' Gemfile
-
-egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
-
+sed -i.bak -e 's/\(gem.*webpacker.*\)/# see below - /' Gemfile
+(egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile) || echo No required gems found...
 echo
 echo ================= $PWD/Gemfile ===================
 cat Gemfile
@@ -236,6 +245,12 @@ echo
 echo running smarter_bundle install
 smarter_bundle install
 $rehash
+
+if [ ! -f config/webpacker.yml ] ; then
+  echo completing setup by running rails webpacker:install ...
+  $rails webpacker:install
+fi
+
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
 rake="$railsapp/bin/rake"

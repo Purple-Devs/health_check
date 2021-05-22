@@ -24,6 +24,27 @@ report_failure() {
 trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
 
+# Any failure causes exit
+set -eE -o functrace
+
+report_failure() {
+  local lineno=$2
+  local fn=$3
+  local exitstatus=$4
+  local msg=$5
+  local lineno_fns=${1% 0}
+  if [[ $lineno_fns != "0" ]] ; then
+    lineno="${lineno} ${lineno_fns}"
+  fi
+  if [[ $exitstatus == 0 ]] ; then
+    echo "${BASH_SOURCE[1]}: Finished!"
+  else
+    echo "${BASH_SOURCE[1]}:${fn}[${lineno}] Failed with status ${exitstatus}: $msg"
+  fi
+}
+
+trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
+
 export DISABLE_SPRING=1
 
 cleanup_db()
@@ -104,18 +125,25 @@ start_server()
         bundle_prefix='bundle exec'
     fi
     server_arg=${RAILS_SERVER:-webrick}
+    case "$actual_rails_version" in
+    *' '[12345].*)
+        ;;
+    *) 
+        server_arg="-u $server_arg"
+        ;;
+    esac
     echo "start_server called using: `env | egrep '^RAILS|^RACK|^PATH='` $bundle_prefix $server_arg"
     case "$server_arg" in
-    puma) 
+    *puma) 
         $bundle_prefix puma -b tcp://127.0.0.1:$port &
         ;;
-    passenger) 
+    *passenger) 
         $bundle_prefix passenger start -p $port &
         ;;
-    thin) 
+    *thin) 
         $bundle_prefix thin start -p $port &
         ;;
-    unicorn) 
+    *unicorn) 
         $bundle_prefix unicorn_rails -l 127.0.0.1:$port &
         ;;
     *)
@@ -321,6 +349,21 @@ common_tests()
         $testurl ${host}/${route_prefix}/database 550 text/plain failed
         echo
     fi
+
+    export HIDE_ERROR_RESPONSE=true
+    stop_server
+    start_server
+
+    test_no=`expr 1 + $test_no`
+    if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
+        echo "${test_no}: TESTING ${route_prefix}/database should have response body 'failure' if include_error_in_response_body is false"
+        $testurl ${host}/${route_prefix}/database 550 text/plain failure
+        echo
+    fi
+
+    unset HIDE_ERROR_RESPONSE
+    stop_server
+    start_server
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then

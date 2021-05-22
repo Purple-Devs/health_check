@@ -1,10 +1,19 @@
 = health_check gem
 
-Simple health check of Rails 5.x apps for use with Pingdom, NewRelic, EngineYard etc.
+Simple health check of Rails 5.x and 6.x apps for use with Pingdom, NewRelic, EngineYard etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
 Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
+
+Use gem versions for stable releases, or github branch / commits for development versions:
+* gem versions ~> 3.0 for Rails 5.x and 6.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] development branch
+* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] development branch;
+* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] development branch;
+* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] development branch;
+* {master}[https://github.com/ianheggie/health_check/tree/master] branch for edge development;
+
+Note: it is best to pin to a specific commit if using a development branch as sometimes tests break.
 
 health_check provides various monitoring URIs, for example:
 
@@ -138,6 +147,10 @@ To change the configuration of health_check, create a file `config/initializers/
 
       # When redis url is non-standard
       config.redis_url = 'redis_url'
+
+      # Disable the error message to prevent /health_check from leaking
+      # sensitive information
+      config.include_error_in_response_body = false
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
@@ -246,7 +259,10 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 === Automated testing and other checks
 
-* {<img src="https://travis-ci.org/ianheggie/health_check.svg?branch=rails5">}[https://travis-ci.org/ianheggie/health_check.svg?branch=rails5]  - Travis CI 
+* {<img src="https://badge.fury.io/rb/health_check.svg" alt="Gem Version" />}[http://badge.fury.io/rb/health_check] - Latest Gem
+* {<img src="https://travis-ci.org/ianheggie/health_check.svg">}[https://travis-ci.org/ianheggie/health_check]  - Travis CI
+* {<img src="https://codeclimate.com/github/ianheggie/health_check.svg" />}[https://codeclimate.com/github/ianheggie/health_check] - Code quality
+* {<img src="https://gemnasium.com/ianheggie/health_check.svg">}[https://gemnasium.com/ianheggie/health_check] - Gem dependencies
 
 === Manual testing
 
@@ -280,11 +296,11 @@ Cd to the checked out health_check directory and then run the test as follows:
 
     cd /vagrant  # the current directory on your host is mounted here on the virtual machine
 
-    chruby 2.2.2 # or some other ruby version 
+    chruby 2.2.2 # or some other ruby version (run chruby with no arguments to see the current list)
 
     test/test_with_railsapp
 
-    exit        # from viretual machine when finished
+    exit        # from virtual machine when finished
 
 The script will first call `test/setup_railsapp` to setup a rails app with health_check installed and then
 run up the rails server and perform veraious tests.

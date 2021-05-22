@@ -21,8 +21,6 @@ report_failure() {
 
 trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
-
-
 echo Setting RAILS_ENV=test RACK_ENV=test
 export RAILS_ENV=test RACK_ENV=test
 

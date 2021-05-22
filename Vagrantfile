@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
 
-  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "ubuntu/focal64"
 
   # set auto_update to false, if you do NOT want to check the correct 
   # additions version when booting this machine
