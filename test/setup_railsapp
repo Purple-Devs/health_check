@@ -237,7 +237,7 @@ webrick|'')
         ;;
 esac
 if egrep -q REQUIRED ${INITIAL_BUNDLE_GEMFILE} ; then
-  sed -n 's/^gem *["'"'"']\([^"'"'"']*\)["'"'"'].*REQUIRED.*/\1/p' ${INITIAL_BUNDLE_GEMFILE} | while read gem
+  sed -n 's/^[  ]*gem[  ]*["'"'"']\([^"'"'"']*\)["'"'"'].*REQUIRED.*/\1/p' ${INITIAL_BUNDLE_GEMFILE} | while read gem
   do
     echo "Commenting out existing line for gem $gem"
     sed -i.bak '/^gem *["'"']${gem}['"'"]/s/^/# see REQUIRED below for /' Gemfile
