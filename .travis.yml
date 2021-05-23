@@ -1,4 +1,5 @@
 dist: trusty
+os: linux
 # Released April 2014, Support ended: April 2019
 # ruby 2.2.7, 2.3.4, 2.4.1 pre-installed on travis
 language: ruby
@@ -26,7 +27,7 @@ rvm:
 gemfile:
   - test/rails_3.2.gemfile
 
-matrix:
+jobs:
   allow_failures:
     - rvm: 1.9.3
       gemfile: test/rails_3.1.gemfile
