@@ -25,4 +25,5 @@ group :development, :test do
 end
 
 gem 'webpacker', '~> 4.0.7' # REQUIRED
-gem 'rexml', '~> 3.2.4' # REQUIRED
+gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0
+gem 'webrick' # REQUIRED for ruby 3.0
