@@ -21,8 +21,7 @@ group :development, :test do
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
-
+  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
 gem 'webpacker', '~> 4.2.2' # REQUIRED
