@@ -30,13 +30,14 @@ jobs:
   fast_finish: true
 
   allow_failures:
-    - rvm: 2.3.1
+
+    - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge MIDDLEWARE=YES
 
-    - rvm: ruby-head
-      gemfile: test/rails_5.0.gemfile
-      env: RAILS_VERSION=5.0 MIDDLEWARE=YES
+    - rvm: 3.0.0
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
 
   include:
     # -------------------------------------
@@ -194,3 +195,8 @@ jobs:
     - rvm: 3.0.0
       gemfile: test/rails_edge.gemfile
       env: RAILS_VERSION=edge MIDDLEWARE=YES
+
+    - rvm: ruby-head
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
+
