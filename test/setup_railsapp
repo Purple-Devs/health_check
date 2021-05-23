@@ -237,10 +237,12 @@ webrick|'')
         ;;
 esac
 if egrep -q REQUIRED ${INITIAL_BUNDLE_GEMFILE} ; then
-  sed -n 's/^[  ]*gem[  ]*["'"'"']\([^"'"'"']*\)["'"'"'].*REQUIRED.*/\1/p' ${INITIAL_BUNDLE_GEMFILE} | while read gem
+  TAB=$'\t'
+  QUOTES='"'"'"
+  sed -n "s/^[ ${TAB}]*gem[ ${TAB}]*[${QUOTES}]\([^${QUOTES}]*\)[${QUOTES}].*REQUIRED.*/\1/p" ${INITIAL_BUNDLE_GEMFILE} | while read gem
   do
-    echo "Commenting out existing line for gem $gem"
-    sed -i.bak '/^gem *["'"']${gem}['"'"]/s/^/# see REQUIRED below for /' Gemfile
+    echo "Commenting out gem '$gem' line in Gemfile"
+    sed -i.bak -e "s/^\([ ${TAB}]*gem[ ${TAB}]*[${QUOTES}]${gem}[${QUOTES}].*\)$/# overriden by REQUIRED below: \1/" Gemfile
   done
   echo Adding Required gems
   egrep REQUIRED ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile
