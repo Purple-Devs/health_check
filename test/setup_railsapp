@@ -236,12 +236,21 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
-sed -i.bak -e 's/\(gem.*webpacker.*\)/# see below - \1/' Gemfile
-(egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile) || echo No required gems found...
+if egrep -q REQUIRED ${INITIAL_BUNDLE_GEMFILE} ; then
+  sed -n 's/^gem *["'"'"']\([^"'"'"']*\)["'"'"'].*REQUIRED.*/\1/p' ${INITIAL_BUNDLE_GEMFILE} | while read gem
+  do
+    echo "Commenting out existing line for gem $gem"
+    sed -i.bak '/^gem *["'"']${gem}['"'"]/s/^/# see REQUIRED below for /' Gemfile
+  done
+  echo Adding Required gems
+  egrep REQUIRED ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile
+else
+  echo No required gems to be added to Gemfile 
+fi
 echo
 echo ================= $PWD/Gemfile ===================
 cat Gemfile
-echo
+echo ==================================================
 echo running smarter_bundle install
 smarter_bundle install
 $rehash
@@ -276,6 +285,7 @@ $rehash
 export PATH="`pwd`/bin:$PATH"
 echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
+echo ==================================================
 echo
 
 for e in test ${RAILS_ENV2:-production}
@@ -290,9 +300,13 @@ do
     fi
 done
 
-echo "============== $PWD/config/boot.rb ============="
-sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
-cat config/boot.rb
+if egrep -q 'bootsnap.setup' config/boot.rb  ; then
+  echo Commenting out bootsnap from config/boot.rb
+  sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
+  echo "============== $PWD/config/boot.rb ============="
+  cat config/boot.rb
+  echo ==================================================
+fi
 rm -rf tmp/cache/bootsnap*
 echo 
 
@@ -300,7 +314,7 @@ echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
-echo ========================
+echo =========================================================
 case $db in
     jdbcsqlite3)
       for e in test ${RAILS_ENV2:-production}
