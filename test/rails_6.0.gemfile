@@ -26,4 +26,4 @@ group :development, :test do
   gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
-gem 'webpacker', '~> 4.2.2' # REQUIRED
+gem 'webpacker', '~> 4.0.7' # REQUIRED
