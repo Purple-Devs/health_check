@@ -1,7 +1,7 @@
 dist: xenial
+os: linux
 # Released April 2016, Support ended: April 2021
 # ruby 2.3.8, 2.4.5 and 2.5.3 (default 2.5.3p105) pre-installed on travis
-sudo: false
 addons:
   apt:
     packages:
@@ -26,7 +26,7 @@ bundler_args: "--binstubs"
 
 script: ./test/test_with_railsapp
 
-matrix:
+jobs:
   fast_finish: true
 
   include:
