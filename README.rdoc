@@ -7,10 +7,10 @@ The basic goal is to quickly check that rails is up and running and that it has 
 Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
 
 Use gem versions for stable releases, or github branch / commits for development versions:
-* gem versions ~> 3.0 for Rails 5.x and 6.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] development branch
-* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] development branch;
-* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] development branch;
-* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] development branch;
+* gem versions ~> 3.0 for Rails 5.x and 6.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] stable branch;
+* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] stable branch;
+* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] stable branch;
+* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] stable branch;
 * {master}[https://github.com/ianheggie/health_check/tree/master] branch for edge development;
 
 Note: it is best to pin to a specific commit if using a development branch as sometimes tests break.
@@ -323,8 +323,10 @@ Thanks go to the various people who have given feedback and suggestions via the 
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request (Code with BDD tests are favoured)
+3. Create a test that confirms your changes work
+4. Update README.rdoc to explain enhancements, or add succinct comment in code when fixing bugs
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin my-new-feature`)
+7. Create new Pull Request (Code with BDD tests and documentation are highly favoured)
 
-<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
+<em>Feedback welcome! Especially with suggested replacement code, tests and documentation</em>

@@ -236,7 +236,7 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
-sed -i.bak -e 's/\(gem.*webpacker.*\)/# see below - /' Gemfile
+sed -i.bak -e 's/\(gem.*webpacker.*\)/# see below - \1/' Gemfile
 (egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile) || echo No required gems found...
 echo
 echo ================= $PWD/Gemfile ===================
@@ -246,7 +246,7 @@ echo running smarter_bundle install
 smarter_bundle install
 $rehash
 
-if [ ! -f config/webpacker.yml ] ; then
+if egrep webpacker Gemfile && [ ! -f config/webpacker.yml ] ; then
   echo completing setup by running rails webpacker:install ...
   $rails webpacker:install
 fi
