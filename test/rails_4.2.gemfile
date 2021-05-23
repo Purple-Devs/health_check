@@ -24,7 +24,7 @@ group :development, :test do
   gem 'redis', '< 4.0', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
 # mime-types 2.0 requires Ruby version >= 1.9.2
