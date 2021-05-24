@@ -13,7 +13,7 @@ module HealthCheck
 
   # Text output upon failure
   mattr_accessor :failure
-  self.failure = "failure"
+  self.failure = "health_check failed"
 
   # Timeout in seconds used when checking smtp server
   mattr_accessor :smtp_timeout
