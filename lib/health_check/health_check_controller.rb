@@ -29,11 +29,9 @@ module HealthCheck
         else
           msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors}" : nil
           send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
+          
           # Log a single line as some uptime checkers only record that it failed, not the text returned
-          if logger
-            # Always report details in log
-            logger.info "#{HealthCheck.failure}: #{errors}"
-          end
+          logger.send(HealthCheck.log_level, "#{HealthCheck.failure}: #{errors}") if logger && HealthCheck.log_level
         end
       end
     end
@@ -60,7 +58,7 @@ module HealthCheck
 
     def check_origin_ip
       unless HealthCheck.origin_ip_whitelist.blank? ||
-          HealthCheck.origin_ip_whitelist.include?(request.ip)
+          HealthCheck.origin_ip_whitelist.include?(HealthCheck.accept_proxied_requests ? request.remote_ip : request.ip)
         render :plain => 'Health check is not allowed for the requesting IP',
                :status => HealthCheck.http_status_for_ip_whitelist_error,
                :content_type => 'text/plain'
