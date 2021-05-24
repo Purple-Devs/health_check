@@ -26,9 +26,9 @@ group :development, :test do
 end
 
 # redis based checks
-gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil? # REQUIRED
-gem 'redis', :require => !ENV['REDIS_URL'].nil? # REQUIRED
-gem 'resque', :require => !ENV['RESQUE'].nil? # REQUIRED
-gem 'elasticsearch', :require => !ENV['ELASTICSEARCH_URL'].nil? # REQUIRED
+gem 'sidekiq', require: !ENV['SIDEKIQ'].nil? # REQUIRED
+gem 'redis', require: !ENV['REDIS_URL'].nil? # REQUIRED
+gem 'resque', require: !ENV['RESQUE'].nil? # REQUIRED
+gem 'elasticsearch', require: !ENV['ELASTICSEARCH_URL'].nil? # REQUIRED
 # s3 check
-gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil? # REQUIRED
+gem 'aws-sdk', require: !ENV['AWS_ACCESS_KEY_ID'].nil? # REQUIRED

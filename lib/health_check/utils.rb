@@ -6,13 +6,13 @@ module HealthCheck
 
     @@default_smtp_settings =
         {
-            :address              => "localhost",
-            :port                 => 25,
-            :domain               => 'localhost.localdomain',
-            :user_name            => nil,
-            :password             => nil,
-            :authentication       => nil,
-            :enable_starttls_auto => true,
+            address:               "localhost",
+            port:                  25,
+            domain:                'localhost.localdomain',
+            user_name:             nil,
+            password:              nil,
+            authentication:        nil,
+            enable_starttls_auto:  true
         }
 
     cattr_accessor :default_smtp_settings
@@ -67,6 +67,8 @@ module HealthCheck
             errors << HealthCheck::S3HealthCheck.check
           when 'elasticsearch'
             errors << HealthCheck::ElasticsearchHealthCheck.check
+          when 'rabbitmq'
+            errors << HealthCheck::RabbitMQHealthCheck.check
           when "standard"
             errors << HealthCheck::Utils.process_checks(HealthCheck.standard_checks, called_from_middleware)
           when "middleware"
@@ -168,7 +170,26 @@ module HealthCheck
     end
 
     def self.check_cache
-      Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
+      t = Time.now.to_i
+      value = "ok #{t}"
+      ret = Rails.cache.read('__health_check_cache_test__')
+      if ret.to_s =~ /^ok (\d+)$/ 
+        diff = ($1.to_i - t).abs
+        return('Cache expiry is broken. ') if diff > 30
+      elsif ret
+        return 'Cache is returning garbage. '
+      end
+      if Rails.cache.write('__health_check_cache_test__', value, expires_in: 2.seconds)
+        ret = Rails.cache.read('__health_check_cache_test__')
+        if ret =~ /^ok (\d+)$/ 
+          diff = ($1.to_i - t).abs
+          (diff < 2 ? '' : 'Out of date cache or time is skewed. ')
+        else
+          'Unable to read from cache. '
+        end
+      else
+        'Unable to write to cache. '
+      end
     end
 
   end
