@@ -6,6 +6,7 @@
   * Got all travis tests passing
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
+  * Merged PR S3 should not depend on Rails secrets file #77 by natefaerber
 
 * 3.0.0
  * First release on rails5 branch
