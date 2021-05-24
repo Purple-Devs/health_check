@@ -47,6 +47,7 @@ The health_check controller disables sessions for versions that eagerly load ses
 * database - checks that the current migration level can be read from the database
 * email - basic check of email - :test returns true, :sendmail checks file is present and executable, :smtp sends HELO command to server and checks response
 * migration - checks that the database migration level matches that in db/migrations
+* rabbitmq - RabbitMQ Health Check
 * redis / redis-if-present - checks Redis connectivity
 * resque-redis / resque-redis-if-present - checks Resque connectivity to Redis
 * s3 / s3-if-present - checks proper permissions to s3 buckets
@@ -151,6 +152,9 @@ To change the configuration of health_check, create a file `config/initializers/
 
       # http status code used when the ip is not allowed for the request
       config.http_status_for_ip_whitelist_error = 403
+
+      # rabbitmq
+      config.rabbitmq_config = {}
 
       # When redis url is non-standard
       config.redis_url = 'redis_url'

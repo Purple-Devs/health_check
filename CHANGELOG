@@ -6,6 +6,7 @@
   * Got all travis tests passing
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
+  * Merged PR RabbitMQ Health check #98 from rhuanbarreto
 
 * 3.0.0
  * First release on rails5 branch
