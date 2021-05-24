@@ -6,12 +6,11 @@ The basic goal is to quickly check that rails is up and running and that it has 
 
 Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
 
-Use gem versions for stable releases, or github branch / commits for development versions:
-* gem versions ~> 3.0 for Rails 5.x and 6.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] stable branch;
-* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] stable branch;
-* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] stable branch;
-* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] stable branch;
-* {master}[https://github.com/ianheggie/health_check/tree/master] branch for edge development;
+Use gem versions for stable releases:
+* ~> 3.0 for Rails 5.x and 6.x (etc until there is a proven need to split off another branch),
+* ~> 2.0 for Rails 4.x,
+* ~> 1.7 for Rails 3.x,
+* ~> 1.6.3 for Rails 2.3
 
 Note: it is best to pin to a specific commit if using a development branch as sometimes tests break.
 
@@ -312,7 +311,7 @@ The command `rake test` will also launch these tests, except it cannot install t
 
 == Copyright
 
-Copyright (c) 2010-2017 Ian Heggie, released under the MIT license.
+Copyright (c) 2010-2021 Ian Heggie, released under the MIT license.
 See MIT-LICENSE for details.
 
 == Contributors
@@ -320,6 +319,12 @@ See MIT-LICENSE for details.
 Thanks go to the various people who have given feedback and suggestions via the issues list and pull requests.
 
 === Contributing
+
+Use gem versions for stable releases, or github branch / commits for development versions:
+* for Rails 5.x and 6.x use feature branched off master {master}[https://github.com/ianheggie/health_check/tree/master] for development;
+* for Rails 4.x use feature branches off the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] stable branch for development;
+* for Rails 3.x use feature branches off the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] stable branch for development;
+* for Rails 2.3 use feature branches off the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] stable branch for development;
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
