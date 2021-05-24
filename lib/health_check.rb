@@ -71,10 +71,10 @@ module HealthCheck
   mattr_accessor :redis_url
   self.redis_url = nil
 
-  # Include the error in the response body. You may want to set this to false
-  # if your /health_check endpoint is open to the public internet
+  # Include the error in the response body. 
+  # You should only do this where your /health_check endpoint is NOT open to the public internet
   mattr_accessor :include_error_in_response_body
-  self.include_error_in_response_body = true
+  self.include_error_in_response_body = false
 
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
