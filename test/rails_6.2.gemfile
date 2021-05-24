@@ -15,14 +15,15 @@ group :development, :test do
     gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
-  
-  # redis based checks
-  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
-  gem 'redis', :require => !ENV['REDIS_URL'].nil?
-  gem 'resque', :require => !ENV['RESQUE'].nil?
-  # s3 check
-  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
+
+# redis based checks
+gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil? # REQUIRED
+gem 'redis', :require => !ENV['REDIS_URL'].nil? # REQUIRED
+gem 'resque', :require => !ENV['RESQUE'].nil? # REQUIRED
+gem 'elasticsearch', :require => !ENV['ELASTICSEARCH_URL'].nil? # REQUIRED
+# s3 check
+gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil? # REQUIRED
 
 gem 'webpacker', '~> 4.0.7' # REQUIRED
 gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0
