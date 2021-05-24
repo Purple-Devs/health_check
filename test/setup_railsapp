@@ -262,9 +262,8 @@ fi
 
 echo
 echo ================= $PWD/Gemfile ===================
+cat Gemfile
 echo
-echo running smarter_bundle install
-smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
 echo ==================================================
 echo running smarter_bundle install
 smarter_bundle install
