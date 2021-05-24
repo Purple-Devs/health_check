@@ -265,6 +265,7 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 == Similar projects
 
 * fitter_happier plugin by atmos - plugin with similar goals, but not compatible with uptime, and does not check email gateway
+* HealthBit - inspired by this gem but with a fresh start as a simpler rack only application, no travis CI tests (yet?) but looks interesting.
 
 == Testing
 
