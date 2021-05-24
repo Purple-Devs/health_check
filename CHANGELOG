@@ -1,5 +1,11 @@
 = Change Log =
 
+* May 2021
+  * Updated all the branches to work with the latest travis and gem changes, as some gems needed to be locked down.
+  * Updated to test rails 6.0 and 6.1
+  * Got all travis tests passing
+  * Removed old, unused branches
+
 * 3.0.0
  * First release on rails5 branch
  * Depends on railties rather than rails so it can be used with trimmed down stacks
