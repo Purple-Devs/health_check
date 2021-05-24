@@ -5,6 +5,7 @@
   * Updated to test rails 6.0 and 6.1
   * Got all travis tests passing
   * Removed old, unused branches
+  * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
 
 * 3.0.0
  * First release on rails5 branch
