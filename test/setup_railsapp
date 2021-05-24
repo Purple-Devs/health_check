@@ -183,7 +183,7 @@ echo "Configuring mailer to point to fake_smtp_server port 3555"
 cat >> config/environment.rb <<'!EOF!'
 
 ActionMailer::Base.delivery_method = :smtp
-ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
+ActionMailer::Base.smtp_settings = { address: "localhost", port: 3555 }
 
 !EOF!
 
@@ -225,7 +225,7 @@ then
     exit 2
 fi
 echo Adding health_check as gem to Gemfile...
-echo "gem 'health_check', :path => '$base_dir'" >> Gemfile
+echo "gem 'health_check', path: '$base_dir'" >> Gemfile
 
 case "$RAILS_SERVER" in
 webrick|'')
@@ -419,11 +419,11 @@ cat > app/controllers/example_controller.rb <<'EOF'
 class ExampleController < ApplicationController
 
   def index
-    render :plain => 'example page'
+    render plain: 'example page'
   end
   
   def catchall
-    render :plain => 'catch all route'
+    render plain: 'catch all route'
   end
   
 end
@@ -481,11 +481,11 @@ if [ -s config/routes.rb ]; then
     # rails 3.0+
     echo "  # -----------------------------------------"
     echo "  # START OF SECTION FOR TESTING HEALTH_CHECK"
-    echo "  get 'example(/:action(/:id))(.:format)' => 'example'"
+    echo "  get 'example(/:action(/:id))(.:format)', to: 'example'"
     echo "  if File.exists?('$catchall_file')"
     echo "    health_check_routes"
     echo "    # CATCH ALL ROUTE"
-    echo "    get '*path', :to => 'example#catchall'"
+    echo "    get '*path', to: 'example#catchall'"
     echo "  end"
     echo "  # END OF SECTION FOR TESTING HEALTH_CHECK"
     echo "  # ---------------------------------------"
