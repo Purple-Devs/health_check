@@ -58,7 +58,7 @@ module HealthCheck
   mattr_accessor :full_checks
   mattr_accessor :standard_checks
   self.custom_checks = { }
-  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present']
+  self.full_checks = ['database', 'migrations', 'custom', 'email', 'cache', 'redis-if-present', 'sidekiq-redis-if-present', 'resque-redis-if-present', 's3-if-present', 'elasticsearch', 'elasticsearch-if-present']
   self.standard_checks = [ 'database', 'migrations', 'custom', 'emailconf' ]
 
   # Middleware based checks
@@ -92,6 +92,7 @@ require 'health_check/base_health_check'
 require 'health_check/resque_health_check'
 require 'health_check/s3_health_check'
 require 'health_check/redis_health_check'
+require 'health_check/elasticsearch_health_check'
 require 'health_check/sidekiq_health_check'
 require 'health_check/utils'
 require 'health_check/health_check_controller'
