@@ -20,16 +20,16 @@ group :development, :test do
   gem 'shoulda'
   
   # redis based checks
-  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
-  gem 'redis', :require => !ENV['REDIS_URL'].nil?
-  gem 'resque', :require => !ENV['RESQUE'].nil?
+  gem 'sidekiq', require: !ENV['SIDEKIQ'].nil?
+  gem 'redis', require: !ENV['REDIS_URL'].nil?
+  gem 'resque', require: !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+  gem 'aws-sdk-s3', require: !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
 # Initial Gemfile has therubyracer commented out
-gem 'therubyrhino', :platform => :jruby # REQUIRED
-gem 'therubyracer', :platform => :ruby # REQUIRED
+gem 'therubyrhino', platform: :jruby # REQUIRED
+gem 'therubyracer', platform: :ruby # REQUIRED
 
 gem 'webpacker', '~> 4.0.7' # REQUIRED
 gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0

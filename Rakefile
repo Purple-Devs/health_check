@@ -8,7 +8,7 @@ task :test do
   exec '/bin/bash', './test/test_with_railsapp'
 end
 
-task :default => :test
+task default: :test
 
 begin
   gem 'rdoc'
