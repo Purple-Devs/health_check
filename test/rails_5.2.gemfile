@@ -2,20 +2,25 @@
 
 source 'https://rubygems.org'
 
-# Bundle edge Rails instead:
-
 ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
-gem 'rails'
-gem 'rake'
-gem 'rack'
+gem 'rails', '~> 5.2.0'
+gem 'rake', '>= 0.8.7'
+
+#  spring-watcher-listen was resolved to 2.0.1, which depends on
+#    listen was resolved to 3.1.5, which depends on
+#      ruby_dep
+#      and ruby_dep 1.5 requires 2.2.3 or later
+gem 'ruby_dep', '~> 1.3.0'  # REQUIRED
+
+gem 'listen', '<3.1.2' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
     gem 'jruby-openssl'
     gem 'activerecord-jdbcsqlite3-adapter'
   else
-    gem 'sqlite3'
+    gem 'sqlite3', "~> 1.3.7"
   end
   gem 'shoulda'
   
@@ -24,13 +29,7 @@ group :development, :test do
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+
 end
 
-# Initial Gemfile has therubyracer commented out
-gem 'therubyrhino', :platform => :jruby # REQUIRED
-gem 'therubyracer', :platform => :ruby # REQUIRED
-
-gem 'webpacker', '~> 4.0.7' # REQUIRED
-gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0
-gem 'webrick' # REQUIRED for ruby 3.0

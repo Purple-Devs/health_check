@@ -253,7 +253,7 @@ common_tests()
     test_no=$1
 
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: CHECKING routes exist..."
+        echo "${test_no}[line $LINENO]: CHECKING routes exist..."
         $rake routes | tee /tmp/t$$
         echo
         case `egrep ${route_prefix} /tmp/t$$ || true` in
@@ -266,7 +266,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING can get a static file ..."
+        echo "${test_no}[line $LINENO]: TESTING can get a static file ..."
         case "$RAILS_ENV=`egrep '^\s*config.serve_static_[asetfil]* *= *false' config/environments/${RAILS_ENV}.rb`" in
         production*static*false*)
             echo "  SKIPPED (disabled in production)"
@@ -281,21 +281,21 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING can get an example controller ..."
+        echo "${test_no}[line $LINENO]: TESTING can get an example controller ..."
         $testurl ${host}/example 200 text/plain 'example page'
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING direct call to catchall method on example controller ..."
+        echo "${test_no}[line $LINENO]: TESTING direct call to catchall method on example controller ..."
         $testurl ${host}/example/catchall 200 text/plain 'catch all route'
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should pass with no database migrations ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should pass with no database migrations ..."
         ls db/migrate
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
@@ -303,7 +303,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should fail without initial database migration ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should fail without initial database migration ..."
         cp $base_dir/test/migrate/nine/* db/migrate
         ls db/migrate
         $testurl ${host}/${route_prefix}/migration 550 text/plain failed
@@ -312,7 +312,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/database should pass without initial database migration (since it ignores the difference) ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/database should pass without initial database migration (since it ignores the difference) ..."
         $testurl ${host}/${route_prefix}/database 200 text/plain $success
         echo
     fi
@@ -321,14 +321,14 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/site should pass ..."
         $testurl ${host}/${route_prefix}/site 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should pass after initial database migration ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should pass after initial database migration ..."
         $rake db:migrate
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
@@ -344,9 +344,9 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/database should fail if the database has been corrupted ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/database should fail if the database has been corrupted ..."
 
-        $testurl ${host}/${route_prefix}/database 550 text/plain failed
+        $testurl ${host}/${route_prefix}/database 550 text/plain failed:
         echo
     fi
 
@@ -356,8 +356,8 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/database should have response body 'failure' if include_error_in_response_body is false"
-        $testurl ${host}/${route_prefix}/database 550 text/plain failure
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/database should have response body 'health_check failed' but no error details if include_error_in_response_body is false"
+        $testurl ${host}/${route_prefix}/database 550 text/plain 'health_check failed' failed:
         echo
     fi
 
@@ -367,10 +367,10 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/site should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/site should pass ..."
         $testurl ${host}/${route_prefix}/site 200 text/plain $success
         if $has_middleware; then
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/middleware_site should pass ..."
             $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
         fi
         echo
@@ -381,7 +381,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should fail without all migrations ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should fail without all migrations ..."
         cp $base_dir/test/migrate/twelve/* db/migrate
 
         ls db/migrate
@@ -391,7 +391,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should pass after both database migrations ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should pass after both database migrations ..."
         $rake db:migrate
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
@@ -399,7 +399,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/migration should pass after both database migrations ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should pass after both database migrations ..."
         $rake db:migrate
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
         echo
@@ -407,14 +407,14 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/email should fail without smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/email should fail without smtp available ..."
         $testurl ${host}/${route_prefix}/email 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/email should pass with smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/email should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
@@ -424,14 +424,14 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix} (all) should fail without smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix} (all) should fail without smtp available ..."
         $testurl ${host}/${route_prefix} 550 text/plain failed
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/all should fail without smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/all should fail without smtp available ..."
         $testurl ${host}/${route_prefix} 550 text/plain failed
         echo
     fi
@@ -439,7 +439,7 @@ common_tests()
     kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix} (all) should pass with smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix} (all) should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
@@ -450,7 +450,7 @@ common_tests()
     kill -9 $fake_smtp_pid || echo fake_smtp_server had finished as expected
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/all should pass with smtp available ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/all should pass with smtp available ..."
         $fake_smtp_server &
         fake_smtp_pid=$!
         sleep 5
@@ -460,28 +460,28 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/pass should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/pass should pass ..."
         $testurl ${host}/${route_prefix}/pass 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/custom should pass ..."
         $testurl ${host}/${route_prefix}/custom 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom.html should pass (returning plain text) ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/custom.html should pass (returning plain text) ..."
         $testurl ${host}/${route_prefix}/custom.html 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom.json should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/custom.json should pass ..."
         $testurl ${host}/${route_prefix}/custom.json 200 application/json '"healthy":true'
         $testurl ${host}/${route_prefix}/custom.json 200 application/json "\"message\":\"$success\""
         echo
@@ -489,7 +489,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom.xml should pass ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/custom.xml should pass ..."
         $testurl ${host}/${route_prefix}/custom.xml 200 application/xml '<healthy type="boolean">true</healthy>'
         $testurl ${host}/${route_prefix}/custom.xml 200 application/xml "<message>$success</message>"
         echo
@@ -498,27 +498,27 @@ common_tests()
     test_no=`expr 1 + $test_no`
     rm -f $custom_file
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/custom should fail when custom returns string ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/custom should fail when custom returns string ..."
         $testurl ${host}/${route_prefix}/custom 550 text/plain failed
         echo
     fi
 
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}/pass should pass even if other custom test returns string ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/pass should pass even if other custom test returns string ..."
         $testurl ${host}/${route_prefix}/pass 200 text/plain $success
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix} (all) should fail when custom check fails ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix} (all) should fail when custom check fails ..."
         $testurl ${host}/${route_prefix} 550 text/plain "$custom_file is missing!"
         echo
     fi
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}.json (all) should fail when custom check fails ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}.json (all) should fail when custom check fails ..."
         $testurl ${host}/${route_prefix}.json 555 application/json '"healthy":false'
         $testurl ${host}/${route_prefix}.json 555 application/json "$custom_file is missing!"
         echo
@@ -526,7 +526,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING ${route_prefix}.xml (all) should fail when custom check fails ..."
+        echo "${test_no}[line $LINENO]: TESTING ${route_prefix}.xml (all) should fail when custom check fails ..."
         $testurl ${host}/${route_prefix}.xml 555 application/xml '<healthy type="boolean">false</healthy>'
         echo
     fi
@@ -534,10 +534,10 @@ common_tests()
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         if $has_middleware; then
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should pass ..."
+            echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/middleware_site should pass ..."
             $testurl ${host}/${route_prefix}/middleware_site 200 text/plain $success
         else
-            echo "${test_no}: TESTING ${route_prefix}/middleware_site should fail ..."
+            echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/middleware_site should fail ..."
             $testurl ${host}/${route_prefix}/middleware_site 550 text/plain failed
         fi
         echo
@@ -545,7 +545,7 @@ common_tests()
 
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
-        echo "${test_no}: TESTING log files to check for deprecation warnings ..."
+        echo "${test_no}[line $LINENO]: TESTING log files to check for deprecation warnings ..."
         if egrep ' is deprecated|DEPRECATION WARNING' $railsapp/log/[tp][er][so][td]*.log 
         then
             echo Found deprecation warnings - failed test
