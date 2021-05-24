@@ -87,6 +87,14 @@ To change the configuration of health_check, create a file `config/initializers/
       # Text output upon success
       config.success = 'success'
 
+      # Text output upon failure
+      config.failure = "failure"
+
+      # Include the error in the response body. 
+      # You should only turn this on where there is no public access to this url as it may leak private information
+      mattr_accessor :include_error_in_response_body
+      self.include_error_in_response_body = false
+
       # Timeout in seconds used when checking smtp server
       config.smtp_timeout = 30.0
 
