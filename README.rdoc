@@ -1,14 +1,16 @@
 = health_check gem
 
-Simple health check of Rails edge apps for use with Pingdom, NewRelic, EngineYard etc.
+Simple health check of Rails 5.x and 6.x apps for use with Pingdom, NewRelic, EngineYard etc.
 
 The basic goal is to quickly check that rails is up and running and that it has access to correctly configured resources (database, email gateway)
 
+Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
+
 Use gem versions for stable releases, or github branch / commits for development versions:
-* gem versions ~> 3.0 for Rails 5.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] development branch
-* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] development branch;
-* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] development branch;
-* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] development branch;
+* gem versions ~> 3.0 for Rails 5.x and 6.x, or the {rails5}[https://github.com/ianheggie/health_check/tree/rails5] stable branch;
+* gem versions ~> 2.0 for Rails 4.x, or the {rails4}[https://github.com/ianheggie/health_check/tree/rails4] stable branch;
+* gem versions ~> 1.7 for Rails 3.x, or the {rails3}[https://github.com/ianheggie/health_check/tree/rails3] stable branch;
+* gem versions ~> 1.6.1 for Rails 2.3, or the {rails2.3}[https://github.com/ianheggie/health_check/tree/rails2.3] stable branch;
 * {master}[https://github.com/ianheggie/health_check/tree/master] branch for edge development;
 
 Note: it is best to pin to a specific commit if using a development branch as sometimes tests break.
@@ -58,7 +60,7 @@ The email gateway is not checked unless the smtp settings have been changed.
 Specify full or include email in the list of checks to verify the smtp settings
 (eg use 127.0.0.1 instead of localhost).
 
-Note: rails 4.0 also checks migrations by default in development mode and throws an ActiveRecord::PendingMigrationError exception (http error 500) if there is an error
+Note: rails also checks migrations by default in development mode and throws an ActiveRecord::PendingMigrationError exception (http error 500) if there is an error
 
 == Installation
 
@@ -185,7 +187,6 @@ See
 
 * Pingdom Website Monitoring - https://www.pingdom.com
 * NewRelic Availability Monitoring - http://newrelic.com/docs/features/availability-monitoring-faq
-* Uptime by OpenACS - http://uptime.openacs.org/uptime/
 * Engine Yard's guide - https://support.cloud.engineyard.com/entries/20996821-monitor-application-uptime (although the guide is based on fitter_happier plugin it will also work with this gem)
 * Nagios check_http (with -s success) - https://www.nagios-plugins.org/doc/man/check_http.html
 * Any other montoring service that can be set to check for the word success in the text returned from a url
@@ -244,16 +245,6 @@ Cache-control is set with
 * max-age (default 1)
 
 Last-modified is set to the current time (rounded down to a multiple of max_age when max_age > 1)
-
-== Note on Patches/Pull Requests
-
-<em>Feedback welcome! Especially with suggested replacement code and corresponding tests</em>
-
-1. Fork it
-2. Create your feature branch (<tt>git checkout -b my-new-feature</tt>)
-3. Commit your changes (<tt>git commit -am 'Add some feature'</tt>)
-4. Push to the branch (<tt>git push origin my-new-feature</tt>)
-5. Create new Pull Request.
 
 == Known Issues
 
@@ -332,6 +323,10 @@ Thanks go to the various people who have given feedback and suggestions via the 
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request (Code with BDD tests are favoured)
+3. Create a test that confirms your changes work
+4. Update README.rdoc to explain enhancements, or add succinct comment in code when fixing bugs
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin my-new-feature`)
+7. Create new Pull Request (Code with BDD tests and documentation are highly favoured)
+
+<em>Feedback welcome! Especially with suggested replacement code, tests and documentation</em>

@@ -10,7 +10,6 @@ esac
 
 chruby_version=0.3.9
 chruby=chruby-${chruby_version}
-
 set -x
 set -eE -o functrace
 
@@ -32,15 +31,18 @@ report_failure() {
 
 trap 'report_failure "${BASH_LINENO[*]}" "$LINENO" "${FUNCNAME[*]:-script}" "$?" "$BASH_COMMAND"' ERR
 
+
 id
 pwd
 export DEBIAN_FRONTEND=noninteractive
 find /tmp/got-apt-update -mtime -1 || ( apt-get update && touch /tmp/got-apt-update )
 apt install --yes -q build-essential ruby ruby-dev sqlite3 libsqlite3-dev nodejs git git-core
 apt install --yes -q gcc autoconf bison libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev
-apt install --yes -q libgdbm6
-
-
+apt install --yes -q libgdbm3
+# useful when debugging
+apt install --yes -q silversearcher-ag vim exuberant-ctags
+apt install --yes -q unattended-upgrades
+unattended-upgrade
 # The following is not required for testing, install if you are doing manual tests with extra gems
 # apt install --yes -q mysql-client mysql-server libmysqlclient-dev
 # apt install --yes -q libcurl4-openssl-dev libncurses5-dev libxml2-dev libxslt1-dev
@@ -64,7 +66,13 @@ EOF
   which ruby-build || PREFIX=/usr/local ./ruby-build/install.sh
 
   mkdir -p /opt/rubies
-  for v in 2.5.0 2.6.6 2.6.7 2.7.1 2.7.3 3.0.1
+  for v in 2.2.2
+  do
+    [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )
+    [ -x /opt/rubies/${v}/bin/bundle ] || ( /opt/rubies/${v}/bin/gem install bundler -v '<2.0' )
+  done
+  
+  for v in 2.3.8 2.4.10 2.5.9 2.5.0 2.6.6 2.6.7 2.7.1 2.7.3 3.0.1
   do
     [ -x /opt/rubies/$v/bin/ruby ] || ( ruby-build $v /opt/rubies/$v )
     [ -x /opt/rubies/$v/bin/bundle ] || ( /opt/rubies/$v/bin/gem install bundler )
@@ -72,7 +80,8 @@ EOF
 )
 
 echo Setup system ruby
-which bundle || gem install bundler 
+which bundle || gem install bundler || gem install bundler -v '<2.0'
+which bundle || gem install bundler -v '< 2.0'
 bundle --version
 set +x
 cat <<EOF

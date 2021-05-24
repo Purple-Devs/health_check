@@ -1,7 +1,7 @@
-dist: focal
-# Released April 2020, Support ended: April 2025
-# ruby 2.5.7, 2.5.8, 2.6.5, 2.6.6, 2.7.0 and 2.7.1 pre-installed on travis
-sudo: false
+dest: xenial
+os: linux
+# Released April 2018, Support ended: April 2023
+# ruby 2.4.9, 2.5.3, 2.5.7, 2.6.5 (default) and 2.7.0 pre-installed on travis
 addons:
   apt:
     packages:
@@ -26,23 +26,105 @@ bundler_args: "--binstubs"
 
 script: ./test/test_with_railsapp
 
-matrix:
+jobs:
   fast_finish: true
 
   allow_failures:
-    - rvm: 3.0.1
-      gemfile: test/rails_edge.gemfile
-      env:
-      - RAILS_VERSION=edge
-      - MIDDLEWARE=YES
 
     - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
-      env:
-      - RAILS_VERSION=edge
-      - MIDDLEWARE=YES
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
+
+    - rvm: 3.0.0
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
 
   include:
+    # -------------------------------------
+    # Standard
+    
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env: 
+      - RAILS_VERSION=5.0 
+      - MIDDLEWARE=no
+      - RUBYGEMS_VERSION=2.7.11
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 2.3.6
+      gemfile: test/rails_5.0.gemfile
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=no
+
+    # rails 5.1 sometime before May 2017
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.1.gemfile
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
+      - RUBYGEMS_VERSION=2.7.11
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 2.3.6
+      gemfile: test/rails_5.1.gemfile
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 2.4.3
+      gemfile: test/rails_5.1.gemfile
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=no
+
+    # -------------------------------------
+    # Middleware
+    
+    # ruby 5.0  Jun. 2016
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.0.gemfile
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=yes
+      - RUBYGEMS_VERSION=2.7.11
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 2.3.6
+      gemfile: test/rails_5.0.gemfile
+      env:
+      - RAILS_VERSION=5.0
+      - MIDDLEWARE=yes
+
+    # rails 5.1 sometime before May 2017
+    
+    - rvm: 2.2.2
+      gemfile: test/rails_5.1.gemfile
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=yes
+      - RUBYGEMS_VERSION=2.7.11
+      - BUNDLER_VERSION=1.17.3
+
+    - rvm: 2.4.3
+      gemfile: test/rails_5.1.gemfile
+      env:
+      - RAILS_VERSION=5.1
+      - MIDDLEWARE=yes
+
+
+    # rails 5.2 April 2018
+    # -------------------------------------
+    # INSTALLED AS MIDDLEWARE
+    
+
+    # rails 6.0
+
     - rvm: 2.5.0
       gemfile: test/rails_6.0.gemfile
       env:
@@ -54,13 +136,10 @@ matrix:
       env:
       - RAILS_VERSION=6.0
       - MIDDLEWARE=YES
+    
+    # Not testing past recommended ruby version as listed on https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
 
-    - rvm: 2.7.1
-      gemfile: test/rails_6.0.gemfile
-      env:
-      - RAILS_VERSION=6.0
-      - MIDDLEWARE=YES
-
+    # --------------------------------------
     - rvm: 2.5.0
       gemfile: test/rails_6.1.gemfile
       env:
@@ -84,28 +163,40 @@ matrix:
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+    
 
-    - rvm: 2.5.0
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
+#    - rvm: 2.5.0
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 2.6.6
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 2.7.3
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+#    - rvm: 3.0.1
+#      gemfile: test/rails_6.2.gemfile
+#      env:
+#      - RAILS_VERSION=6.2
+#      - MIDDLEWARE=YES
+#
+    
+    # ruby / rails edge
+    
+    - rvm: 3.0.0
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
 
-    - rvm: 2.6.6
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
-    - rvm: 2.7.3
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
-
-    - rvm: 3.0.1
-      gemfile: test/rails_6.2.gemfile
-      env:
-      - RAILS_VERSION=6.2
-      - MIDDLEWARE=YES
+    - rvm: ruby-head
+      gemfile: test/rails_edge.gemfile
+      env: RAILS_VERSION=edge MIDDLEWARE=YES
 

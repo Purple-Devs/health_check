@@ -2,10 +2,12 @@
 
 source 'https://rubygems.org'
 
-ruby RUBY_VERSION < '2.5' ? '2.5.0' : RUBY_VERSION
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
 
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 5.0.0'
 gem 'rake', '>= 0.8.7'
+
+gem 'listen', '<3.1.2' # REQUIRED
 
 group :development, :test do
   if defined?(JRUBY_VERSION)
@@ -24,6 +26,3 @@ group :development, :test do
   gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
-gem 'webpacker', '~> 4.0.7' # REQUIRED
-gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0
-gem 'webrick' # REQUIRED for ruby 3.0

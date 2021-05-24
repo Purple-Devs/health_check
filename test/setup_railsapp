@@ -88,9 +88,9 @@ rails="$base_dir/test/bin/rails"
 rake="$base_dir/test/bin/rake"
 
 echo Checking $rails is present ...
-[ -f $rails -a -f $rake ] || bundle exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
-[ -f $rails ] || bundle binstubs railties || echo '(ignored bundle exit status)'
-[ -f $rails ] || bundle binstubs rails || echo '(ignored bundle exit status)'
+[ -f $rails -a -f $rake ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} exec rake rails:update:bin || echo '(ignored rake rails:update:bin exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs railties || echo '(ignored bundle exit status)'
+[ -f $rails ] || bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rails || echo '(ignored bundle exit status)'
 if [ ! -f $rails ]; then
     echo "Test aborted (unable to create $rails)"
     exit 2
@@ -98,7 +98,7 @@ fi
 
 if [ ! -f $rake ]; then
     echo "Running bundle binstubs rake ..."
-    if ! bundle binstubs rake || [ ! -f $rake ]; then
+    if ! bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} binstubs rake || [ ! -f $rake ]; then
         echo "Test aborted (unable to create $rake)"
         exit 2
     fi
@@ -143,9 +143,6 @@ esac
 
 echo "Creating $actual_rails_version app in $tmp_dir/railsapp using adapter $db"
 case "$actual_rails_version" in
-    *' '[12].*)
-        $rails railsapp -d $db
-        ;;
     *' '[345].*)
         args="--skip-bundle -d $db"
         case "$BUNDLE_GEMFILE" in
@@ -158,7 +155,7 @@ case "$actual_rails_version" in
         esac
         ;;
     *' '[6].*)
-        args="--skip-bundle -d $db --skip-git --skip-webpack-install --skip-bootsnap"
+        args="--skip-bundle -d $db --skip-git --skip-bootsnap"
         case "$BUNDLE_GEMFILE" in
         *rails_edge.gemfile)
             $rails new railsapp $args --edge
@@ -193,25 +190,27 @@ ActionMailer::Base.smtp_settings = { :address => "localhost", :port => 3555 }
 echo Adding an initializer for health_check gem ...
 mkdir -p config/initializers
 tee config/initializers/health_check.rb <<!
-HealthCheck.setup do |config|
-  config.success = "$success"
-  config.smtp_timeout = 60.0
-  config.http_status_for_error_text = 550
-  config.http_status_for_error_object = 555
-  config.uri = '$route_prefix'
-  config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
-  config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
-  config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
-
-  config.add_custom_check do
-    File.exists?("$custom_file") ? '' : '$custom_file is missing!'
+if defined? HealthCheck
+  HealthCheck.setup do |config|
+    config.success = "$success"
+    config.smtp_timeout = 60.0
+    config.http_status_for_error_text = 550
+    config.http_status_for_error_object = 555
+    config.uri = '$route_prefix'
+    config.origin_ip_whitelist = ENV['IP_WHITELIST'].split(',') unless ENV['IP_WHITELIST'].blank?
+    config.basic_auth_username = ENV['AUTH_USER'] unless ENV['AUTH_USER'].blank?
+    config.basic_auth_password = ENV['AUTH_PASSWORD'] unless ENV['AUTH_PASSWORD'].blank?
+  
+    config.add_custom_check do
+      File.exists?("$custom_file") ? '' : '$custom_file is missing!'
+    end
+  
+    config.add_custom_check('pass') do
+      ''
+    end
+  
+    config.include_error_in_response_body = false if ENV['HIDE_ERROR_RESPONSE'].present?
   end
-
-  config.add_custom_check('pass') do
-    ''
-  end
-
-  config.include_error_in_response_body = false if ENV['HIDE_ERROR_RESPONSE'].present?
 end
 !
 
@@ -237,14 +236,45 @@ webrick|'')
         echo "gem '$RAILS_SERVER'" >> Gemfile
         ;;
 esac
-egrep REQUIRED < ${INITIAL_BUNDLE_GEMFILE} >> Gemfile || echo No required gems found...
+TAB=$'\t'
+QUOTES='"'"'"
+case "$actual_rails_version" in
+*' '5.0*)
+  if egrep -i 'gem.*sqlite3' Gemfile ; then
+     # Can't do this as a require as we may go back to testing JRuby
+     echo Force sqlite to 1.3.13+ version for Rails 5.0 ...
+     gem=sqlite3
+     sed -i.bak -e "s/^\([ ${TAB}]*gem[ ${TAB}]*[${QUOTES}]${gem}[${QUOTES}]\)\(.*\)$/\1, '~> 1.3.13' # overriden: \2/" Gemfile
+  fi
+  ;;
+esac
+if egrep -q REQUIRED ${INITIAL_BUNDLE_GEMFILE} ; then
+  sed -n "s/^[ ${TAB}]*gem[ ${TAB}]*[${QUOTES}]\([^${QUOTES}]*\)[${QUOTES}].*REQUIRED.*/\1/p" ${INITIAL_BUNDLE_GEMFILE} | while read gem
+  do
+    echo "Commenting out gem '$gem' line in Gemfile"
+    sed -i.bak -e "s/^\([ ${TAB}]*gem[ ${TAB}]*[${QUOTES}]${gem}[${QUOTES}].*\)$/# overriden by REQUIRED below: \1/" Gemfile
+  done
+  echo Adding Required gems
+  egrep REQUIRED ${INITIAL_BUNDLE_GEMFILE} | tee -a Gemfile
+else
+  echo No required gems to be added to Gemfile 
+fi
+
 echo
 echo ================= $PWD/Gemfile ===================
-cat Gemfile
 echo
+echo running smarter_bundle install
+smarter_bundle ${BUNDLER_VERSION:+_${BUNDLER_VERSION}_} install
+echo ==================================================
 echo running smarter_bundle install
 smarter_bundle install
 $rehash
+
+if egrep webpacker Gemfile && [ ! -f config/webpacker.yml ] ; then
+  echo completing setup by running rails webpacker:install ...
+  $rails webpacker:install
+fi
+
 echo "Using binstubs in $railsapp/bin for rails and rake commands"
 rails="$railsapp/bin/rails"
 rake="$railsapp/bin/rake"
@@ -270,6 +300,7 @@ $rehash
 export PATH="`pwd`/bin:$PATH"
 echo ================= $PWD/Gemfile.lock ===================
 cat Gemfile.lock
+echo ==================================================
 echo
 
 for e in test ${RAILS_ENV2:-production}
@@ -284,9 +315,13 @@ do
     fi
 done
 
-echo "============== $PWD/config/boot.rb ============="
-sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
-cat config/boot.rb
+if egrep -q 'bootsnap.setup' config/boot.rb  ; then
+  echo Commenting out bootsnap from config/boot.rb
+  sed -i.bak -e 's/^\(.*bootsnap.setup\)/# \1/' config/boot.rb 
+  echo "============== $PWD/config/boot.rb ============="
+  cat config/boot.rb
+  echo ==================================================
+fi
 rm -rf tmp/cache/bootsnap*
 echo 
 
@@ -294,7 +329,7 @@ echo "============== $PWD/config/environment.rb ============="
 cat config/environment.rb
 echo 
 
-echo ========================
+echo =========================================================
 case $db in
     jdbcsqlite3)
       for e in test ${RAILS_ENV2:-production}

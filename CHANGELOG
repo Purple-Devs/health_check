@@ -1,5 +1,16 @@
 = Change Log =
 
+* 3.0.0
+ * First release on rails5 branch
+ * Depends on railties rather than rails so it can be used with trimmed down stacks
+ * Corrected ruby version required to match rails
+ * Cleaned up README
+ * redis_url now defaults to nil (url determined by redis gem)
+ * Cleaned out rails 4.0 dependent code
+ * Cleaned up test code and updated to rails 5 standards, uses smarter_bundler to handle gem ruby version isssues
+ * Added rails 5.1 test
+ * Split all releases to this rails* branchs - master is only for edge development
+
 * 2.7.0
  * Add ability to check health of redis when url is non-standard redis url
 * 2.6.0

@@ -7,6 +7,8 @@ ruby RUBY_VERSION < '2.5' ? '2.5.0' : RUBY_VERSION
 gem 'rails', '~> 6.0.0'
 gem 'rake', '>= 0.8.7'
 
+gem 'listen', '<3.1.2' # REQUIRED
+
 group :development, :test do
   if defined?(JRUBY_VERSION)
     gem 'jruby-openssl'
@@ -21,6 +23,7 @@ group :development, :test do
   gem 'redis', :require => !ENV['REDIS_URL'].nil?
   gem 'resque', :require => !ENV['RESQUE'].nil?
   # s3 check
-  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+  gem 'aws-sdk-s3', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
 end
 
+gem 'webpacker', '~> 4.0.7' # REQUIRED
