@@ -1,0 +1,35 @@
+# Gemfile for health_test testing
+
+source 'https://rubygems.org'
+
+ruby RUBY_VERSION < '2.2.2' ? '2.2.2' : RUBY_VERSION
+
+gem 'rails', '~> 5.1.0'
+gem 'rake', '>= 0.8.7'
+
+#  spring-watcher-listen was resolved to 2.0.1, which depends on
+#    listen was resolved to 3.1.5, which depends on
+#      ruby_dep
+#      and ruby_dep 1.5 requires 2.2.3 or later
+gem 'ruby_dep', '~> 1.3.0'  # REQUIRED
+
+gem 'listen', '<3.1.2' # REQUIRED
+
+group :development, :test do
+  if defined?(JRUBY_VERSION)
+    gem 'jruby-openssl'
+    gem 'activerecord-jdbcsqlite3-adapter'
+  else
+    gem 'sqlite3', "~> 1.3.7"
+  end
+  gem 'shoulda'
+  
+  # redis based checks
+  gem 'sidekiq', :require => !ENV['SIDEKIQ'].nil?
+  gem 'redis', :require => !ENV['REDIS_URL'].nil?
+  gem 'resque', :require => !ENV['RESQUE'].nil?
+  # s3 check
+  gem 'aws-sdk', :require => !ENV['AWS_ACCESS_KEY_ID'].nil?
+
+end
+
