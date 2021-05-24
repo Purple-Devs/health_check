@@ -6,13 +6,13 @@ module HealthCheck
 
     @@default_smtp_settings =
         {
-            :address              => "localhost",
-            :port                 => 25,
-            :domain               => 'localhost.localdomain',
-            :user_name            => nil,
-            :password             => nil,
-            :authentication       => nil,
-            :enable_starttls_auto => true,
+            address:               "localhost",
+            port:                  25,
+            domain:                'localhost.localdomain',
+            user_name:             nil,
+            password:              nil,
+            authentication:        nil,
+            enable_starttls_auto:  true
         }
 
     cattr_accessor :default_smtp_settings
@@ -175,7 +175,7 @@ module HealthCheck
       elsif ret
         return 'Cache is returning garbage. '
       end
-      if Rails.cache.write('__health_check_cache_test__', value, :expires_in => 2.seconds)
+      if Rails.cache.write('__health_check_cache_test__', value, expires_in: 2.seconds)
         ret = Rails.cache.read('__health_check_cache_test__')
         if ret =~ /^ok (\d+)$/ 
           diff = ($1.to_i - t).abs
