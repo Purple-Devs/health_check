@@ -164,7 +164,8 @@ module HealthCheck
     end
 
     def self.check_cache
-      Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
+      Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second)
+      Rails.cache.read('__health_check_cache_test__') == 'ok' ? '' : 'Unable to write to cache. '
     end
 
   end
