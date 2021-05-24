@@ -27,11 +27,12 @@ module HealthCheck
         if errors.blank?
           send_response true, nil, :ok, :ok
         else
-          msg = HealthCheck.include_error_in_response_body ? "health_check failed: #{errors}" : nil
+          msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors}" : nil
           send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           # Log a single line as some uptime checkers only record that it failed, not the text returned
           if logger
-            logger.info msg
+            # Always report details in log
+            logger.info "#{HealthCheck.failure}: #{errors}"
           end
         end
       end

@@ -7,6 +7,8 @@
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
   * Merged PR RabbitMQ Health check #98 from rhuanbarreto
+  * Fixed up failure setting to match previous output on error, and use it as a prefix when the error message is also output (not by default)
+  * Always log the error to rails log even if not including in html response
 
 * 3.0.0
  * First release on rails5 branch
