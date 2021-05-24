@@ -8,6 +8,7 @@
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
   * Fixed up failure setting to match previous output on error, and use it as a prefix when the error message is also output (not by default)
   * Always log the error to rails log even if not including in html response
+  * Merged PR ensure REDIS connections are closed #88 from yld
 
 * 3.0.0
  * First release on rails5 branch
