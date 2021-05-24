@@ -95,7 +95,8 @@ To change the configuration of health_check, create a file `config/initializers/
       # sensitive information
       config.include_error_in_response_body = false
 
-      # error message is always logged to rails log
+      # Log level (success or failure message with error details is sent to rails log unless this is set to nil)
+      config.log_level = 'info'
 
       # Timeout in seconds used when checking smtp server
       config.smtp_timeout = 30.0

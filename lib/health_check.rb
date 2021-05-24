@@ -4,8 +4,12 @@
 module HealthCheck
 
   class Engine < Rails::Engine
-    cattr_accessor :routes_explicitly_defined 
+    cattr_accessor :routes_explicitly_defined
   end
+
+  # Log level
+  mattr_accessor :log_level
+  self.log_level = 'info'
 
   # Text output upon success
   mattr_accessor :success
@@ -47,6 +51,10 @@ module HealthCheck
   # s3 buckets
   mattr_accessor :buckets
   self.buckets = {}
+
+  # rabbitmq
+  mattr_accessor :rabbitmq_config
+  self.rabbitmq_config = {}
 
   # health check uri path
   mattr_accessor :uri
@@ -101,5 +109,6 @@ require 'health_check/utils'
 require 'health_check/health_check_controller'
 require 'health_check/health_check_routes'
 require 'health_check/middleware_health_check'
+require 'health_check/rabbitmq_health_check'
 
 # vi: sw=2 sm ai:
