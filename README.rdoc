@@ -108,7 +108,7 @@ To change the configuration of health_check, create a file `config/initializers/
       config.http_status_for_error_text = 500
 
       # http status code used when an error object is output (json or xml)
-      # Set to 200 if you want your want to distinguish between partial (healthy property == false) and
+      # Set to 200 if you want to distinguish between partial (healthy property == false) and
       # total failure of rails application (http status of 500 etc)
 
       config.http_status_for_error_object = 500
