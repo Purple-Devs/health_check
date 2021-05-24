@@ -6,13 +6,13 @@ module HealthCheck
 
     @@default_smtp_settings =
         {
-            :address              => "localhost",
-            :port                 => 25,
-            :domain               => 'localhost.localdomain',
-            :user_name            => nil,
-            :password             => nil,
-            :authentication       => nil,
-            :enable_starttls_auto => true,
+            address:               "localhost",
+            port:                  25,
+            domain:                'localhost.localdomain',
+            user_name:             nil,
+            password:              nil,
+            authentication:        nil,
+            enable_starttls_auto:  true
         }
 
     cattr_accessor :default_smtp_settings
@@ -164,7 +164,7 @@ module HealthCheck
     end
 
     def self.check_cache
-      Rails.cache.write('__health_check_cache_test__', 'ok', :expires_in => 1.second) ? '' : 'Unable to write to cache. '
+      Rails.cache.write('__health_check_cache_test__', 'ok', expires_in: 1.second) ? '' : 'Unable to write to cache. '
     end
 
   end

@@ -14,8 +14,8 @@ module HealthCheck
       if max_age > 1
         last_modified = Time.at((last_modified.to_f / max_age).floor * max_age).utc
       end
-      public = (max_age > 1) && ! HealthCheck.basic_auth_username
-      if stale?(:last_modified => last_modified, :public => public)
+      is_public = (max_age > 1) && ! HealthCheck.basic_auth_username
+      if stale?(last_modified: last_modified, public: is_public)
         checks = params[:checks] ? params[:checks].split('_') : ['standard']
         checks -= HealthCheck.middleware_checks if HealthCheck.installed_as_middleware
         begin
@@ -41,12 +41,12 @@ module HealthCheck
 
     def send_response(healthy, msg, text_status, obj_status)
       msg ||= healthy ? HealthCheck.success : HealthCheck.failure
-      obj = { :healthy => healthy, :message => msg}
+      obj = { healthy: healthy, message: msg}
       respond_to do |format|
-        format.html { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
-        format.json { render :json => obj, :status => obj_status }
-        format.xml { render :xml => obj, :status => obj_status }
-        format.any { render :plain => msg, :status => text_status, :content_type => 'text/plain' }
+        format.html { render plain: msg, status: text_status, content_type: 'text/plain' }
+        format.json { render json: obj, status: obj_status }
+        format.xml { render xml: obj, status: obj_status }
+        format.any { render plain: msg, status: text_status, content_type: 'text/plain' }
       end
     end
 
@@ -60,9 +60,9 @@ module HealthCheck
     def check_origin_ip
       unless HealthCheck.origin_ip_whitelist.blank? ||
           HealthCheck.origin_ip_whitelist.include?(request.ip)
-        render :plain => 'Health check is not allowed for the requesting IP',
-               :status => HealthCheck.http_status_for_ip_whitelist_error,
-               :content_type => 'text/plain'
+        render plain: 'Health check is not allowed for the requesting IP',
+               status: HealthCheck.http_status_for_ip_whitelist_error,
+               content_type: 'text/plain'
       end
     end
 
