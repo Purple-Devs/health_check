@@ -7,6 +7,19 @@ addons:
     packages:
     - net-tools
 
+services:
+- redis-server
+- elasticsearch
+- rabbitmq
+
+env:
+- REDIS_URL: 'redis://localhost:6379'
+- ELASTICSEARCH_URL: 'http://localhost:9200'
+- RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
+
+before_script:
+  - sleep 10
+
 cache: bundler
 language: ruby
 notifications:
