@@ -6,6 +6,7 @@
   * Got all travis tests passing
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
+  * Merged PR Use remote_ip to accept proxy-forwarded requests #102 by alessio-signorini but made it optional
 
 * 3.0.0
  * First release on rails5 branch
