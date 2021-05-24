@@ -7,6 +7,10 @@ module HealthCheck
     cattr_accessor :routes_explicitly_defined
   end
 
+  # Log level
+  mattr_accessor :log_level
+  self.log_level = 'info'
+
   # Text output upon success
   mattr_accessor :success
   self.success = "success"
@@ -30,6 +34,10 @@ module HealthCheck
   # http status code used when the ip is not allowed for the request
   mattr_accessor :http_status_for_ip_whitelist_error
   self.http_status_for_ip_whitelist_error = 403
+
+  # check remote_ip rather than ip for ip whitelist
+  mattr_accessor :accept_proxied_requests
+  self.accept_proxied_requests = false
 
   # ips allowed to perform requests
   mattr_accessor :origin_ip_whitelist

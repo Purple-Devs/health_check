@@ -7,8 +7,13 @@
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
   * Merged PR RabbitMQ Health check #98 from rhuanbarreto
+  * Merged PR Use remote_ip to accept proxy-forwarded requests #102 by alessio-signorini but made it optional
   * Fixed up failure setting to match previous output on error, and use it as a prefix when the error message is also output (not by default)
   * Always log the error to rails log even if not including in html response
+  * Merged PR ensure REDIS connections are closed #88 from yld
+  * Merged PR more robust cache check #90 from masciugo
+  * Merged PR Add log_level config setting which defaults to 'info'. #97 from FloHeinle 
+  * Merged PR get rid of old school hash rockets syntax #92 from DmytroStepaniuk
 
 * 3.0.0
  * First release on rails5 branch
