@@ -209,7 +209,7 @@ if defined? HealthCheck
       ''
     end
   
-    config.include_error_in_response_body = false if ENV['HIDE_ERROR_RESPONSE'].present?
+    config.include_error_in_response_body = ENV['HIDE_ERROR_RESPONSE'].to_s !~ /^[1tTyY]/
   end
 end
 !
