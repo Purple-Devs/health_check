@@ -6,6 +6,7 @@
   * Got all travis tests passing
   * Removed old, unused branches
   * Merged PR Fix broken Cache-Control headers #93 from felixbuenemann 
+  * Merged PR S3 should not depend on Rails secrets file #77 by natefaerber
   * Merged PR RabbitMQ Health check #98 from rhuanbarreto
   * Merged PR Use remote_ip to accept proxy-forwarded requests #102 by alessio-signorini but made it optional
   * Fixed up failure setting to match previous output on error, and use it as a prefix when the error message is also output (not by default)

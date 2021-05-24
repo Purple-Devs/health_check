@@ -27,19 +27,14 @@ module HealthCheck
 
       private
 
+      # We already assume you are using Rails.  Let's also assume you have an initializer
+      # created for your Aws config.  We will set the region here so you can use an
+      # instance profile and simply set the region in your environment.
       def configure_client
-        return unless defined?(Rails)
+        ::Aws.config[:s3] = { force_path_style: true }
+        ::Aws.config[:region] ||= ENV['AWS_REGION'] || ENV['DEFAULT_AWS_REGION']
 
-        aws_configuration = {
-          region: Rails.application.secrets.aws_default_region,
-          credentials: ::Aws::Credentials.new(
-            Rails.application.secrets.aws_access_key_id,
-            Rails.application.secrets.aws_secret_access_key
-          ),
-          force_path_style: true
-        }
-
-        ::Aws::S3::Client.new aws_configuration
+        ::Aws::S3::Client.new
       end
 
       def aws_s3_client
