@@ -31,6 +31,10 @@ module HealthCheck
   mattr_accessor :http_status_for_ip_whitelist_error
   self.http_status_for_ip_whitelist_error = 403
 
+  # check remote_ip rather than ip for ip whitelist
+  mattr_accessor :accept_proxied_requests
+  self.accept_proxied_requests = false
+
   # ips allowed to perform requests
   mattr_accessor :origin_ip_whitelist
   self.origin_ip_whitelist = []

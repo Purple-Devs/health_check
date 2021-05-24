@@ -91,10 +91,9 @@ To change the configuration of health_check, create a file `config/initializers/
       # Text output upon failure
       config.failure = 'health_check failed'
 
-      # Include the error in the response body. 
-      # You should only turn this on where there is no public access to this url as it may leak private information
-      mattr_accessor :include_error_in_response_body
-      self.include_error_in_response_body = false
+      # Disable the error message to prevent /health_check from leaking
+      # sensitive information
+      config.include_error_in_response_body = false
 
       # error message is always logged to rails log
 
@@ -152,15 +151,15 @@ To change the configuration of health_check, create a file `config/initializers/
       # Defaults to blank and allows any IP
       config.origin_ip_whitelist = %w(123.123.123.123)
 
+      # Enable when behind a proxy to pick up the real remote IP for origin_ip_whitelist check
+      config.accept_proxied_requests = false
+
       # http status code used when the ip is not allowed for the request
       config.http_status_for_ip_whitelist_error = 403
 
       # When redis url is non-standard
       config.redis_url = 'redis_url'
 
-      # Disable the error message to prevent /health_check from leaking
-      # sensitive information
-      config.include_error_in_response_body = false
     end
 
 You may call add_custom_check multiple times with different tests. These tests will be included in the default list ("standard").
