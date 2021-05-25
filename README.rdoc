@@ -150,11 +150,13 @@ To change the configuration of health_check, create a file `config/initializers/
       config.basic_auth_username = 'my_username'
       config.basic_auth_password = 'my_password'
 
-      # Whitelist requesting IPs
-      # Defaults to blank and allows any IP
-      config.origin_ip_whitelist = %w(123.123.123.123)
+      # Whitelist requesting IPs by a list of IP and/or CIDR ranges, either IPv4 or IPv6 (uses IPAddr.include? method to check)
+      # Defaults to blank which allows any IP
+      config.origin_ip_whitelist = %w(123.123.123.123 10.11.12.0/24 2400:cb00::/32)
 
-      # Enable when behind a proxy to pick up the real remote IP for origin_ip_whitelist check
+      # Use ActionDispatch::Request's remote_ip method when behind a proxy to pick up the real remote IP for origin_ip_whitelist check
+      # Otherwise uses Rack::Request's ip method (the default, and always used by Middleware), which is more susceptable to spoofing
+      # See https://stackoverflow.com/questions/10997005/whats-the-difference-between-request-remote-ip-and-request-ip-in-rails
       config.accept_proxied_requests = false
 
       # http status code used when the ip is not allowed for the request
