@@ -12,10 +12,6 @@ services:
 - elasticsearch
 - rabbitmq
 
-env:
-- REDIS_URL: 'redis://localhost:6379'
-- ELASTICSEARCH_URL: 'http://localhost:9200'
-- RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
 before_script:
   - sleep 10
@@ -46,11 +42,21 @@ jobs:
 
     - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge MIDDLEWARE=YES
+      env: 
+      - RAILS_VERSION=edge
+      - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 3.0.0
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge MIDDLEWARE=YES
+      env:
+      - RAILS_VERSION=edge
+      - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
   include:
     # -------------------------------------
@@ -65,12 +71,18 @@ jobs:
       - MIDDLEWARE=no
       - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.3.6
       gemfile: test/rails_5.0.gemfile
       env:
       - RAILS_VERSION=5.0
       - MIDDLEWARE=no
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     # rails 5.1 sometime before May 2017
     
@@ -81,6 +93,9 @@ jobs:
       - MIDDLEWARE=no
       - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.3.6
       gemfile: test/rails_5.1.gemfile
@@ -88,12 +103,18 @@ jobs:
       - RAILS_VERSION=5.1
       - MIDDLEWARE=no
       - BUNDLER_VERSION=1.17.3
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.4.3
       gemfile: test/rails_5.1.gemfile
       env:
       - RAILS_VERSION=5.1
       - MIDDLEWARE=no
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     # -------------------------------------
     # Middleware
@@ -107,12 +128,18 @@ jobs:
       - MIDDLEWARE=yes
       - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.3.6
       gemfile: test/rails_5.0.gemfile
       env:
       - RAILS_VERSION=5.0
       - MIDDLEWARE=yes
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     # rails 5.1 sometime before May 2017
     
@@ -123,12 +150,18 @@ jobs:
       - MIDDLEWARE=yes
       - RUBYGEMS_VERSION=2.7.11
       - BUNDLER_VERSION=1.17.3
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.4.3
       gemfile: test/rails_5.1.gemfile
       env:
       - RAILS_VERSION=5.1
       - MIDDLEWARE=yes
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
 
     # rails 5.2 April 2018
@@ -143,12 +176,18 @@ jobs:
       env:
       - RAILS_VERSION=6.0
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.6.7
       gemfile: test/rails_6.0.gemfile
       env:
       - RAILS_VERSION=6.0
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
     
     # Not testing past recommended ruby version as listed on https://www.fastruby.io/blog/ruby/rails/versions/compatibility-table.html
 
@@ -158,24 +197,36 @@ jobs:
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.6.6
       gemfile: test/rails_6.1.gemfile
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 2.7.3
       gemfile: test/rails_6.1.gemfile
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: 3.0.1
       gemfile: test/rails_6.1.gemfile
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
     
 
 #    - rvm: 2.5.0
@@ -207,9 +258,16 @@ jobs:
     
     - rvm: 3.0.0
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge MIDDLEWARE=YES
+      env:
+      - RAILS_VERSION=edge
+      - MIDDLEWARE=YES
+      - REDIS_URL: 'redis://localhost:6379'
+      - ELASTICSEARCH_URL: 'http://localhost:9200'
+      - RABBITMQ_URL: 'amqp://guest:guest@localhost:5672'
 
     - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge MIDDLEWARE=YES
+      env:
+      - RAILS_VERSION=edge
+      - MIDDLEWARE=YES
 
