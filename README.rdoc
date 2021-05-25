@@ -7,8 +7,8 @@ The basic goal is to quickly check that rails is up and running and that it has 
 Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
 
 Use gem versions for stable releases:
-* ~> 3.0 for Rails 5.x and 6.x (etc until there is a proven need to split off another branch),
-* ~> 2.0 for Rails 4.x,
+* ~> 3.x for Rails 5.x and 6.x (etc until there is a proven need to split off another branch),
+* ~> 2.x for Rails 4.x,
 * ~> 1.7 for Rails 3.x,
 * ~> 1.6.3 for Rails 2.3
 
@@ -68,7 +68,7 @@ Note: rails also checks migrations by default in development mode and throws an 
 
 Add the following line to Gemfile
 
-    gem "health_check"
+    gem 'health_check'
 
 And then execute
 
@@ -267,6 +267,7 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 == Known Issues
 
+* See https://github.com/ianheggie/health_check/issues
 * No inline documentation for methods
 * <b>rvm gemsets breaks the test</b> - specifically <tt>rvm use 1.9.3</tt> works but <tt>rvm gemset use ruby-1.9.3-p385@health_check --create</tt> triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
 
