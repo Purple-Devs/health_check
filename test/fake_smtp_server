@@ -25,7 +25,7 @@ class FakeSmtpServer
           send '550 Access Denied – Invalid HELO name'
         else
           send '250-Welcome to a dummy smtp server'
-          unless ENV['FAIL_SMTP'] == 'NOSTARTTLS'
+          unless ENV['SMTP_STARTTLS'] == 'DISABLED'
             send '250-STARTTLS'
           end
           send '250-AUTH PLAIN LOGIN'
@@ -38,7 +38,7 @@ class FakeSmtpServer
           send '235 2.7.0 Authentication successful'
         end
       elsif cmd =~ /^STARTTLS\r/
-        if ENV['FAIL_SMTP'] == 'NOSTARTTLS'
+        if ENV['SMTP_STARTTLS'] == 'DISABLED'
           send '502 STARTTLS is disabled!'
         end
         send '220 Ready to start TLS'
