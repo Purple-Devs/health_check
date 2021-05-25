@@ -31,23 +31,33 @@ jobs:
 
   allow_failures:
 
-    - rvm: ruby-head
-      gemfile: test/rails_edge.gemfile
-      env: 
-      - RAILS_VERSION=edge 
-      - MIDDLEWARE=YES
-
-    - rvm: 3.0.0
-      gemfile: test/rails_edge.gemfile
-      env: 
-      - RAILS_VERSION=edge 
-      - MIDDLEWARE=YES
-
     - rvm: 3.0.1
       gemfile: test/rails_6.1.gemfile
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+
+    - rvm: 3.0.1
+      gemfile: test/rails_edge.gemfile
+      env: 
+      - RAILS_VERSION=edge 
+      - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
+
+    - rvm: ruby-head
+      gemfile: test/rails_6.1.gemfile
+      env: 
+      - RAILS_VERSION=6.1 
+      - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
+
+    - rvm: ruby-head
+      gemfile: test/rails_edge.gemfile
+      env: 
+      - RAILS_VERSION=edge 
+      - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
+
 
   include:
     # -------------------------------------
@@ -173,49 +183,19 @@ jobs:
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
+    
+   # ------------------
+   # FIXME
+   # ------------------
 
     - rvm: 3.0.1
       gemfile: test/rails_6.1.gemfile
       env:
       - RAILS_VERSION=6.1
       - MIDDLEWARE=YES
-      - SMTP_STARTTLS=DISABLED
-    
 
-#    - rvm: 2.5.0
-#      gemfile: test/rails_6.2.gemfile
-#      env:
-#      - RAILS_VERSION=6.2
-#      - MIDDLEWARE=YES
-#
-#    - rvm: 2.6.6
-#      gemfile: test/rails_6.2.gemfile
-#      env:
-#      - RAILS_VERSION=6.2
-#      - MIDDLEWARE=YES
-#
-#    - rvm: 2.7.3
-#      gemfile: test/rails_6.2.gemfile
-#      env:
-#      - RAILS_VERSION=6.2
-#      - MIDDLEWARE=YES
-#
-#    - rvm: 3.0.1
-#      gemfile: test/rails_6.2.gemfile
-#      env:
-#      - RAILS_VERSION=6.2
-#      - MIDDLEWARE=YES
-#
-    
-    # ruby / rails edge
-    
-    - rvm: 3.0.0
-      gemfile: test/rails_edge.gemfile
-      env: 
-      - RAILS_VERSION=edge 
-      - MIDDLEWARE=YES
-
-    - rvm: 3.0.0
+    - rvm: 3.0.1
       gemfile: test/rails_edge.gemfile
       env: 
       - RAILS_VERSION=edge 
@@ -223,6 +203,16 @@ jobs:
       - SMTP_STARTTLS=DISABLED
 
     - rvm: ruby-head
+      gemfile: test/rails_6.1.gemfile
+      env: 
+      - RAILS_VERSION=6.1 
+      - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
+
+    - rvm: ruby-head
       gemfile: test/rails_edge.gemfile
-      env: RAILS_VERSION=edge MIDDLEWARE=YES
+      env: 
+      - RAILS_VERSION=edge 
+      - MIDDLEWARE=YES
+      - SMTP_STARTTLS=DISABLED
 
