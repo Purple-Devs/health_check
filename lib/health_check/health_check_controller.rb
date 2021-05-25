@@ -1,5 +1,6 @@
 # Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
 # See MIT-LICENSE for details.
+require "ipaddr"
 
 module HealthCheck
   class HealthCheckController < ActionController::Base
@@ -58,7 +59,12 @@ module HealthCheck
 
     def check_origin_ip
       unless HealthCheck.origin_ip_whitelist.blank? ||
-          HealthCheck.origin_ip_whitelist.include?(HealthCheck.accept_proxied_requests ? request.remote_ip : request.ip)
+          request_ipaddr = IPAddr.new(HealthCheck.accept_proxied_requests ? request.remote_ip : request.ip)
+          HealthCheck.origin_ip_whitelist.map {
+            |addr| IPAddr.new(addr)
+          }.any?{
+            |addr| addr.include? request_ipaddr
+          }
         render plain: 'Health check is not allowed for the requesting IP',
                status: HealthCheck.http_status_for_ip_whitelist_error,
                content_type: 'text/plain'
