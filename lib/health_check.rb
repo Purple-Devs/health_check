@@ -3,7 +3,7 @@
 
 module HealthCheck
 
-  class Engine < Rails::Engine
+  class Engine < ::Rails::Engine
     cattr_accessor :routes_explicitly_defined
   end
 
@@ -79,9 +79,12 @@ module HealthCheck
 
   mattr_accessor :installed_as_middleware
 
-  # Allow non-standard redis url
+  # Allow non-standard redis url and password
   mattr_accessor :redis_url
-  self.redis_url = nil
+  self.redis_url = ENV['REDIS_URL']
+
+  mattr_accessor :redis_password
+  self.redis_password = 'some-password'
 
   # Include the error in the response body. 
   # You should only do this where your /health_check endpoint is NOT open to the public internet
