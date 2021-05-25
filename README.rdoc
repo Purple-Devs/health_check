@@ -66,7 +66,7 @@ Note: rails also checks migrations by default in development mode and throws an 
 
 == Installation
 
-Add the following line to Gemfile
+Add the following line to Gemfile (after the rails gems are listed)
 
     gem 'health_check'
 
