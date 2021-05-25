@@ -190,6 +190,8 @@ ActionMailer::Base.smtp_settings = { address: "localhost", port: 3555 }
 echo Adding an initializer for health_check gem ...
 mkdir -p config/initializers
 tee config/initializers/health_check.rb <<!
+require 'fileutils'
+
 if defined? HealthCheck
   HealthCheck.setup do |config|
     config.success = "$success"
@@ -207,6 +209,18 @@ if defined? HealthCheck
   
     config.add_custom_check('pass') do
       ''
+    end
+  
+    config.on_failure do |checks, msg|
+      File.open('tmp/health_check_failure.txt', 'w') do |f|
+        f.puts "FAILED: #{checks}, MESSAGE: #{msg}"
+      end
+    end
+  
+    config.on_success do |checks|
+      File.open('tmp/health_check_success.txt', 'w') do |f|
+        f.puts "PASSED: #{checks}"
+      end
     end
   
     config.include_error_in_response_body = ENV['HIDE_ERROR_RESPONSE'].to_s !~ /^[1tTyY]/

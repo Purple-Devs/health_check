@@ -279,6 +279,8 @@ common_tests()
         echo
     fi
 
+    rm -f tmp/health_check_success.txt tmp/health_check_failure.txt
+
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}[line $LINENO]: TESTING can get an example controller ..."
@@ -293,11 +295,34 @@ common_tests()
         echo
     fi
 
+    if [ -f tmp/health_check_success.txt ] ; then
+        echo "FAIL tmp/health_check_success.txt exists on line $LINENO" 
+    else
+        echo "PASS tmp/health_check_success.txt is missing as expected on line $LINENO" 
+    fi
+    if [ -f tmp/health_check_failure.txt ] ; then
+        echo "FAIL tmp/health_check_failure.txt exists on line $LINENO" 
+    else
+        echo "PASS tmp/health_check_failure.txt is missing as expected on line $LINENO" 
+    fi
+
     test_no=`expr 1 + $test_no`
     if [ -z "$run_test" ] || [ $test_no == "$run_test" ]; then
         echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should pass with no database migrations ..."
         ls db/migrate
+        rm -f tmp/health_check_success.txt tmp/health_check_failure.txt
         $testurl ${host}/${route_prefix}/migration 200 text/plain $success
+        if [ -f tmp/health_check_success.txt ] ; then
+            echo "PASS tmp/health_check_success.txt exists as expected on line $LINENO" 
+            cat tmp/health_check_success.txt
+        else
+            echo "FAIL tmp/health_check_success.txt is missing on line $LINENO" 
+        fi
+        if [ -f tmp/health_check_failure.txt ] ; then
+            echo "FAIL tmp/health_check_failure.txt exists on line $LINENO" 
+        else
+            echo "PASS tmp/health_check_failure.txt is missing as expected on line $LINENO" 
+        fi
         echo
     fi
 
@@ -306,7 +331,19 @@ common_tests()
         echo "${test_no}[line $LINENO]: TESTING ${route_prefix}/migration should fail without initial database migration ..."
         cp $base_dir/test/migrate/nine/* db/migrate
         ls db/migrate
+        rm -f tmp/health_check_success.txt tmp/health_check_failure.txt
         $testurl ${host}/${route_prefix}/migration 550 text/plain failed
+        if [ -f tmp/health_check_success.txt ] ; then
+            echo "FAIL tmp/health_check_success.txt exists on line $LINENO" 
+        else
+            echo "PASS tmp/health_check_success.txt is missing as expected on line $LINENO" 
+        fi
+        if [ -f tmp/health_check_failure.txt ] ; then
+            echo "PASS tmp/health_check_failure.txt exists as expected on line $LINENO" 
+            cat tmp/health_check_failure.txt
+        else
+            echo "FAIL tmp/health_check_failure.txt is missing on line $LINENO" 
+        fi
         echo
     fi
 
