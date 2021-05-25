@@ -7,8 +7,8 @@ The basic goal is to quickly check that rails is up and running and that it has 
 Check the latest README {master}[https://github.com/ianheggie/health_check/tree/master] for other versions
 
 Use gem versions for stable releases:
-* ~> 3.0 for Rails 5.x and 6.x (etc until there is a proven need to split off another branch),
-* ~> 2.0 for Rails 4.x,
+* ~> 3.x for Rails 5.x and 6.x (etc until there is a proven need to split off another branch),
+* ~> 2.x for Rails 4.x,
 * ~> 1.7 for Rails 3.x,
 * ~> 1.6.3 for Rails 2.3
 
@@ -66,9 +66,9 @@ Note: rails also checks migrations by default in development mode and throws an 
 
 == Installation
 
-Add the following line to Gemfile
+Add the following line to Gemfile (after the rails gems are listed)
 
-    gem "health_check"
+    gem 'health_check'
 
 And then execute
 
@@ -150,11 +150,13 @@ To change the configuration of health_check, create a file `config/initializers/
       config.basic_auth_username = 'my_username'
       config.basic_auth_password = 'my_password'
 
-      # Whitelist requesting IPs
-      # Defaults to blank and allows any IP
-      config.origin_ip_whitelist = %w(123.123.123.123)
+      # Whitelist requesting IPs by a list of IP and/or CIDR ranges, either IPv4 or IPv6 (uses IPAddr.include? method to check)
+      # Defaults to blank which allows any IP
+      config.origin_ip_whitelist = %w(123.123.123.123 10.11.12.0/24 2400:cb00::/32)
 
-      # Enable when behind a proxy to pick up the real remote IP for origin_ip_whitelist check
+      # Use ActionDispatch::Request's remote_ip method when behind a proxy to pick up the real remote IP for origin_ip_whitelist check
+      # Otherwise uses Rack::Request's ip method (the default, and always used by Middleware), which is more susceptable to spoofing
+      # See https://stackoverflow.com/questions/10997005/whats-the-difference-between-request-remote-ip-and-request-ip-in-rails
       config.accept_proxied_requests = false
 
       # http status code used when the ip is not allowed for the request
@@ -163,8 +165,21 @@ To change the configuration of health_check, create a file `config/initializers/
       # rabbitmq
       config.rabbitmq_config = {}
 
-      # When redis url is non-standard
-      config.redis_url = 'redis_url'
+      # When redis url/password is non-standard
+      config.redis_url = 'redis_url' # default ENV['REDIS_URL']
+      # Only included if set, as url can optionally include passwords as well
+      config.redis_password = 'redis_password' # default ENV['REDIS_PASSWORD']
+
+      # Failure Hooks to do something more ...
+      # checks lists the checks requested
+      config.on_failure do |checks, msg|
+        # log msg somewhere
+      end
+    
+      config.on_success do |checks|
+        # flag that everything is well
+      end
+  
 
     end
 
@@ -263,6 +278,7 @@ Last-modified is set to the current time (rounded down to a multiple of max_age 
 
 == Known Issues
 
+* See https://github.com/ianheggie/health_check/issues
 * No inline documentation for methods
 * <b>rvm gemsets breaks the test</b> - specifically <tt>rvm use 1.9.3</tt> works but <tt>rvm gemset use ruby-1.9.3-p385@health_check --create</tt> triggers a "Could not find gem 'coffee-rails (~> 3.2.1) ruby' in the gems available on this machine." error in the last call to bundle (installing health_check as a gem via a path into the temp railsapp)
 

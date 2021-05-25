@@ -1,6 +1,8 @@
 = Change Log =
 
-* May 2021
+* 3.1.0 - 26 May 2021
+  * Updated README to clarify railsN branch status (they are intended to be stable, development to be a feature branch off them or master)
+  * Updated README with all the settings
   * Updated all the branches to work with the latest travis and gem changes, as some gems needed to be locked down.
   * Updated to test rails 6.0 and 6.1
   * Got all travis tests passing
@@ -15,6 +17,9 @@
   * Merged PR more robust cache check #90 from masciugo
   * Merged PR Add log_level config setting which defaults to 'info'. #97 from FloHeinle 
   * Merged PR get rid of old school hash rockets syntax #92 from DmytroStepaniuk
+  * Merged PR Converted whitelist testing to use IPAddr objects. #64 jordanyaker
+  * Added on_success and on_failure callbacks
+  * Makes sure errors are seperated by a period and a space and a period always ends the list of errors
 
 * 3.0.0
  * First release on rails5 branch

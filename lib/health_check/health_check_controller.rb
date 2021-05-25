@@ -1,5 +1,6 @@
-# Copyright (c) 2010-2013 Ian Heggie, released under the MIT license.
+# Copyright (c) 2010-2021 Ian Heggie, released under the MIT license.
 # See MIT-LICENSE for details.
+require "ipaddr"
 
 module HealthCheck
   class HealthCheckController < ActionController::Base
@@ -26,12 +27,23 @@ module HealthCheck
         response.headers['Cache-Control'] = "must-revalidate, max-age=#{max_age}"
         if errors.blank?
           send_response true, nil, :ok, :ok
+          if HealthCheck.success_callbacks
+            HealthCheck.success_callbacks.each do |callback|
+              callback.call(checks)
+            end 
+          end
         else
           msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors}" : nil
           send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           
           # Log a single line as some uptime checkers only record that it failed, not the text returned
-          logger.send(HealthCheck.log_level, "#{HealthCheck.failure}: #{errors}") if logger && HealthCheck.log_level
+          msg = "#{HealthCheck.failure}: #{errors}"
+          logger.send(HealthCheck.log_level, msg) if logger && HealthCheck.log_level
+          if HealthCheck.failure_callbacks
+            HealthCheck.failure_callbacks.each do |callback|
+              callback.call(checks, msg)
+            end
+          end
         end
       end
     end
@@ -57,8 +69,9 @@ module HealthCheck
     end
 
     def check_origin_ip
+      request_ipaddr = IPAddr.new(HealthCheck.accept_proxied_requests ? request.remote_ip : request.ip)
       unless HealthCheck.origin_ip_whitelist.blank? ||
-          HealthCheck.origin_ip_whitelist.include?(HealthCheck.accept_proxied_requests ? request.remote_ip : request.ip)
+          HealthCheck.origin_ip_whitelist.any? { |addr| IPAddr.new(addr).include? request_ipaddr }
         render plain: 'Health check is not allowed for the requesting IP',
                status: HealthCheck.http_status_for_ip_whitelist_error,
                content_type: 'text/plain'
