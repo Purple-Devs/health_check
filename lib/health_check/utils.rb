@@ -98,7 +98,7 @@ module HealthCheck
 
     def self.db_migrate_path
       # Lazy initialisation so Rails.root will be defined
-      @@db_migrate_path ||= File.join(Rails.root, 'db', 'migrate')
+      @@db_migrate_path ||= File.join(::Rails.root, 'db', 'migrate')
     end
 
     def self.db_migrate_path=(value)
@@ -160,15 +160,15 @@ module HealthCheck
     def self.check_cache
       t = Time.now.to_i
       value = "ok #{t}"
-      ret = Rails.cache.read('__health_check_cache_test__')
+      ret = ::Rails.cache.read('__health_check_cache_test__')
       if ret.to_s =~ /^ok (\d+)$/ 
         diff = ($1.to_i - t).abs
         return('Cache expiry is broken. ') if diff > 30
       elsif ret
         return 'Cache is returning garbage. '
       end
-      if Rails.cache.write('__health_check_cache_test__', value, expires_in: 2.seconds)
-        ret = Rails.cache.read('__health_check_cache_test__')
+      if ::Rails.cache.write('__health_check_cache_test__', value, expires_in: 2.seconds)
+        ret = ::Rails.cache.read('__health_check_cache_test__')
         if ret =~ /^ok (\d+)$/ 
           diff = ($1.to_i - t).abs
           (diff < 2 ? '' : 'Out of date cache or time is skewed. ')

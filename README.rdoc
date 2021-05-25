@@ -165,8 +165,10 @@ To change the configuration of health_check, create a file `config/initializers/
       # rabbitmq
       config.rabbitmq_config = {}
 
-      # When redis url is non-standard
-      config.redis_url = 'redis_url'
+      # When redis url/password is non-standard
+      config.redis_url = 'redis_url' # default ENV['REDIS_URL']
+      # Only included if set, as url can optionally include passwords as well
+      config.redis_password = 'redis_password' # default ENV['REDIS_PASSWORD']
 
     end
 
