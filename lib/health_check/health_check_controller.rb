@@ -33,11 +33,11 @@ module HealthCheck
             end 
           end
         else
-          msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors.join(', ')}" : nil
+          msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors}" : nil
           send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           
           # Log a single line as some uptime checkers only record that it failed, not the text returned
-          msg = "#{HealthCheck.failure}: #{errors.join(', ')}"
+          msg = "#{HealthCheck.failure}: #{errors}"
           logger.send(HealthCheck.log_level, msg) if logger && HealthCheck.log_level
           if HealthCheck.failure_callbacks
             HealthCheck.failure_callbacks.each do |callback|

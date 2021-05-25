@@ -90,8 +90,9 @@ module HealthCheck
               return "invalid argument to health_test."
             end
         end
+        errors << '. ' unless errors == '' || errors.end_with?('. ')
       end
-      return errors
+      return errors.strip
     rescue => e
       return e.message
     end
