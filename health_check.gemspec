@@ -25,5 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency(%q<smarter_bundler>, [">= 0.1.0"])
   gem.add_development_dependency(%q<rake>, [">= 0.8.3"])
   gem.add_development_dependency(%q<shoulda>, ["~> 2.11.0"])
-  gem.add_development_dependency(%q<bundler>, [">= 1.2"])
+  gem.add_development_dependency(%q<bundler>, [">= 2.2.10"])
 end
