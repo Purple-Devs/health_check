@@ -12,7 +12,7 @@ module HealthCheck
       rescue Exception => err
         create_error 'redis', err.message
       ensure
-        client.disconnect
+        client.close
       end
 
       def client
