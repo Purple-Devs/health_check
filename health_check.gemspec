@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
   gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.extra_rdoc_files = [ "README.rdoc" ]
   gem.require_paths = ["lib"]
@@ -26,5 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency(%q<smarter_bundler>, [">= 0.1.0"])
   gem.add_development_dependency(%q<rake>, [">= 0.8.3"])
   gem.add_development_dependency(%q<shoulda>, ["~> 2.11.0"])
-  gem.add_development_dependency(%q<bundler>, ["~> 1.2"])
+  gem.add_development_dependency(%q<bundler>, [">= 1.2"])
 end
