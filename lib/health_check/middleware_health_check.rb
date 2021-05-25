@@ -1,3 +1,7 @@
+# Copyright (c) 2010-2021 Ian Heggie, released under the MIT license.
+# See MIT-LICENSE for details.
+require 'ipaddr'
+
 module HealthCheck
   class MiddlewareHealthcheck
 
@@ -59,7 +63,8 @@ module HealthCheck
     def ip_blocked(env)
       return false if HealthCheck.origin_ip_whitelist.blank?
       req = Rack::Request.new(env)
-      unless HealthCheck.origin_ip_whitelist.include?(req.ip)
+      request_ipaddr = IPAddr.new(req.ip)
+      unless HealthCheck.origin_ip_whitelist.any? { |addr| IPAddr.new(addr).include? request_ipaddr }
         [ HealthCheck.http_status_for_ip_whitelist_error,
           { 'Content-Type' => 'text/plain' },
           [ 'Health check is not allowed for the requesting IP' ]

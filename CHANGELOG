@@ -15,6 +15,7 @@
   * Merged PR more robust cache check #90 from masciugo
   * Merged PR Add log_level config setting which defaults to 'info'. #97 from FloHeinle 
   * Merged PR get rid of old school hash rockets syntax #92 from DmytroStepaniuk
+  * Merged PR Converted whitelist testing to use IPAddr objects. #64 jordanyaker
 
 * 3.0.0
  * First release on rails5 branch
