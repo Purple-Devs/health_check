@@ -27,12 +27,23 @@ module HealthCheck
         response.headers['Cache-Control'] = "must-revalidate, max-age=#{max_age}"
         if errors.blank?
           send_response true, nil, :ok, :ok
+          if HealthCheck.success_callbacks
+            HealthCheck.success_callbacks.each do |callback|
+              callback.call(checks)
+            end 
+          end
         else
           msg = HealthCheck.include_error_in_response_body ? "#{HealthCheck.failure}: #{errors}" : nil
           send_response false, msg, HealthCheck.http_status_for_error_text, HealthCheck.http_status_for_error_object
           
           # Log a single line as some uptime checkers only record that it failed, not the text returned
-          logger.send(HealthCheck.log_level, "#{HealthCheck.failure}: #{errors}") if logger && HealthCheck.log_level
+          msg = "#{HealthCheck.failure}: #{errors}"
+          logger.send(HealthCheck.log_level, msg) if logger && HealthCheck.log_level
+          if HealthCheck.failure_callbacks
+            HealthCheck.failure_callbacks.each do |callback|
+              callback.call(checks, msg)
+            end
+          end
         end
       end
     end

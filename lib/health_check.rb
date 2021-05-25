@@ -91,9 +91,23 @@ module HealthCheck
   mattr_accessor :include_error_in_response_body
   self.include_error_in_response_body = false
 
+  # used for on_failure and on_success
+  mattr_accessor :success_callbacks
+  mattr_accessor :failure_callbacks
+
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
     custom_checks[name] << block
+  end
+
+  def self.on_success(&block)
+    success_callbacks ||= [ ]
+    success_callbacks << block
+  end
+
+  def self.on_failure(&block)
+    failure_callbacks ||= [ ]
+    failure_callbacks << block
   end
 
   def self.setup
