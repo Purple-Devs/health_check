@@ -84,9 +84,9 @@ module HealthCheck
   self.redis_url = ENV['REDIS_URL']
 
   mattr_accessor :redis_password
-  self.redis_password = 'some-password'
+  self.redis_password = ENV['REDIS_PASSWORD']
 
-  # Include the error in the response body. 
+  # Include the error in the response body.
   # You should only do this where your /health_check endpoint is NOT open to the public internet
   mattr_accessor :include_error_in_response_body
   self.include_error_in_response_body = false
