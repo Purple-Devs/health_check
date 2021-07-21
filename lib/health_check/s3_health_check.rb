@@ -14,10 +14,10 @@ module HealthCheck
           end
           permissions.each do |permision|
             begin
-            send(permision, bucket_name)
-          rescue Exception => e
-            raise "bucket:#{bucket_name}, permission:#{permision} - #{e.message}"
-          end
+              send(permision, bucket_name)
+            rescue Exception => e
+              raise "bucket:#{bucket_name}, permission:#{permision} - #{e.message}"
+            end
           end
         end
         ''
@@ -46,14 +46,25 @@ module HealthCheck
       end
 
       def W(bucket)
+        app_name = if Rails::VERSION::MAJOR >= 6
+                     ::Rails.application.class.module_parent_name
+                   else
+                     ::Rails.application.class.parent_name
+                   end
+
         aws_s3_client.put_object(bucket: bucket,
-                                 key: "healthcheck_#{::Rails.application.class.parent_name}",
+                                 key: "healthcheck_#{app_name}",
                                  body: Time.new.to_s)
       end
 
       def D(bucket)
+        app_name = if Rails::VERSION::MAJOR >= 6
+                     ::Rails.application.class.module_parent_name
+                   else
+                     ::Rails.application.class.parent_name
+                   end
         aws_s3_client.delete_object(bucket: bucket,
-                                    key: "healthcheck_#{::Rails.application.class.parent_name}")
+                                    key: "healthcheck_#{app_name}")
       end
     end
   end
