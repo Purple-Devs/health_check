@@ -95,6 +95,10 @@ module HealthCheck
   mattr_accessor :success_callbacks
   mattr_accessor :failure_callbacks
 
+  # define if you want the error messages to end with a period
+  mattr_accessor :do_not_add_period
+  self.do_not_add_period = false
+
   def self.add_custom_check(name = 'custom', &block)
     custom_checks[name] ||= [ ]
     custom_checks[name] << block
