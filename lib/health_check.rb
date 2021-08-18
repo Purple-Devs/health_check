@@ -106,8 +106,8 @@ module HealthCheck
   end
 
   def self.on_failure(&block)
-    failure_callbacks ||= [ ]
-    failure_callbacks << block
+    self.failure_callbacks ||= [ ]
+    self.failure_callbacks << block
   end
 
   def self.setup
