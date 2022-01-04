@@ -4,6 +4,8 @@ require "ipaddr"
 
 module HealthCheck
   class HealthCheckController < ActionController::Base
+    skip_around_action :shopify_session
+    skip_before_action :login_again_if_different_shop
 
     layout false if self.respond_to? :layout
     before_action :check_origin_ip
