@@ -146,6 +146,7 @@ module HealthCheck
         else
           smtp = Net::SMTP.new(settings[:address], settings[:port])
           smtp.enable_starttls if settings[:enable_starttls_auto]
+          smtp.enable_tls if settings[:tls] || settings[:ssl]
           smtp.open_timeout = timeout
           smtp.read_timeout = timeout
           smtp.start(settings[:domain], settings[:user_name], settings[:password], settings[:authentication]) do
