@@ -162,6 +162,9 @@ To change the configuration of health_check, create a file `config/initializers/
       # http status code used when the ip is not allowed for the request
       config.http_status_for_ip_whitelist_error = 403
 
+      # elasticsearch
+      config.elasticsearch_config = {}
+
       # rabbitmq
       config.rabbitmq_config = {}
 

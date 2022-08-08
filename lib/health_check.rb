@@ -52,6 +52,10 @@ module HealthCheck
   mattr_accessor :buckets
   self.buckets = {}
 
+  # elasticsearch
+  mattr_accessor :elasticsearch_config
+  self.elasticsearch_config = {}
+
   # rabbitmq
   mattr_accessor :rabbitmq_config
   self.rabbitmq_config = {}
