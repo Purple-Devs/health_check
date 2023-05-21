@@ -6,9 +6,7 @@ module HealthCheck
 
     class << self
       def check
-        raise "Wrong configuration. Missing 'redis' gem" unless defined?(::Redis)
-
-        client.ping == 'PONG' ? '' : "Redis.ping returned #{res.inspect} instead of PONG"
+        client.call('PING')  == 'PONG' ? '' : "ping returned #{res.inspect} instead of PONG"
       rescue Exception => err
         create_error 'redis', err.message
       ensure
@@ -16,12 +14,22 @@ module HealthCheck
       end
 
       def client
-        @client ||= Redis.new(
-          {
-            url: HealthCheck.redis_url,
-            password: HealthCheck.redis_password
-          }.reject { |k, v| v.nil? }
-        )
+        @client ||= begin
+          if defined?(::Redis)
+            Redis.new(redis_config)
+          elsif defined?(::RedisClient)
+            RedisClient.new(redis_config)
+          else
+            raise "Wrong configuration. Missing 'redis' or 'redis-client' gem"
+          end
+        end
+      end
+
+      def redis_config
+        {
+          url: HealthCheck.redis_url,
+          password: HealthCheck.redis_password
+        }.reject { |k, v| v.nil? }
       end
     end
   end
