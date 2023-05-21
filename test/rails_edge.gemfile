@@ -28,9 +28,7 @@ gem 'elasticsearch', '~> 6.3.1', require: !ENV['ELASTICSEARCH_URL'].nil? # REQUI
 # s3 check
 gem 'aws-sdk-s3', require: !ENV['AWS_ACCESS_KEY_ID'].nil? # REQUIRED
 
-# Initial Gemfile has therubyracer commented out
 gem 'therubyrhino', platform: :jruby # REQUIRED
-gem 'therubyracer', platform: :ruby # REQUIRED
 
 gem 'webpacker', '~> 4.0.7' # REQUIRED
 gem 'rexml', '~> 3.2.4' # REQUIRED for ruby 3.0
