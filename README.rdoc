@@ -169,17 +169,19 @@ To change the configuration of health_check, create a file `config/initializers/
       config.redis_url = 'redis_url' # default ENV['REDIS_URL']
       # Only included if set, as url can optionally include passwords as well
       config.redis_password = 'redis_password' # default ENV['REDIS_PASSWORD']
+      # Only use if set, as url can optionally include username as well
+      config.redis_username = 'redis_username' # default ENV['REDIS_USERNAME']
 
       # Failure Hooks to do something more ...
       # checks lists the checks requested
       config.on_failure do |checks, msg|
         # log msg somewhere
       end
-    
+
       config.on_success do |checks|
         # flag that everything is well
       end
-  
+
 
     end
 

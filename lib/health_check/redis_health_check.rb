@@ -19,7 +19,8 @@ module HealthCheck
         @client ||= Redis.new(
           {
             url: HealthCheck.redis_url,
-            password: HealthCheck.redis_password
+            password: HealthCheck.redis_password,
+            username: HealthCheck.redis_username,
           }.reject { |k, v| v.nil? }
         )
       end
