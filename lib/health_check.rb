@@ -79,12 +79,14 @@ module HealthCheck
 
   mattr_accessor :installed_as_middleware
 
-  # Allow non-standard redis url and password
+  # Allow non-standard redis url, password and username
   mattr_accessor :redis_url
   self.redis_url = ENV['REDIS_URL']
 
   mattr_accessor :redis_password
   self.redis_password = ENV['REDIS_PASSWORD']
+  mattr_accessor :redis_username
+  self.redis_username = ENV['REDIS_USERNAME']
 
   # Include the error in the response body.
   # You should only do this where your /health_check endpoint is NOT open to the public internet
